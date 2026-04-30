@@ -7,6 +7,7 @@ Use this file for image-understanding requests.
 Build the shared request envelope with:
 
 - `RequestKind = vision`
+- optional `ConnectionProfileKey`
 - `Model = <API Model>`
 - `Inputs.Messages = [...]`
 - `Inputs.Images = [...]`

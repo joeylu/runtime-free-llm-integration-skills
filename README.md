@@ -1,6 +1,6 @@
 # runtime-free-llm-integration-skills
 
-Runtime-free skills for coding agents to build fail-fast LLM provider integration, starting with Aliyun Bailian / DashScope.
+Runtime-free skills for coding agents to build fail-fast LLM provider integration, starting with OpenAI and Aliyun Bailian / DashScope.
 
 ## What problem does this solve?
 
@@ -36,8 +36,9 @@ The authoring logic is simple:
 
 ## Current provider coverage
 
-The first public version includes one concrete provider skill:
+The current version includes these concrete provider skills:
 
+- OpenAI API
 - Aliyun Bailian / DashScope
 
 The shared structure is designed so more LLM providers can be added later.
@@ -46,11 +47,13 @@ The shared structure is designed so more LLM providers can be added later.
 
 - shared request / response / error contracts
 - provider model catalog pattern
+- connection profile pattern for separate API keys and base URLs
 - capability matrix rules
 - model selection UI guidance
 - provider configuration UI guidance
 - fail-fast validation rules
 - transport rules for different model modes
+- OpenAI API provider skill
 - Aliyun Bailian / DashScope provider skill
 
 ## Who is this for?
@@ -83,5 +86,7 @@ Copy or reference the relevant skill folder in your coding-agent workflow.
 Start from:
 
 ```text
-_shared/
-skill-llm-aliyun/
+LLM/_shared/
+LLM/skill-llm-openai/
+LLM/skill-llm-aliyun/
+```

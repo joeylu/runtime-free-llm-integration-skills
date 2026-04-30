@@ -4,6 +4,7 @@ This repository is a runtime-free skill pack for helping coding agents build LLM
 
 Current concrete provider coverage:
 
+- OpenAI API
 - Aliyun Bailian / DashScope
 
 The shared structure is designed for more providers later.
@@ -13,13 +14,14 @@ The shared structure is designed for more providers later.
 Keep the folder structure intact:
 
 ```text
-_shared/
-skill-llm-aliyun/
+LLM/_shared/
+LLM/skill-llm-openai/
+LLM/skill-llm-aliyun/
 ```
 
-Do not copy only `skill-llm-aliyun/SKILL.md`.
+Do not copy only one provider `SKILL.md`.
 
-The Aliyun skill depends on the shared contracts in `_shared`.
+Each provider skill depends on the shared contracts in `LLM/_shared`.
 
 ## 2. Give your coding agent a clear task
 
@@ -28,11 +30,11 @@ Example prompt:
 ```text
 Read this repository as a skill pack.
 
-First read skill-llm-aliyun/SKILL.md.
+First read LLM/skill-llm-openai/SKILL.md or LLM/skill-llm-aliyun/SKILL.md.
 Follow its read order.
-Use _shared for request, response, error, progress, UI, model catalog, and capability rules.
+Use LLM/_shared for request, response, error, progress, UI, model catalog, and capability rules.
 
-Build a website settings page where users can enter their Aliyun Bailian / DashScope API key, select a verified model, test the connection, and enable only verified capabilities.
+Build a website settings page where users can enter their OpenAI or Aliyun Bailian / DashScope API key, select a verified model, test the connection, and enable only verified capabilities.
 
 Do not guess model IDs.
 Do not enable unknown capabilities.
@@ -44,26 +46,46 @@ Do not silently fallback to another model, key, or provider.
 The provider skill is the entry point:
 
 ```text
-skill-llm-aliyun/SKILL.md
+LLM/skill-llm-openai/SKILL.md
+LLM/skill-llm-aliyun/SKILL.md
 ```
 
 It points the agent to the shared rules and provider references, including:
 
 ```text
-_shared/model-catalog-schema.md
-_shared/capability-matrix-schema.md
-_shared/request-envelope.md
-_shared/response-envelope.md
-_shared/error-contract.md
-_shared/progress-contract.md
-_shared/ui-binding.md
-_shared/sync-policy.md
-skill-llm-aliyun/references/model-catalog.md
-skill-llm-aliyun/references/capability-matrix.md
-skill-llm-aliyun/references/transport-*.md
+LLM/_shared/model-catalog-schema.md
+LLM/_shared/capability-matrix-schema.md
+LLM/_shared/connection-profile-schema.md
+LLM/_shared/request-envelope.md
+LLM/_shared/response-envelope.md
+LLM/_shared/error-contract.md
+LLM/_shared/progress-contract.md
+LLM/_shared/ui-binding.md
+LLM/_shared/sync-policy.md
+LLM/skill-llm-aliyun/references/connection-profiles.md
+LLM/skill-llm-aliyun/references/model-catalog.md
+LLM/skill-llm-aliyun/references/capability-matrix.md
+LLM/skill-llm-aliyun/references/transport-*.md
+LLM/skill-llm-openai/references/connection-profiles.md
+LLM/skill-llm-openai/references/model-catalog.md
+LLM/skill-llm-openai/references/capability-matrix.md
+LLM/skill-llm-openai/references/transport-*.md
 ```
 
-## 4. Choose the request kind before coding
+## 4. Resolve the connection profile
+
+If a provider has multiple profiles, resolve the profile before model selection.
+
+Example:
+
+```text
+ConnectionProfileKey = build uses OPENAI_BUILD_API_KEY.
+ConnectionProfileKey = plan uses OPENAI_PLAN_API_KEY.
+```
+
+Do not silently switch profiles, API keys, or base URLs.
+
+## 5. Choose the request kind before coding
 
 Before writing implementation code, the agent must identify the request kind.
 
@@ -81,12 +103,12 @@ If the user wants to understand an uploaded image, use vision.
 Do not fake it as chat.
 ```
 
-## 5. Build model selectors from the catalog
+## 6. Build model selectors from the catalog
 
 Use:
 
 ```text
-skill-llm-aliyun/references/model-catalog.md
+LLM/skill-llm-openai/references/model-catalog.md or LLM/skill-llm-aliyun/references/model-catalog.md
 ```
 
 Only expose rows where:
@@ -105,12 +127,12 @@ API Model = what the request sends
 
 Do not submit the UI label as the model ID.
 
-## 6. Gate every feature with the capability matrix
+## 7. Gate every feature with the capability matrix
 
 Use:
 
 ```text
-skill-llm-aliyun/references/capability-matrix.md
+LLM/skill-llm-openai/references/capability-matrix.md or LLM/skill-llm-aliyun/references/capability-matrix.md
 ```
 
 If a requested feature is:
@@ -131,15 +153,15 @@ Example:
 If Supports Stream = unknown, do not add a stream toggle.
 ```
 
-## 7. Use the shared contracts
+## 8. Use the shared contracts
 
 All provider calls should map into the shared contracts:
 
 ```text
-_shared/request-envelope.md
-_shared/response-envelope.md
-_shared/error-contract.md
-_shared/progress-contract.md
+LLM/_shared/request-envelope.md
+LLM/_shared/response-envelope.md
+LLM/_shared/error-contract.md
+LLM/_shared/progress-contract.md
 ```
 
 This keeps the app logic provider-neutral.
@@ -151,17 +173,18 @@ Provider image URLs should become ImageOutputs.
 Do not hide them inside TextContent.
 ```
 
-## 8. Follow the UI rules
+## 9. Follow the UI rules
 
 Use:
 
 ```text
-_shared/ui-binding.md
+LLM/_shared/ui-binding.md
 ```
 
 Basic UI behavior:
 
 - always show a model selector
+- show a connection profile selector when multiple active profiles exist
 - show stream only when verified
 - show thinking only when supported
 - show image inputs only for valid vision or verified imaging flows
@@ -176,7 +199,7 @@ Example:
 Stream disabled: Supports Stream is unknown for kimi-k2.6.
 ```
 
-## 9. Model sync must be explicit
+## 10. Model sync must be explicit
 
 Do not sync models automatically.
 
@@ -201,7 +224,7 @@ Then convert it into an absolute cutoff date.
 
 If official docs do not clearly confirm a field, keep it as `unknown`.
 
-## 10. Fail fast
+## 11. Fail fast
 
 The most important rule:
 
@@ -219,6 +242,7 @@ Do not:
 - silently switch request kinds
 - silently fallback to another model
 - silently fallback to another API key
+- silently fallback to another connection profile or base URL
 - hide provider errors
 
 If a required fact is missing, stop and report what is missing.

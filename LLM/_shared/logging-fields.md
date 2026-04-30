@@ -7,12 +7,18 @@ Use these normalized fields across all `skill-llm-xxxx` integrations.
 | Field | Meaning |
 | --- | --- |
 | `provider` | provider identifier such as `aliyun-bailian` |
+| `connection_profile_key` | selected connection profile key such as `build` or `plan` |
+| `endpoint_kind` | endpoint kind such as `official`, `gateway`, or `custom` |
 | `request_kind` | `chat`, `vision`, `imaging`, or `music` |
 | `model` | exact provider model |
 | `is_stream` | whether stream transport was used |
 | `thinking_requested` | caller intent |
 | `thinking_applied` | normalized provider result |
+| `reasoning_effort` | applied enum-style reasoning effort when available |
+| `reasoning_output_visibility` | whether the provider returned raw, summary, encrypted, usage-only, or no reasoning output |
 | `temperature` | applied temperature when available |
+| `response_format` | requested structured-output mode when available |
+| `tool_count` | number of caller-defined tools supplied |
 | `usage` | normalized usage summary |
 | `latency_ms` | end-to-end latency |
 | `finish_reason` | normalized completion reason |

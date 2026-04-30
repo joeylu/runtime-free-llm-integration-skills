@@ -21,12 +21,20 @@ Use this file to keep every provider skill's capability matrix shaped the same w
 | `Supports Non-Stream` | whether a non-stream request path is allowed |
 | `Supports Stream` | whether a stream request path is allowed |
 | `Thinking Mode` | `mixed`, `always-on`, `unsupported`, `unknown`, or `n/a` |
-| `Thinking Default` | default effective thinking state when the caller omits `ThinkingRequested` |
+| `Thinking Default` | default effective thinking state or default reasoning-effort value when the caller omits thinking controls |
 | `Thinking Budget Field` | whether a separate thinking budget field is officially documented |
 | `Thinking Budget Default` | official default or maximum budget value, if the docs expose one |
 | `Temperature Mode` | `all-modes`, `thinking-only`, `non-thinking-only`, `unsupported`, `unknown`, or `n/a` |
 | `Temperature Defaults` | official default value or per-mode default values |
 | `Json Object Mode` | `all-modes`, `non-thinking-only`, `thinking-only`, `unsupported`, `unknown`, or `n/a` |
+| `Json Schema Mode` | `all-modes`, `non-thinking-only`, `thinking-only`, `unsupported`, `unknown`, or `n/a` |
+| `Tool Calling Mode` | `all-modes`, `non-thinking-only`, `thinking-only`, `unsupported`, `unknown`, or `n/a` |
+| `Strict Tool Schema Mode` | whether strict schema adherence for tool/function arguments is verified |
+| `Parallel Tool Calls` | whether parallel tool/function calls are verified |
+| `Reasoning Effort Field` | whether an enum-style reasoning effort field is officially documented |
+| `Reasoning Effort Values` | official supported values, such as `none,low,medium,high,xhigh` |
+| `Reasoning Summary Field` | whether provider-visible reasoning summaries are officially documented |
+| `Reasoning Output Visibility` | `raw`, `summary`, `encrypted`, `usage-only`, `none`, `unknown`, or `n/a` |
 | `Supports Image Input` | whether image input is allowed |
 | `Supports Seed` | whether seed is supported |
 | `Supports Image Size` | whether image size is supported |
@@ -44,18 +52,27 @@ Use this file to keep every provider skill's capability matrix shaped the same w
 
 Resolve the effective thinking state before checking mode-sensitive capabilities:
 
-1. If the caller explicitly sets `ThinkingRequested`, use that value.
-2. Otherwise, if `Thinking Mode = mixed`, use `Thinking Default`.
-3. Otherwise, if `Thinking Mode = always-on`, effective thinking is `true`.
-4. Otherwise, effective thinking is `false`.
+1. If the caller sets `ReasoningEffort`, map `none` to `false` and values such as `low`, `medium`, `high`, or `xhigh` to `true`.
+2. If the caller explicitly sets `ThinkingRequested`, use that value, unless it conflicts with `ReasoningEffort`.
+3. Otherwise, if `Thinking Mode = mixed`, map `Thinking Default`: `off`, `false`, or `none` means `false`; `on`, `true`, `low`, `medium`, `high`, or `xhigh` means `true`.
+4. Otherwise, if `Thinking Mode = always-on`, effective thinking is `true`.
+5. Otherwise, effective thinking is `false`.
+
+If the effective thinking state is needed for a requested mode-sensitive option and `Thinking Default = unknown`, stop unless the caller supplies an explicit verified thinking control.
 
 Then gate the request like this:
 
 - `ThinkingRequested = true` requires `Thinking Mode = mixed` or `always-on`.
 - `ThinkingRequested = false` is invalid when `Thinking Mode = always-on`.
 - `ThinkingBudget` requires `Thinking Budget Field = verified`.
+- `ReasoningEffort` requires `Reasoning Effort Field = verified` and an allowed value in `Reasoning Effort Values`.
+- `ReasoningSummary` requires `Reasoning Summary Field = verified`.
 - `Temperature` requires `Temperature Mode` to be compatible with the effective thinking state.
 - `ResponseFormat = json_object` requires `Json Object Mode` to be compatible with the effective thinking state.
+- `ResponseFormat = json_schema` requires `Json Schema Mode` to be compatible with the effective thinking state.
+- Function/tool definitions require `Tool Calling Mode` to be compatible with the effective thinking state.
+- Strict tool/function schemas require `Strict Tool Schema Mode = verified`.
+- Parallel tool calls require `Parallel Tool Calls = verified`.
 
 For `imaging`, treat `Supports Image Input` as verified only when the provider docs confirm image input for the exact requested imaging flow, such as edit input or reference images. Do not infer edit/reference-image support from a base text-to-image row.
 
@@ -118,8 +135,62 @@ You may set `Json Object Mode` from official:
 Example:
 If `Json Object Mode = non-thinking-only` and `Thinking Default = on`, a caller asking for `json_object` must also explicitly set `ThinkingRequested = false`.
 
+## Json Schema Verification Rule
+
+Treat strict schema adherence as separate from basic JSON mode.
+
+You may set `Json Schema Mode` from official:
+
+- structured-output docs
+- model capability pages
+- API reference pages that explicitly document `json_schema` or equivalent schema-constrained output
+
+Do not infer `json_schema` support from `json_object` support.
+
+## Tool Calling Verification Rule
+
+Track tool/function calling separately from structured text output.
+
+You may set `Tool Calling Mode`, `Strict Tool Schema Mode`, and `Parallel Tool Calls` from official:
+
+- function-calling or tool-calling docs
+- model capability pages
+- API reference pages that document strict function schemas or parallel tool calls
+
+Do not treat provider-hosted tools, such as web search or image generation tools, as proof that caller-defined function tools are supported.
+
+## Reasoning Effort Verification Rule
+
+Some providers expose reasoning as enum-style effort instead of a boolean thinking toggle.
+
+When official docs expose a field such as `reasoning.effort`, update:
+
+- `Reasoning Effort Field`
+- `Reasoning Effort Values`
+- `Thinking Mode`
+- `Thinking Default`
+
+Map an effort value such as `none` to effective thinking `false`; map effort values such as `low`, `medium`, `high`, or `xhigh` to effective thinking `true`.
+
+If the default effort is not documented for the exact model, set `Thinking Default = unknown` and require the caller to choose an explicit effort before using mode-sensitive options.
+
+## Reasoning Output Visibility Rule
+
+Do not assume raw chain-of-thought is visible.
+
+Use:
+
+- `raw` only when official docs expose raw reasoning text
+- `summary` when docs expose summaries but not raw reasoning
+- `encrypted` when docs expose encrypted reasoning items for continuation
+- `usage-only` when docs expose only reasoning-token usage
+- `none` when docs explicitly say reasoning output is not exposed
+- `unknown` when the skill has not verified visibility
+
 ## Example
 
 For an inherited chat model, `Supports Non-Stream = inherited` can be acceptable, while `Supports Stream = unknown` must still block stream wiring.
 
 For `qwen3.6-plus`, `Thinking Mode = mixed`, `Thinking Default = on`, and `Json Object Mode = non-thinking-only` means strict JSON output must fail fast unless the caller explicitly disables thinking.
+
+For `gpt-5.5`, `Reasoning Effort Field = verified` with values `none,low,medium,high,xhigh` means `ReasoningEffort = none` is the non-thinking path, while `ReasoningEffort = medium` is a thinking path.

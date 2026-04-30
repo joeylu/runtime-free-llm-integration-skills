@@ -15,6 +15,7 @@ Do not invent imaging model names or unsupported parameters.
 Build the shared request envelope with:
 
 - `RequestKind = imaging`
+- optional `ConnectionProfileKey`
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`
 - optional `Inputs.ReferenceImages = [...]`

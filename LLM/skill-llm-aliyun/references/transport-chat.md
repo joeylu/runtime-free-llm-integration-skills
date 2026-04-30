@@ -7,6 +7,7 @@ Use this file for text-first direct-model chat requests.
 Build the shared request envelope with:
 
 - `RequestKind = chat`
+- optional `ConnectionProfileKey`
 - `Model = <API Model>`
 - `Inputs.Messages = [...]`
 - optional `IsStream`

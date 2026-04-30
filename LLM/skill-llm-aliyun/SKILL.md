@@ -30,30 +30,33 @@ Read these shared files first:
 
 1. `../_shared/model-catalog-schema.md`
 2. `../_shared/capability-matrix-schema.md`
-3. `../_shared/recency-window-policy.md`
-4. `../_shared/request-envelope.md`
-5. `../_shared/response-envelope.md`
-6. `../_shared/error-contract.md`
-7. `../_shared/progress-contract.md`
-8. `../_shared/ui-binding.md`
-9. `../_shared/sync-policy.md`
-10. `../_shared/logging-fields.md`
+3. `../_shared/connection-profile-schema.md`
+4. `../_shared/recency-window-policy.md`
+5. `../_shared/request-envelope.md`
+6. `../_shared/response-envelope.md`
+7. `../_shared/error-contract.md`
+8. `../_shared/progress-contract.md`
+9. `../_shared/ui-binding.md`
+10. `../_shared/sync-policy.md`
+11. `../_shared/logging-fields.md`
 
 Then read these Aliyun-specific files:
 
-1. `references/model-catalog.md`
-2. `references/model-sync.md`
-3. `references/capability-matrix.md`
-4. One or more transport files that match the request:
+1. `references/connection-profiles.md`
+2. `references/model-catalog.md`
+3. `references/model-sync.md`
+4. `references/capability-matrix.md`
+5. One or more transport files that match the request:
    - `references/transport-chat.md`
    - `references/transport-vision.md`
    - `references/transport-imaging.md`
    - `references/transport-music.md`
-5. `references/logging-contract.md` when logging is requested
+6. `references/logging-contract.md` when logging is requested
 
 ## Hard Rules
 
 - Treat this skill as `direct-model` only. Do not silently switch to Agent App.
+- Resolve a provided connection profile before selecting the model. Do not silently fall back between profiles, API keys, or base URLs.
 - Use the bundled Aliyun model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
 - When the user asks for sync, confirm one recency boundary first. Propose `6 months` by default and convert it into one absolute cutoff date before reviewing rows.
 - Keep dropdown `label` and submitted `value` separate. Use `UI Label` for display and `API Model` for submission.
@@ -72,14 +75,16 @@ Then read these Aliyun-specific files:
 
 1. Confirm that the task is Aliyun Bailian direct-model access.
 2. Identify the request kind: `chat`, `vision`, `imaging`, or `music`.
-3. Read `references/model-catalog.md` and select only rows whose `Catalog Status` is `active` and `Selection Status` is `selected`.
-4. Read `references/capability-matrix.md` and verify every requested option before wiring the request.
-5. Read the matching transport file for the request kind.
-6. Build the request with the shared request envelope from `../_shared/request-envelope.md`.
-7. Map the provider response into the shared response envelope from `../_shared/response-envelope.md`.
-8. If the user wants UI, apply `../_shared/ui-binding.md`, `../_shared/progress-contract.md`, and `../_shared/error-contract.md`.
-9. If the user wants logging, apply `../_shared/logging-fields.md` and `references/logging-contract.md`.
-10. Sync the model catalog only when the user explicitly asks for latest-model sync, and apply `../_shared/recency-window-policy.md` before reviewing rows.
+3. Read `references/connection-profiles.md` and resolve `ConnectionProfileKey` when the host defines Aliyun profiles.
+4. Read `references/model-catalog.md` and select only rows whose `Catalog Status` is `active` and `Selection Status` is `selected`.
+5. Apply profile restrictions before choosing the final model and API surface.
+6. Read `references/capability-matrix.md` and verify every requested option before wiring the request.
+7. Read the matching transport file for the request kind.
+8. Build the request with the shared request envelope from `../_shared/request-envelope.md`.
+9. Map the provider response into the shared response envelope from `../_shared/response-envelope.md`.
+10. If the user wants UI, apply `../_shared/ui-binding.md`, `../_shared/progress-contract.md`, and `../_shared/error-contract.md`.
+11. If the user wants logging, apply `../_shared/logging-fields.md` and `references/logging-contract.md`.
+12. Sync the model catalog only when the user explicitly asks for latest-model sync, and apply `../_shared/recency-window-policy.md` before reviewing rows.
 
 ## Request Kinds
 

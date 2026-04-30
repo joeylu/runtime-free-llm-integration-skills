@@ -13,6 +13,7 @@ Do not invent music model names or unsupported parameters.
 Build the shared request envelope with:
 
 - `RequestKind = music`
+- optional `ConnectionProfileKey`
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`
 - optional `Inputs.Lyrics = <text>`

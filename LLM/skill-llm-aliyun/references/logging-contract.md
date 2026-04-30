@@ -15,6 +15,7 @@ Add Aliyun-specific raw payload snapshots only when debugging value outweighs st
 Store at least:
 
 - `provider = aliyun-bailian`
+- `connection profile key` when the host uses profiles
 - `request kind`
 - `model`
 - `catalog verification state`

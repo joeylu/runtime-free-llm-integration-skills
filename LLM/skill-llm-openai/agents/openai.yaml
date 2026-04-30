@@ -1,0 +1,7 @@
+interface:
+  display_name: "OpenAI Direct Models"
+  short_description: "Wire OpenAI chat, vision, image, reasoning, structured-output, and tool flows."
+  default_prompt: "Use $skill-llm-openai to wire an OpenAI API direct-model integration with the right catalog, transport, reasoning, structured output, tool, progress, and error contracts."
+
+policy:
+  allow_implicit_invocation: true
