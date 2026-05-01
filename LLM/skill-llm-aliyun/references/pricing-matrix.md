@@ -1,0 +1,42 @@
+# Aliyun Pricing Matrix
+
+Use this file as the structured billing source for selected Aliyun Bailian rows.
+
+Do not reconstruct pricing from `model-catalog.md` notes.
+
+| Model Type | API Model | Price Region | Price Currency | Price Unit | Metered Side | Metered Item | Context Band | Unit Price | Price Condition | Last Verified At | Source |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `chat` | `qwen3.6-max-preview` | `international` | `USD` | `per-million-tokens` | `input` | `text tokens` | `0 < tokens <= 128K` | `9.742` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `qwen3.6-max-preview` | `international` | `USD` | `per-million-tokens` | `input` | `text tokens` | `128K < tokens <= 256K` | `14.988` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `qwen3.6-max-preview` | `international` | `USD` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 128K` | `58.455` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `qwen3.6-max-preview` | `international` | `USD` | `per-million-tokens` | `output` | `text tokens` | `128K < tokens <= 256K` | `89.93` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `0 < tokens <= 256K` | `1.2` | `batch supported` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `chat` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `256K < tokens <= 1M` | `4.8` | `batch supported` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `chat` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 256K` | `7.2` | `batch supported` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `chat` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `256K < tokens <= 1M` | `28.8` | `batch supported` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `chat` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `0 < tokens <= 256K` | `2` | `batch unsupported` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `256K < tokens <= 1M` | `8` | `batch unsupported` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 256K` | `12` | `batch unsupported` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `256K < tokens <= 1M` | `48` | `batch unsupported` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `chat` | `glm-5.1` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `0 < tokens <= 32K` | `6` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `chat` | `glm-5.1` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `32K < tokens <= 200K` | `8` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `chat` | `glm-5.1` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 32K` | `24` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `chat` | `glm-5.1` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `32K < tokens <= 200K` | `28` | `standard` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `chat` | `kimi-k2.6` | `china-mainland` | `unknown` | `per-million-tokens` | `input` | `text tokens` | `all` | `unknown` | `help-center docs point pricing to Bailian console` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/kimi-api` |
+| `chat` | `kimi-k2.6` | `china-mainland` | `unknown` | `per-million-tokens` | `output` | `text tokens` | `all` | `unknown` | `help-center docs point pricing to Bailian console` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/kimi-api` |
+| `vision` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text/image tokens` | `0 < tokens <= 256K` | `2` | `vision requests consume model token pricing` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `vision` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text/image tokens` | `256K < tokens <= 1M` | `8` | `vision requests consume model token pricing` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `vision` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 256K` | `12` | `vision requests consume model token pricing` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `vision` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `256K < tokens <= 1M` | `48` | `vision requests consume model token pricing` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+| `vision` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text/image tokens` | `0 < tokens <= 256K` | `1.2` | `vision requests consume model token pricing` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `vision` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text/image tokens` | `256K < tokens <= 1M` | `4.8` | `vision requests consume model token pricing` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `vision` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 256K` | `7.2` | `vision requests consume model token pricing` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `vision` | `qwen3.6-flash` | `china-mainland` | `CNY` | `per-million-tokens` | `output` | `text tokens` | `256K < tokens <= 1M` | `28.8` | `vision requests consume model token pricing` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `vision` | `kimi-k2.6` | `china-mainland` | `unknown` | `per-million-tokens` | `input` | `text/image tokens` | `all` | `unknown` | `help-center docs point pricing to Bailian console` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/kimi-api` |
+| `vision` | `kimi-k2.6` | `china-mainland` | `unknown` | `per-million-tokens` | `output` | `text tokens` | `all` | `unknown` | `help-center docs point pricing to Bailian console` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/kimi-api` |
+| `imaging` | `z-image-turbo` | `china-mainland` | `CNY` | `per-image` | `image-output` | `image` | `all` | `0.1` | `prompt_extend=false` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `imaging` | `z-image-turbo` | `china-mainland` | `CNY` | `per-image` | `image-output` | `image` | `all` | `0.2` | `prompt_extend=true` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `imaging` | `qwen-image-2.0` | `china-mainland` | `CNY` | `per-image` | `image-output` | `image` | `all` | `0.2` | `generation and edit model` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `imaging` | `qwen-image-2.0-pro` | `china-mainland` | `CNY` | `per-image` | `image-output` | `image` | `all` | `0.5` | `generation and edit model` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/billing-for-model-studio` |
+| `imaging` | `wan2.7-image-pro` | `china-mainland` | `CNY` | `per-image` | `image-output` | `image` | `all` | `0.5` | `output-only billing` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |
+| `imaging` | `wan2.7-image` | `china-mainland` | `CNY` | `per-image` | `image-output` | `image` | `all` | `0.2` | `output-only billing` | `2026-04-24` | `https://help.aliyun.com/zh/model-studio/model-pricing` |

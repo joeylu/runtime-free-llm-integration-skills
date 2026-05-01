@@ -1,4 +1,4 @@
-# OpenAI Logging Contract
+# Gemini Logging Contract
 
 Use this file when the caller wants request logging, troubleshooting, or trace retention.
 
@@ -8,26 +8,29 @@ Read `../../_shared/logging-fields.md` first.
 
 Log normalized fields first.
 
-Add OpenAI-specific raw payload snapshots only when debugging value outweighs storage cost or privacy risk.
+Add Gemini-specific raw payload snapshots only when debugging value outweighs storage cost or privacy risk.
 
 ## Minimum Log Payload
 
 Store at least:
 
-- `provider = openai`
+- `provider = gemini`
 - `connection profile key`
 - `endpoint kind`
 - `request kind`
 - `model`
 - `catalog verification state`
 - `stream or non-stream`
-- `reasoning effort`
+- `thinking level`
 - `thinking requested`
 - `thinking applied`
+- `reasoning summary requested`
 - `reasoning output visibility`
 - `response format`
 - `tool count`
 - `temperature`
+- `image size`
+- `reference image count`
 - `usage`
 - `latency`
 - `finish reason`
@@ -40,15 +43,15 @@ Store at least:
 Store these when available:
 
 - official endpoint path
-- response id
 - request id
-- service tier
-- previous response id
-- conversation id
-- output item ids
-- reasoning encrypted-content presence
-- raw status and incomplete details
+- candidate count
+- safety ratings
+- prompt feedback
+- thought signature presence
+- thought summary presence
+- inline image output count
+- provider finish reason
 
 ## Fail-Fast Rule
 
-If the user asks for detailed traces that include raw prompts, raw outputs, images, files, or tool arguments, confirm that this is intended before implementation.
+If the user asks for detailed traces that include raw prompts, raw outputs, images, files, function arguments, thought summaries, or thought signatures, confirm that this is intended before implementation.

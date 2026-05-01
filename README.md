@@ -1,6 +1,6 @@
 # runtime-free-llm-integration-skills
 
-Runtime-free skills for coding agents to build fail-fast LLM provider integration, starting with OpenAI and Aliyun Bailian / DashScope.
+Runtime-free skills for coding agents to build fail-fast LLM provider integration, starting with OpenAI, Aliyun Bailian / DashScope, DeepSeek, and Gemini.
 
 ## What problem does this solve?
 
@@ -40,6 +40,8 @@ The current version includes these concrete provider skills:
 
 - OpenAI API
 - Aliyun Bailian / DashScope
+- DeepSeek API
+- Gemini Developer API
 
 The shared structure is designed so more LLM providers can be added later.
 
@@ -47,6 +49,8 @@ The shared structure is designed so more LLM providers can be added later.
 
 - shared request / response / error contracts
 - provider model catalog pattern
+- structured provider pricing matrix pattern
+- live LLM model sync policy for pricing, capabilities, context windows, and token limits
 - connection profile pattern for separate API keys and base URLs
 - capability matrix rules
 - model selection UI guidance
@@ -55,6 +59,8 @@ The shared structure is designed so more LLM providers can be added later.
 - transport rules for different model modes
 - OpenAI API provider skill
 - Aliyun Bailian / DashScope provider skill
+- DeepSeek API provider skill
+- Gemini Developer API provider skill
 
 ## Who is this for?
 
@@ -89,4 +95,6 @@ Start from:
 LLM/_shared/
 LLM/skill-llm-openai/
 LLM/skill-llm-aliyun/
+LLM/skill-llm-deepseek/
+LLM/skill-llm-gemini/
 ```

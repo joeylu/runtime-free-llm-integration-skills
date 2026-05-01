@@ -22,14 +22,14 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 | image picker | `RequestKind = vision` or imaging edit flow |
 | seed input | capability matrix verifies seed |
 | size input | capability matrix verifies size |
-| image count input | capability matrix verifies image count |
+| image count input | `RequestKind = imaging` and capability matrix verifies output image count |
 | duration input | capability matrix verifies duration |
 | cancel button | cancellation is safe on that host surface |
 
 ## Binding Rules
 
-- Bind dropdown text to `UI Label`.
-- Bind dropdown value to `API Model`.
+- Bind model dropdown text to `API Model`.
+- Bind model dropdown value to `API Model`.
 - Bind connection profile text to `Display Name`.
 - Bind connection profile value to `Profile Key`.
 - Bind progress UI to the shared progress contract, not raw provider payloads.

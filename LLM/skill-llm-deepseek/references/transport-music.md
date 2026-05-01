@@ -1,18 +1,19 @@
-# OpenAI Music Transport
+# DeepSeek Music Transport
 
 Use this file for music or audio generation requests.
 
 ## Current State
 
-This skill does not bundle selected OpenAI music rows yet.
+This skill does not bundle selected DeepSeek music rows yet.
 
-Do not invent music model names or route text-to-speech, transcription, or realtime voice through `RequestKind = music` unless the shared request-kind contract is explicitly expanded.
+Do not invent music model names.
 
 ## Input Shape
 
 Build the shared request envelope with:
 
 - `RequestKind = music`
+- `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`
 - optional `Inputs.Lyrics = <text>`

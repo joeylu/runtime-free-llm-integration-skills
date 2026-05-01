@@ -1,0 +1,7 @@
+interface:
+  display_name: "Gemini Direct Models"
+  short_description: "Wire Gemini chat, vision, Nano Banana image, thinking, structured-output, stream, and tool flows."
+  default_prompt: "Use $skill-llm-gemini to wire a Gemini API direct-model integration with the right catalog, connection profile, transport, thinking, structured output, tool, image, progress, and error contracts."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,30 +1,29 @@
 ---
-name: skill-llm-openai
-description: Standardize OpenAI API direct-model integration for chat, vision, image generation, structured outputs, reasoning effort, streaming, and tool calling. Use when Codex needs to choose an OpenAI model, wire Responses API or Chat Completions compatible request/response flows, expose reasoning effort, JSON object, JSON schema, tool/function calling, stream controls, model selectors, or shared progress and error states. Do not use for ChatGPT consumer-app settings, Apps SDK orchestration, Agents SDK orchestration, non-OpenAI providers, or prompt-only work with no integration change.
+name: skill-llm-gemini
+description: Standardize Google Gemini API direct-model integration for chat, vision, Nano Banana image generation and editing, thinking levels, structured outputs, streaming, and function calling. Use when Codex needs to choose a Gemini model, wire generateContent or streamGenerateContent flows, expose thinking controls, JSON schema output, tool/function calling, image input, image generation, connection profiles, model selectors, or shared progress and error states. Do not use for Vertex AI, non-Gemini Google Cloud APIs, non-Gemini providers, Agent/App orchestration, or prompt-only work with no integration change.
 ---
 
-# Skill LLM OpenAI
+# Skill LLM Gemini
 
 ## Mission
 
-Own the provider-specific part of OpenAI API direct-model integration while reusing the shared contracts under `../_shared`.
+Own the provider-specific part of Google Gemini API direct-model integration while reusing the shared contracts under `../_shared`.
 
 Keep this skill focused on:
 
-- OpenAI model catalog
-- OpenAI model sync workflow
-- OpenAI capability verification
-- OpenAI transport rules by request kind
-- OpenAI-specific logging additions
+- Gemini Developer API model catalog
+- Gemini model sync workflow
+- Gemini capability verification
+- Gemini transport rules by request kind
+- Gemini-specific logging additions
 
 Do not make this skill own:
 
-- ChatGPT consumer app settings
-- Apps SDK flows
-- Agents SDK orchestration
+- Vertex AI routing
+- Google AI Studio UI behavior unrelated to API integration
 - business prompt content
 - platform-specific UI layouts
-- non-OpenAI providers
+- non-Gemini providers
 
 ## Read Order
 
@@ -43,7 +42,7 @@ Read these shared files first:
 11. `../_shared/sync-policy.md`
 12. `../_shared/logging-fields.md`
 
-Then read these OpenAI-specific files:
+Then read these Gemini-specific files:
 
 1. `references/connection-profiles.md`
 2. `references/model-catalog.md`
@@ -59,28 +58,27 @@ Then read these OpenAI-specific files:
 
 ## Hard Rules
 
-- Treat this skill as OpenAI API direct-model work. Do not silently switch to Apps SDK or Agents SDK orchestration.
-- Prefer the Responses API for reasoning, tool-calling, structured outputs, image input, or multi-turn state.
-- Use the Image API for the bundled `gpt-image-2` imaging path. Do not wire the Responses image-generation hosted tool until the capability matrix explicitly models that hosted-tool path.
-- Use Chat Completions only when the host project explicitly needs Chat Completions compatibility and the requested options are verified for that surface.
-- Resolve the connection profile before selecting the model. Do not silently fall back between `build`, `plan`, or any other profile.
+- Treat this skill as Gemini Developer API direct-model work. Do not silently switch to Vertex AI.
+- Use `generateContent` for non-stream chat, vision, and imaging flows.
+- Use `streamGenerateContent` only when the capability matrix verifies streaming for the selected request kind.
+- Resolve the connection profile before selecting the model. Do not silently fall back between `build`, `plan`, API keys, base URLs, or API surfaces.
 - Never store real API keys in this skill. Store only secret references such as environment variable names.
-- Use the bundled OpenAI model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
+- Use the bundled Gemini model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
 - When sync is explicitly requested, collect model rows, pricing, capabilities, context window, max input tokens, and max output tokens live from official docs by LLM review only. Do not use scripts, scrapers, SDK enum dumps, or automated catalog generators.
 - When the user asks for sync, confirm one recency boundary first. Propose `6 months` by default and convert it into one absolute cutoff date before reviewing rows.
 - Use `references/pricing-matrix.md` for billing region, currency, context band, metered side, and unit price. Do not reconstruct tiered pricing from catalog notes.
 - Use `API Model` as both the model dropdown display text and submitted value. Do not put prices in model option labels.
-- Use official OpenAI model IDs in the catalog.
+- Use official Gemini model IDs in the catalog.
 - Keep provider-neutral request, response, progress, error, and UI contracts in `../_shared`. Do not clone those contracts inside this skill.
-- Fail fast on unsupported or unverified combinations. Do not silently disable `stream`, `ReasoningEffort`, `ResponseFormat`, `Tools`, `Temperature`, `ImageSize`, `ImageCount`, or image edit inputs.
+- Fail fast on unsupported or unverified combinations. Do not silently disable `stream`, `thinkingLevel`, `ResponseFormat`, `Tools`, `Temperature`, `ImageSize`, `ImageCount`, or image inputs.
 - If a requested advanced capability is marked `unknown`, stop and tell the user to sync the catalog or choose a verified path.
-- Do not expose raw chain-of-thought unless official docs explicitly expose raw reasoning text for the chosen model and API surface.
-- For current OpenAI reasoning models, prefer `ReasoningSummary` and normalized usage over raw `ThinkingContent`.
-- Distinguish caller-defined function tools from OpenAI-hosted tools such as web search, file search, code interpreter, computer use, and image generation.
+- Do not expose raw chain-of-thought. Gemini exposes thought summaries and thought signatures, not raw reasoning.
+- Preserve Gemini thought signatures in provider metadata for follow-up turns when the response includes them; do not display them as reasoning text.
+- Treat Nano Banana models as `RequestKind = imaging`, not `vision`.
 
 ## Standard Workflow
 
-1. Confirm that the task is OpenAI API direct-model access.
+1. Confirm that the task is Gemini Developer API direct-model access.
 2. Identify the request kind: `chat`, `vision`, `imaging`, or `music`.
 3. Read `references/connection-profiles.md` and resolve `ConnectionProfileKey` when the host has multiple profiles.
 4. Read `references/model-catalog.md` and select only rows whose `Catalog Status` is `active` and `Selection Status` is `selected`.
@@ -104,27 +102,27 @@ Use these meanings consistently:
 - `music`: music or audio generation requests
 
 Example:
-`vision` means "send text plus one or more images and receive understanding output", not "generate a new image".
+Nano Banana 2 image generation uses `RequestKind = imaging` and `Model = gemini-3.1-flash-image-preview`.
 
-## OpenAI-Specific Concepts
+## Gemini-Specific Concepts
 
-- `ReasoningEffort` maps to OpenAI `reasoning.effort`.
-- `ReasoningSummary` maps to OpenAI `reasoning.summary`.
-- `ResponseFormat = json_schema` maps to Responses `text.format.type = json_schema` or Chat Completions `response_format.type = json_schema`.
-- `ResponseFormat = json_object` maps to Responses `text.format.type = json_object` or Chat Completions `response_format.type = json_object`.
-- `Tools` maps to caller-defined OpenAI `function` tools unless the request explicitly asks for OpenAI-hosted tools.
+- `ReasoningEffort` maps to Gemini `generationConfig.thinkingConfig.thinkingLevel` for verified Gemini 3 rows.
+- `ReasoningSummary` maps to Gemini `includeThoughts = true`, which returns thought summaries, not raw chain-of-thought.
+- Gemini thought signatures are continuation metadata; store them as `ReasoningItems` or `ProviderMeta`, not `ThinkingContent`.
+- `ResponseFormat = json_schema` maps to `generationConfig.responseMimeType = application/json` plus `generationConfig.responseJsonSchema`.
+- Bare `ResponseFormat = json_object` is not locally verified for selected Gemini rows; prefer `json_schema`.
+- `Tools` maps to Gemini `functionDeclarations` unless the request explicitly asks for Gemini hosted tools such as Google Search, URL Context, Code Execution, or File Search.
+- `Inputs.ReferenceImages` maps to additional image parts for imaging models only when `Supports Image Input = verified`.
+- `Inputs.ImageSize` maps to Gemini image `imageConfig.imageSize` for Gemini 3 image models, or to `imageConfig.aspectRatio` when only aspect ratio is verified.
 - `ConnectionProfileKey` selects the key/base-URL profile, for example `build` or `plan`.
 
 Example:
-`ReasoningEffort = none` means effective thinking is false. `ReasoningEffort = medium` means effective thinking is true.
-
-Example:
-`ConnectionProfileKey = build` can use `OPENAI_BUILD_API_KEY`, while `ConnectionProfileKey = plan` can use `OPENAI_PLAN_API_KEY`.
+`ReasoningEffort = minimal` for `gemini-3.1-flash-image-preview` still means thinking can happen; Gemini docs say minimal does not mean thinking is off.
 
 ## Do Not Use This Skill For
 
-- ChatGPT consumer app settings
-- ChatGPT Apps SDK components
-- Agents SDK orchestration design
-- Anthropic, Gemini, DeepSeek, Aliyun, or other non-OpenAI providers
+- Vertex AI model routing or regional endpoint setup
+- Google AI Studio consumer UI settings
+- OpenAI, DeepSeek, Aliyun, Anthropic, or other non-Gemini providers
+- platform-specific UI layout design
 - prompt engineering tasks that do not change integration code or contracts

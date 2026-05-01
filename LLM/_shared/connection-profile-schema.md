@@ -33,7 +33,7 @@ A connection profile is one named provider connection configuration, such as `bu
 - Do not store real API keys, tokens, or refresh secrets in skill files.
 - Resolve `ConnectionProfileKey` before selecting the final model.
 - A profile can restrict request kinds, models, API surfaces, or features.
-- A profile must not expand provider capabilities beyond `references/capability-matrix.md`.
+- A profile must not expand provider capabilities beyond the provider `capability-matrix.md`.
 - If the requested profile is missing, disabled, or lacks a required secret reference, stop with `config_error`.
 - Do not silently fall back from one profile to another.
 - Do not silently fall back from one base URL to another.

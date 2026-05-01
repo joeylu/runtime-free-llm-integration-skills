@@ -1,8 +1,8 @@
-# OpenAI Model Sync
+# DeepSeek Model Sync
 
 Use this workflow only when the user explicitly asks for one of these:
 
-- latest OpenAI models
+- latest DeepSeek models
 - sync model list
 - verify current catalog
 - remove downlisted or deprecated models
@@ -12,18 +12,16 @@ Read `../../_shared/recency-window-policy.md` before starting.
 
 ## Source Rule
 
-Use official OpenAI documentation only.
+Use official DeepSeek documentation only.
 
 Prefer:
 
-- `https://developers.openai.com/api/docs/models`
-- `https://developers.openai.com/api/docs/guides/latest-model`
-- `https://developers.openai.com/api/docs/guides/structured-outputs`
-- `https://developers.openai.com/api/docs/guides/function-calling`
-- `https://developers.openai.com/api/docs/guides/reasoning`
-- `https://developers.openai.com/api/docs/guides/image-generation`
-- `https://developers.openai.com/api/docs/api-reference/responses/create`
-- `https://openai.com/api/pricing/`
+- `https://api-docs.deepseek.com/quick_start/pricing`
+- `https://api-docs.deepseek.com/`
+- `https://api-docs.deepseek.com/guides/thinking_mode`
+- `https://api-docs.deepseek.com/guides/json_mode`
+- `https://api-docs.deepseek.com/guides/function_calling`
+- `https://api-docs.deepseek.com/guides/strict_mode`
 
 Do not sync from:
 
@@ -35,7 +33,7 @@ Do not sync from:
 
 ## Live Collection Rule
 
-Every sync or metadata collection task must be performed live by the LLM against official OpenAI documentation at the time of the task.
+Every sync or metadata collection task must be performed live by the LLM against official DeepSeek documentation at the time of the task.
 
 Do not write, use, or rely on scripts, scrapers, crawlers, generated parsers, SDK enum dumps, automated catalog generators, or any other programmatic processing to collect model rows, capabilities, pricing, context windows, max input tokens, or max output tokens.
 
@@ -45,7 +43,7 @@ The LLM may use normal reading and search tools to locate official documentation
 
 1. Ask the user to confirm the recency boundary. If the user does not specify one, propose the default boundary `6 months`.
 2. Convert that confirmed boundary into one absolute cutoff date using the sync date.
-3. Open the official OpenAI direct-model documentation that matches the requested model kind.
+3. Open the official DeepSeek documentation that matches the requested model kind.
 4. Compare the official model list against `model-catalog.md`.
 5. For every matched row, update all columns required by `../../_shared/model-catalog-schema.md`.
 6. Add new official rows with the same schema.
@@ -57,20 +55,18 @@ The LLM may use normal reading and search tools to locate official documentation
 10. Mark candidate rows that the user did not select as `deprecated` and `not-selected`.
 11. Mark unavailable rows as `removed` instead of silently deleting them.
 12. Mark rows outside the confirmed boundary as `deprecated` and `retired` even if the provider still lists them as available.
-13. Collect `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` only when official OpenAI docs clearly expose them for the exact model row.
+13. Collect `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` only when official DeepSeek docs clearly expose them for the exact model row.
 14. Update `pricing-matrix.md` in the same sync task using `../../_shared/pricing-matrix-schema.md`.
 15. Update `capability-matrix.md` in the same sync task using `../../_shared/capability-matrix-schema.md`.
-16. Keep `music` empty until official rows are actually verified for the shared `music` request kind.
+16. Keep unsupported request kinds empty until official rows are actually verified.
 
 ## Evidence Rules
 
-- Verify `stream` from the Responses API reference, model detail page, or request-kind guide.
-- Verify `ReasoningEffort` from the model page, latest-model guide, reasoning guide, or Responses API reference.
-- Verify `ReasoningSummary` from the Responses API reference or reasoning guide.
-- Verify `json_schema` and `json_object` from structured-output docs or the Responses API reference.
-- Verify caller-defined tools from function-calling docs or the Responses API reference.
-- Verify OpenAI-hosted tools separately; do not use hosted-tool support as proof of caller-defined function support.
-- Verify image generation, image edit, image input, size, count, and partial-image stream from the image-generation guide or image API reference.
+- Verify `stream` from official API reference or official chat examples.
+- Verify `thinking` from the DeepSeek thinking-mode guide.
+- Verify `json_object` from JSON Output docs or the pricing feature table.
+- Verify caller-defined tools from function-calling docs or the pricing feature table.
+- Verify strict tool schemas from strict-mode docs, and keep the beta-surface requirement in notes.
 
 ## Fail-Fast Rule
 
@@ -78,14 +74,13 @@ If the official docs do not clearly confirm a field, leave that field as `unknow
 
 Do not infer support for:
 
-- a specific reasoning value
-- raw reasoning visibility
-- strict tool schemas
+- `json_schema`
 - parallel tool calls
-- image seed
+- image input
+- seed
 - image size
 - image count
-- streaming partial images
+- duration
 - context window
 - max input tokens
 - max output tokens

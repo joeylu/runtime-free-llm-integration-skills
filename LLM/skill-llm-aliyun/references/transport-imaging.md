@@ -4,7 +4,7 @@ Use this file for image generation or image edit requests.
 
 ## Current State
 
-This skill bundles selected Aliyun imaging rows in `references/model-catalog.md` and base imaging capability rows in `references/capability-matrix.md`.
+This skill bundles selected Aliyun imaging rows in `model-catalog.md` and base imaging capability rows in `capability-matrix.md`.
 
 A catalog row only proves that the model is a local selectable model. It does not prove support for edit/reference images, seed, size, count, prompt rewriting, or streaming.
 
@@ -24,7 +24,7 @@ Build the shared request envelope with:
 - optional `Inputs.ImageCount`
 - optional `TimeoutMs`
 
-Before adding any optional field, verify that exact field in `references/capability-matrix.md`. For example, `Inputs.ReferenceImages` requires verified imaging image-input support, not just a model note that says the family can edit images.
+Before adding any optional field, verify that exact field in `capability-matrix.md`. For example, `Inputs.ReferenceImages` requires verified imaging image-input support, not just a model note that says the family can edit images.
 
 ## Default Flow
 
@@ -45,8 +45,8 @@ Recommended stage pattern:
 
 Before implementation, confirm all of these:
 
-- the model exists in `references/model-catalog.md`
-- the capability row exists in `references/capability-matrix.md`
+- the model exists in `model-catalog.md`
+- the capability row exists in `capability-matrix.md`
 - `Supports Non-Stream = verified` for the base job request path
 - requested fields such as `Inputs.ReferenceImages`, `Inputs.Seed`, `Inputs.ImageSize`, and `Inputs.ImageCount` are verified
 

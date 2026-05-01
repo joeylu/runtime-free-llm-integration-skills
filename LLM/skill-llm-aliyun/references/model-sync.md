@@ -8,7 +8,7 @@ Use this workflow only when the user explicitly asks for one of these:
 - remove downlisted or deprecated models
 - refresh pricing or capability metadata
 
-Read `../_shared/recency-window-policy.md` before starting.
+Read `../../_shared/recency-window-policy.md` before starting.
 
 ## Source Rule
 
@@ -22,12 +22,20 @@ Do not sync from:
 - repo enum comments
 - third-party wrappers
 
+## Live Collection Rule
+
+Every sync or metadata collection task must be performed live by the LLM against official Aliyun Bailian documentation at the time of the task.
+
+Do not write, use, or rely on scripts, scrapers, crawlers, generated parsers, SDK enum dumps, automated catalog generators, repo enum comments, or any other programmatic processing to collect model rows, capabilities, pricing, context windows, max input tokens, or max output tokens.
+
+The LLM may use normal reading and search tools to locate official documentation, but the reviewed values must be selected and recorded by the LLM from official docs during that sync.
+
 ## Sync Steps
 
 1. Ask the user to confirm the recency boundary. If the user does not specify one, propose the default boundary `6 months`.
 2. Convert that confirmed boundary into one absolute cutoff date using the sync date.
 3. Open the official Aliyun Bailian direct-model documentation that matches the requested model kind.
-4. Compare the official model list against `references/model-catalog.md`.
+4. Compare the official model list against `model-catalog.md`.
 5. For every matched row, update:
    - `Catalog Status`
    - `Selection Status`
@@ -36,6 +44,9 @@ Do not sync from:
    - `Recency Classification`
    - `Recency Basis Date`
    - `Recency Cutoff Date`
+   - `Context Window Tokens`
+   - `Max Input Tokens`
+   - `Max Output Tokens`
    - `Price Region`
    - `Price Unit`
    - `Input Price`
@@ -55,8 +66,10 @@ Do not sync from:
 11. Mark unavailable rows that were already catalog rows as `removed` instead of silently deleting them.
 12. Mark rows outside the confirmed boundary as `deprecated` and `retired` even if the provider still lists them as available.
 13. Exclude pre-sync placeholders only when they were never official catalog rows; if any downstream code references them, stop and ask for a migration decision.
-14. Update `references/capability-matrix.md` in the same sync task using `../_shared/capability-matrix-schema.md`.
-15. Keep `music` empty until official rows are actually verified.
+14. Collect `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` only when official Aliyun docs clearly expose them for the exact model row.
+15. Update `pricing-matrix.md` in the same sync task using `../../_shared/pricing-matrix-schema.md`.
+16. Update `capability-matrix.md` in the same sync task using `../../_shared/capability-matrix-schema.md`.
+17. Keep `music` empty until official rows are actually verified.
 
 ## Stream Evidence Rule
 
@@ -138,6 +151,18 @@ Do not infer support for:
 - `seed`
 - `size`
 - `duration`
+- context window
+- max input tokens
+- max output tokens
+- price region
+- price currency
+- price unit
+- price context band
+- unit price
+
+Do not infer context values from pricing tiers, maximum reasoning lengths, observed request failures, sibling model names, repo enum comments, or non-official references.
+
+Do not infer pricing dimensions from unlabeled price text. If official docs do not clearly expose region, currency, context band, or unit price, keep that pricing field as `unknown`.
 
 Do not guess `stream` from naming, release notes alone, or similarity to another family. Only use the stream evidence rule above.
 
@@ -147,10 +172,12 @@ If the official docs do not clearly provide a recency basis date for one reviewe
 
 After a sync task, the skill should have:
 
-- an updated `references/model-catalog.md`
-- an updated `references/capability-matrix.md`
+- an updated `model-catalog.md`
+- an updated `pricing-matrix.md`
+- an updated `capability-matrix.md`
 - exact recency cutoff dates in reviewed catalog rows
-- exact price region and price unit fields in selected catalog rows
+- exact context window, max input, and max output fields when officially verified, otherwise `unknown`
+- exact price region, currency, price unit, metered side, context band, and unit price rows in `pricing-matrix.md`
 - exact official source URLs in the changed rows
 - no silently deleted catalog rows
 - any non-catalog review-note rows clearly labeled so they cannot be mistaken for selectable catalog rows

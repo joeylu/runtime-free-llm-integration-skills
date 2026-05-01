@@ -32,19 +32,19 @@ Use this file to keep every provider skill's capability matrix shaped the same w
 | `Strict Tool Schema Mode` | whether strict schema adherence for tool/function arguments is verified |
 | `Parallel Tool Calls` | whether parallel tool/function calls are verified |
 | `Reasoning Effort Field` | whether an enum-style reasoning effort field is officially documented |
-| `Reasoning Effort Values` | official supported values, such as `none,low,medium,high,xhigh` |
+| `Reasoning Effort Values` | accepted normalized request values, such as `none,low,medium,high,xhigh`; put provider wire mapping in Notes or transport |
 | `Reasoning Summary Field` | whether provider-visible reasoning summaries are officially documented |
 | `Reasoning Output Visibility` | `raw`, `summary`, `encrypted`, `usage-only`, `none`, `unknown`, or `n/a` |
 | `Supports Image Input` | whether image input is allowed |
 | `Supports Seed` | whether seed is supported |
 | `Supports Image Size` | whether image size is supported |
-| `Supports Image Count` | whether multi-image count is supported |
+| `Supports Image Count` | whether `Inputs.ImageCount` is supported for imaging output count |
 | `Supports Duration Seconds` | whether duration is supported |
 | `Notes` | short explanation or source note |
 
 ## Gating Rules
 
-- `stream`, `thinking budget`, `seed`, `image size`, `image count`, and `duration` should require `verified` unless a provider skill explicitly says otherwise.
+- `stream`, `thinking budget`, `seed`, `image size`, imaging output `image count`, and `duration` should require `verified` unless a provider skill explicitly says otherwise.
 - A provider skill may allow a base `non-stream` path when `Supports Non-Stream = inherited`, but it must say that explicitly.
 - If a requested capability is `unsupported`, stop.
 - If a requested capability is `unknown`, stop.
@@ -73,6 +73,8 @@ Then gate the request like this:
 - Function/tool definitions require `Tool Calling Mode` to be compatible with the effective thinking state.
 - Strict tool/function schemas require `Strict Tool Schema Mode = verified`.
 - Parallel tool calls require `Parallel Tool Calls = verified`.
+
+For `vision`, `Inputs.Images` means input images; do not use `Supports Image Count` to gate vision input image count.
 
 For `imaging`, treat `Supports Image Input` as verified only when the provider docs confirm image input for the exact requested imaging flow, such as edit input or reference images. Do not infer edit/reference-image support from a base text-to-image row.
 

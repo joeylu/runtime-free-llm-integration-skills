@@ -25,7 +25,7 @@ Build the shared request envelope with:
 - optional `IsStream`
 - optional `ProviderOptions.Surface = image-api`
 
-Before adding any optional field, verify that exact field in `references/capability-matrix.md`.
+Before adding any optional field, verify that exact field in `capability-matrix.md`.
 
 Resolve the connection profile before mapping request fields.
 
@@ -52,8 +52,8 @@ Recommended stage pattern:
 
 Before implementation, confirm all of these:
 
-- the model exists in `references/model-catalog.md`
-- the capability row exists in `references/capability-matrix.md`
+- the model exists in `model-catalog.md`
+- the capability row exists in `capability-matrix.md`
 - `Supports Non-Stream = verified` for the base request path
 - `Supports Stream = verified` before using partial-image streaming
 - requested fields such as `Inputs.ReferenceImages`, `Inputs.ImageSize`, and `Inputs.ImageCount` are verified

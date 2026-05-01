@@ -6,7 +6,7 @@ This skill does not bundle active Aliyun profile rows yet because API key refere
 
 ## Rules
 
-- Follow `../_shared/connection-profile-schema.md`.
+- Follow `../../_shared/connection-profile-schema.md`.
 - Store only secret references such as environment variable names. Do not store real API keys.
 - Resolve `ConnectionProfileKey` before selecting the final model and API surface.
 - Do not silently fall back from one profile, API key, or base URL to another.

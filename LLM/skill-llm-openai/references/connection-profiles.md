@@ -4,7 +4,7 @@ Use this file to describe named OpenAI connection profiles such as `build` and `
 
 Connection profiles choose API key references, base URLs, allowed request kinds, and profile-level restrictions.
 
-They do not define model capabilities. Capabilities still come from `references/capability-matrix.md`.
+They do not define model capabilities. Capabilities still come from `capability-matrix.md`.
 
 ## Rules
 

@@ -29,37 +29,41 @@ Do not make this skill own:
 Read these shared files first:
 
 1. `../_shared/model-catalog-schema.md`
-2. `../_shared/capability-matrix-schema.md`
-3. `../_shared/connection-profile-schema.md`
-4. `../_shared/recency-window-policy.md`
-5. `../_shared/request-envelope.md`
-6. `../_shared/response-envelope.md`
-7. `../_shared/error-contract.md`
-8. `../_shared/progress-contract.md`
-9. `../_shared/ui-binding.md`
-10. `../_shared/sync-policy.md`
-11. `../_shared/logging-fields.md`
+2. `../_shared/pricing-matrix-schema.md`
+3. `../_shared/capability-matrix-schema.md`
+4. `../_shared/connection-profile-schema.md`
+5. `../_shared/recency-window-policy.md`
+6. `../_shared/request-envelope.md`
+7. `../_shared/response-envelope.md`
+8. `../_shared/error-contract.md`
+9. `../_shared/progress-contract.md`
+10. `../_shared/ui-binding.md`
+11. `../_shared/sync-policy.md`
+12. `../_shared/logging-fields.md`
 
 Then read these Aliyun-specific files:
 
 1. `references/connection-profiles.md`
 2. `references/model-catalog.md`
-3. `references/model-sync.md`
-4. `references/capability-matrix.md`
-5. One or more transport files that match the request:
+3. `references/pricing-matrix.md`
+4. `references/model-sync.md`
+5. `references/capability-matrix.md`
+6. One or more transport files that match the request:
    - `references/transport-chat.md`
    - `references/transport-vision.md`
    - `references/transport-imaging.md`
    - `references/transport-music.md`
-6. `references/logging-contract.md` when logging is requested
+7. `references/logging-contract.md` when logging is requested
 
 ## Hard Rules
 
 - Treat this skill as `direct-model` only. Do not silently switch to Agent App.
 - Resolve a provided connection profile before selecting the model. Do not silently fall back between profiles, API keys, or base URLs.
 - Use the bundled Aliyun model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
+- When sync is explicitly requested, collect model rows, pricing, capabilities, context window, max input tokens, and max output tokens live from official docs by LLM review only. Do not use scripts, scrapers, SDK enum dumps, or automated catalog generators.
 - When the user asks for sync, confirm one recency boundary first. Propose `6 months` by default and convert it into one absolute cutoff date before reviewing rows.
-- Keep dropdown `label` and submitted `value` separate. Use `UI Label` for display and `API Model` for submission.
+- Use `references/pricing-matrix.md` for billing region, currency, context band, metered side, and unit price. Do not reconstruct tiered pricing from catalog notes.
+- Use `API Model` as both the model dropdown display text and submitted value. Do not put prices in model option labels.
 - Use official model IDs in the catalog. If the user gives a shorthand such as `qwen3.6-p`, normalize it to the official ID before writing.
 - Keep provider-neutral request, response, progress, error, and UI contracts in `../_shared`. Do not clone those contracts inside this skill.
 - Fail fast on unsupported or unverified combinations. Do not silently disable `thinking`, `stream`, `temperature`, `json_object`, `seed`, `size`, or `duration`.
@@ -77,14 +81,15 @@ Then read these Aliyun-specific files:
 2. Identify the request kind: `chat`, `vision`, `imaging`, or `music`.
 3. Read `references/connection-profiles.md` and resolve `ConnectionProfileKey` when the host defines Aliyun profiles.
 4. Read `references/model-catalog.md` and select only rows whose `Catalog Status` is `active` and `Selection Status` is `selected`.
-5. Apply profile restrictions before choosing the final model and API surface.
-6. Read `references/capability-matrix.md` and verify every requested option before wiring the request.
-7. Read the matching transport file for the request kind.
-8. Build the request with the shared request envelope from `../_shared/request-envelope.md`.
-9. Map the provider response into the shared response envelope from `../_shared/response-envelope.md`.
-10. If the user wants UI, apply `../_shared/ui-binding.md`, `../_shared/progress-contract.md`, and `../_shared/error-contract.md`.
-11. If the user wants logging, apply `../_shared/logging-fields.md` and `references/logging-contract.md`.
-12. Sync the model catalog only when the user explicitly asks for latest-model sync, and apply `../_shared/recency-window-policy.md` before reviewing rows.
+5. Read `references/pricing-matrix.md` when billing, estimates, or price display are needed.
+6. Apply profile restrictions before choosing the final model and API surface.
+7. Read `references/capability-matrix.md` and verify every requested option before wiring the request.
+8. Read the matching transport file for the request kind.
+9. Build the request with the shared request envelope from `../_shared/request-envelope.md`.
+10. Map the provider response into the shared response envelope from `../_shared/response-envelope.md`.
+11. If the user wants UI, apply `../_shared/ui-binding.md`, `../_shared/progress-contract.md`, and `../_shared/error-contract.md`.
+12. If the user wants logging, apply `../_shared/logging-fields.md` and `references/logging-contract.md`.
+13. Sync the model catalog only when the user explicitly asks for latest-model sync, and apply `../_shared/recency-window-policy.md` before reviewing rows.
 
 ## Request Kinds
 
@@ -101,6 +106,7 @@ Example:
 ## Catalog and Capability Rules
 
 - `references/model-catalog.md` is the default local source for model names, labels, and pricing notes.
+- `references/pricing-matrix.md` is the structured source for region, currency, context-band, and unit-price rows.
 - The active rows in `references/model-catalog.md` represent the locally selected options, not the full provider inventory.
 - `references/capability-matrix.md` is the default local source for `non-stream`, `stream`, thinking mode/default, thinking-budget field support, temperature mode/defaults, `json_object` mode, `seed`, `image size`, `image count`, `duration`, and other options.
 - For `stream`, use the official Aliyun stream transport doc together with the matching official model-family page when they clearly describe the same callable family.

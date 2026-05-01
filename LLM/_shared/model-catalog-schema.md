@@ -9,7 +9,7 @@ Use this file to keep every `skill-llm-xxxx` model catalog shaped the same way.
 | `Model Type` | One of `chat`, `vision`, `imaging`, or `music` |
 | `API Model` | Exact provider model identifier sent over the wire |
 | `Display Name` | Short human-readable model name |
-| `UI Label` | Ready-to-render dropdown label |
+| `UI Label` | Legacy compatibility label; keep equal to `API Model` for model dropdowns |
 | `Catalog Status` | One of `active`, `deprecated`, or `removed` |
 | `Selection Status` | One of `selected`, `not-selected`, or `unreviewed` |
 | `Is Default` | `yes` or `no` for the local default choice within one model type |
@@ -17,18 +17,22 @@ Use this file to keep every `skill-llm-xxxx` model catalog shaped the same way.
 | `Recency Classification` | One of `candidate`, `retired`, or `unreviewed` |
 | `Recency Basis Date` | Official date used for the recency decision, or `unreviewed` |
 | `Recency Cutoff Date` | Absolute cutoff date used in the last sync review, or `unreviewed` |
-| `Price Region` | Pricing region such as `china-mainland`, `global`, or `international` |
-| `Price Unit` | Billing unit such as `per-million-tokens` or `per-image` |
-| `Input Price` | Exact official input price, or `n/a` / `unknown` |
-| `Output Price` | Exact official output price, or `n/a` / `unknown` |
-| `Pricing Note` | Human-readable price note for UI or docs |
+| `Context Window Tokens` | Official total context window token count, or `unknown` / `n/a` |
+| `Max Input Tokens` | Official maximum input token count, or `unknown` / `n/a` |
+| `Max Output Tokens` | Official maximum output token count, or `unknown` / `n/a` |
+| `Price Region` | Compatibility pricing summary; use `pricing-matrix.md` for structured billing |
+| `Price Unit` | Compatibility billing-unit summary; use `pricing-matrix.md` for structured billing |
+| `Input Price` | Compatibility input-price summary, or `n/a` / `unknown` |
+| `Output Price` | Compatibility output-price summary, or `n/a` / `unknown` |
+| `Pricing Note` | Human-readable price note; do not parse it for billing logic |
 | `Last Verified At` | Absolute verification date or `unverified` |
 | `Source` | Exact official source URL or explicit inherited source note |
 
 ## Rules
 
 - Show only `active` rows in selectors by default.
-- Keep `UI Label` and `API Model` separate.
+- Use `API Model` as both model dropdown display text and submitted value.
+- If a catalog retains `UI Label`, keep it equal to `API Model`. Do not include prices, aliases, or extra marketing text in model option labels.
 - Do not silently delete old rows during sync. Mark them `deprecated` or `removed`.
 - Use absolute dates after sync, for example `2026-04-24`.
 - If the row was copied from an older skill and not re-checked yet, use `Verification State = inherited`.
@@ -37,8 +41,14 @@ Use this file to keep every `skill-llm-xxxx` model catalog shaped the same way.
 - If a row is outside the confirmed recency boundary, set `Recency Classification = retired`.
 - A row marked `retired` should not stay `active`.
 - If a row has not been reviewed against a confirmed boundary yet, use `unreviewed` values for the recency fields.
-- Keep `Price Region`, `Price Unit`, `Input Price`, and `Output Price` explicit. Do not bury exact prices only inside `Pricing Note`.
+- Keep `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` explicit. Use exact official numeric token counts when verified.
+- If an official token limit differs by mode, store every exact mode-qualified value in the same field, for example `thinking: 983616; non-thinking: 991808`.
+- Use `unknown` when official docs do not clearly expose a context value. Do not infer context limits from pricing tiers, reasoning budgets, sibling models, SDK names, or observed runtime errors.
+- Use `n/a` only when a token context value does not apply to the request kind.
+- Keep `Price Region`, `Price Unit`, `Input Price`, and `Output Price` explicit as compatibility summaries.
+- Use provider `references/pricing-matrix.md` as the source of truth for region, currency, context band, metered side, and unit price.
+- Do not make downstream agents parse `Input Price`, `Output Price`, or `Pricing Note` to reconstruct tiered billing.
 
 ## Example
 
-`UI Label` is the user-facing text such as `Qwen35Plus_in0.8rmb_out4.8rmb`, while `API Model` is the submitted value such as `qwen3.5-plus`.
+For model dropdowns, display and submit the same value: `API Model = qwen3.5-plus`.

@@ -40,6 +40,8 @@ Keep these request-kind-specific options under `Inputs`.
 Example:
 Use `Inputs.Seed` and `Inputs.ImageSize`, not top-level `Seed` or `ImageSize`.
 
+For `vision`, `Inputs.Images` is the input image list. Do not use `Inputs.ImageCount` for vision input images; `Inputs.ImageCount` is reserved for imaging output count.
+
 `ThinkingRequested` is the provider-neutral intent. `ReasoningEffort` is the common OpenAI-style control; for example, `ReasoningEffort = none` means effective thinking is false, while `ReasoningEffort = high` means effective thinking is true.
 
 ## Fail-Fast Rules

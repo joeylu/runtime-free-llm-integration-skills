@@ -2,7 +2,7 @@
 
 Use this file when the caller wants request logging, troubleshooting, or trace retention.
 
-Read `../_shared/logging-fields.md` first.
+Read `../../_shared/logging-fields.md` first.
 
 ## Default Rule
 

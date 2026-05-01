@@ -40,8 +40,8 @@ Recommended stage pattern:
 
 Before implementation, confirm all of these:
 
-- the model exists in `references/model-catalog.md`
-- the capability row exists in `references/capability-matrix.md`
+- the model exists in `model-catalog.md`
+- the capability row exists in `capability-matrix.md`
 - requested fields such as `Inputs.DurationSeconds` and `Inputs.Seed` are verified
 
 If any of those are missing, stop.

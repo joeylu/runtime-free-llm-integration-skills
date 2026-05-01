@@ -13,7 +13,7 @@ Meanings:
 
 If a requested option is `unknown` or `unsupported`, stop before implementation.
 
-Only the locally selected active rows from `references/model-catalog.md` are tracked here.
+Only the locally selected active rows from `model-catalog.md` are tracked here.
 
 ## Current Matrix
 
@@ -29,9 +29,9 @@ Only the locally selected active rows from `references/model-catalog.md` are tra
 
 | Model Type | API Model | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `vision` | `gpt-5.5` | `verified` | `verified` | `mixed` | `medium` | `n/a` | `n/a` | `all-modes` | `all-modes: 1.0` | `all-modes` | `all-modes` | `all-modes` | `verified` | `verified` | `verified` | `none,low,medium,high,xhigh` | `verified` | `summary` | `verified` | `n/a` | `n/a` | `verified` | `n/a` | `official models page says all latest OpenAI models support text and image input; latest-model guide says gpt-5.5 preserves more visual detail by default; Responses API capabilities are the same as chat for stream, structured outputs, tools, and reasoning` |
-| `vision` | `gpt-5.4` | `verified` | `verified` | `mixed` | `none` | `n/a` | `n/a` | `all-modes` | `all-modes: 1.0` | `all-modes` | `all-modes` | `all-modes` | `verified` | `verified` | `verified` | `none,low,medium,high,xhigh` | `verified` | `summary` | `verified` | `n/a` | `n/a` | `verified` | `n/a` | `model page verifies text and image input, reasoning.effort values none through xhigh, streaming, function calling, and structured outputs; Responses API capabilities are the same as chat` |
-| `vision` | `gpt-5.4-mini` | `verified` | `verified` | `unknown` | `unknown` | `n/a` | `n/a` | `all-modes` | `all-modes: 1.0` | `all-modes` | `all-modes` | `all-modes` | `verified` | `verified` | `unknown` | `unknown` | `verified` | `summary` | `verified` | `n/a` | `n/a` | `verified` | `n/a` | `model page verifies text and image input, reasoning token support, streaming, function calling, structured outputs, and Responses; this pass did not find an explicit effort-value list for gpt-5.4-mini, so controllable thinking remains unknown` |
+| `vision` | `gpt-5.5` | `verified` | `verified` | `mixed` | `medium` | `n/a` | `n/a` | `all-modes` | `all-modes: 1.0` | `all-modes` | `all-modes` | `all-modes` | `verified` | `verified` | `verified` | `none,low,medium,high,xhigh` | `verified` | `summary` | `verified` | `n/a` | `n/a` | `n/a` | `n/a` | `official models page says all latest OpenAI models support text and image input; latest-model guide says gpt-5.5 preserves more visual detail by default; Responses API capabilities are the same as chat for stream, structured outputs, tools, and reasoning` |
+| `vision` | `gpt-5.4` | `verified` | `verified` | `mixed` | `none` | `n/a` | `n/a` | `all-modes` | `all-modes: 1.0` | `all-modes` | `all-modes` | `all-modes` | `verified` | `verified` | `verified` | `none,low,medium,high,xhigh` | `verified` | `summary` | `verified` | `n/a` | `n/a` | `n/a` | `n/a` | `model page verifies text and image input, reasoning.effort values none through xhigh, streaming, function calling, and structured outputs; Responses API capabilities are the same as chat` |
+| `vision` | `gpt-5.4-mini` | `verified` | `verified` | `unknown` | `unknown` | `n/a` | `n/a` | `all-modes` | `all-modes: 1.0` | `all-modes` | `all-modes` | `all-modes` | `verified` | `verified` | `unknown` | `unknown` | `verified` | `summary` | `verified` | `n/a` | `n/a` | `n/a` | `n/a` | `model page verifies text and image input, reasoning token support, streaming, function calling, structured outputs, and Responses; this pass did not find an explicit effort-value list for gpt-5.4-mini, so controllable thinking remains unknown` |
 
 ### Imaging
 

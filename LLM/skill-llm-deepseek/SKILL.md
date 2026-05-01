@@ -1,30 +1,27 @@
 ---
-name: skill-llm-openai
-description: Standardize OpenAI API direct-model integration for chat, vision, image generation, structured outputs, reasoning effort, streaming, and tool calling. Use when Codex needs to choose an OpenAI model, wire Responses API or Chat Completions compatible request/response flows, expose reasoning effort, JSON object, JSON schema, tool/function calling, stream controls, model selectors, or shared progress and error states. Do not use for ChatGPT consumer-app settings, Apps SDK orchestration, Agents SDK orchestration, non-OpenAI providers, or prompt-only work with no integration change.
+name: skill-llm-deepseek
+description: Standardize DeepSeek API direct-model integration for OpenAI-compatible chat, thinking mode, JSON output, streaming, and tool calling. Use when Codex needs to choose a DeepSeek model, wire chat-completions request/response flows, expose thinking controls, JSON object output, function/tool calling, stream controls, model selectors, connection profiles, or shared progress and error states. Do not use for non-DeepSeek providers, Agent/App orchestration, or prompt-only work with no integration change.
 ---
 
-# Skill LLM OpenAI
+# Skill LLM DeepSeek
 
 ## Mission
 
-Own the provider-specific part of OpenAI API direct-model integration while reusing the shared contracts under `../_shared`.
+Own the provider-specific part of DeepSeek API direct-model integration while reusing the shared contracts under `../_shared`.
 
 Keep this skill focused on:
 
-- OpenAI model catalog
-- OpenAI model sync workflow
-- OpenAI capability verification
-- OpenAI transport rules by request kind
-- OpenAI-specific logging additions
+- DeepSeek model catalog
+- DeepSeek model sync workflow
+- DeepSeek capability verification
+- DeepSeek OpenAI-compatible transport rules
+- DeepSeek-specific logging additions
 
 Do not make this skill own:
 
-- ChatGPT consumer app settings
-- Apps SDK flows
-- Agents SDK orchestration
 - business prompt content
 - platform-specific UI layouts
-- non-OpenAI providers
+- non-DeepSeek providers
 
 ## Read Order
 
@@ -43,7 +40,7 @@ Read these shared files first:
 11. `../_shared/sync-policy.md`
 12. `../_shared/logging-fields.md`
 
-Then read these OpenAI-specific files:
+Then read these DeepSeek-specific files:
 
 1. `references/connection-profiles.md`
 2. `references/model-catalog.md`
@@ -59,28 +56,25 @@ Then read these OpenAI-specific files:
 
 ## Hard Rules
 
-- Treat this skill as OpenAI API direct-model work. Do not silently switch to Apps SDK or Agents SDK orchestration.
-- Prefer the Responses API for reasoning, tool-calling, structured outputs, image input, or multi-turn state.
-- Use the Image API for the bundled `gpt-image-2` imaging path. Do not wire the Responses image-generation hosted tool until the capability matrix explicitly models that hosted-tool path.
-- Use Chat Completions only when the host project explicitly needs Chat Completions compatibility and the requested options are verified for that surface.
-- Resolve the connection profile before selecting the model. Do not silently fall back between `build`, `plan`, or any other profile.
+- Treat this skill as DeepSeek API direct-model work.
+- Prefer DeepSeek's OpenAI-compatible Chat Completions API for selected chat models.
+- Resolve the connection profile before selecting the model. Do not silently fall back between profiles, API keys, base URLs, or compatibility surfaces.
 - Never store real API keys in this skill. Store only secret references such as environment variable names.
-- Use the bundled OpenAI model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
+- Use the bundled DeepSeek model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
 - When sync is explicitly requested, collect model rows, pricing, capabilities, context window, max input tokens, and max output tokens live from official docs by LLM review only. Do not use scripts, scrapers, SDK enum dumps, or automated catalog generators.
 - When the user asks for sync, confirm one recency boundary first. Propose `6 months` by default and convert it into one absolute cutoff date before reviewing rows.
 - Use `references/pricing-matrix.md` for billing region, currency, context band, metered side, and unit price. Do not reconstruct tiered pricing from catalog notes.
 - Use `API Model` as both the model dropdown display text and submitted value. Do not put prices in model option labels.
-- Use official OpenAI model IDs in the catalog.
+- Use official DeepSeek model IDs in the catalog.
 - Keep provider-neutral request, response, progress, error, and UI contracts in `../_shared`. Do not clone those contracts inside this skill.
-- Fail fast on unsupported or unverified combinations. Do not silently disable `stream`, `ReasoningEffort`, `ResponseFormat`, `Tools`, `Temperature`, `ImageSize`, `ImageCount`, or image edit inputs.
+- Fail fast on unsupported or unverified combinations. Do not silently disable `stream`, `thinking`, `ResponseFormat`, `Tools`, `Temperature`, or strict tool schemas.
 - If a requested advanced capability is marked `unknown`, stop and tell the user to sync the catalog or choose a verified path.
-- Do not expose raw chain-of-thought unless official docs explicitly expose raw reasoning text for the chosen model and API surface.
-- For current OpenAI reasoning models, prefer `ReasoningSummary` and normalized usage over raw `ThinkingContent`.
-- Distinguish caller-defined function tools from OpenAI-hosted tools such as web search, file search, code interpreter, computer use, and image generation.
+- Preserve DeepSeek `reasoning_content` in follow-up turns when the prior assistant message included tool calls; official docs say omitting it in that path can cause a 400 error.
+- Treat strict tool schemas as a beta-surface feature unless the active profile explicitly allows the beta API surface.
 
 ## Standard Workflow
 
-1. Confirm that the task is OpenAI API direct-model access.
+1. Confirm that the task is DeepSeek API direct-model access.
 2. Identify the request kind: `chat`, `vision`, `imaging`, or `music`.
 3. Read `references/connection-profiles.md` and resolve `ConnectionProfileKey` when the host has multiple profiles.
 4. Read `references/model-catalog.md` and select only rows whose `Catalog Status` is `active` and `Selection Status` is `selected`.
@@ -103,28 +97,26 @@ Use these meanings consistently:
 - `imaging`: image generation or image edit requests
 - `music`: music or audio generation requests
 
-Example:
-`vision` means "send text plus one or more images and receive understanding output", not "generate a new image".
+Current bundled DeepSeek coverage selects only `chat` rows.
 
-## OpenAI-Specific Concepts
+## DeepSeek-Specific Concepts
 
-- `ReasoningEffort` maps to OpenAI `reasoning.effort`.
-- `ReasoningSummary` maps to OpenAI `reasoning.summary`.
-- `ResponseFormat = json_schema` maps to Responses `text.format.type = json_schema` or Chat Completions `response_format.type = json_schema`.
-- `ResponseFormat = json_object` maps to Responses `text.format.type = json_object` or Chat Completions `response_format.type = json_object`.
-- `Tools` maps to caller-defined OpenAI `function` tools unless the request explicitly asks for OpenAI-hosted tools.
-- `ConnectionProfileKey` selects the key/base-URL profile, for example `build` or `plan`.
-
-Example:
-`ReasoningEffort = none` means effective thinking is false. `ReasoningEffort = medium` means effective thinking is true.
+- `ThinkingRequested` maps to DeepSeek `thinking.type = enabled | disabled`.
+- `ReasoningEffort` maps to DeepSeek OpenAI-compatible `reasoning_effort = high | max` when thinking is enabled.
+- `ThinkingContent` maps to DeepSeek `reasoning_content`.
+- `ResponseFormat = json_object` maps to OpenAI-compatible `response_format.type = json_object`.
+- `Tools` maps to OpenAI-compatible function tools.
+- Strict tool schemas require the DeepSeek beta surface.
 
 Example:
-`ConnectionProfileKey = build` can use `OPENAI_BUILD_API_KEY`, while `ConnectionProfileKey = plan` can use `OPENAI_PLAN_API_KEY`.
+`ThinkingRequested = false` means send `thinking.type = disabled`.
+
+Example:
+If an assistant message has `tool_calls`, keep its `reasoning_content` when sending the next turn; without tool calls, DeepSeek says prior `reasoning_content` is ignored.
 
 ## Do Not Use This Skill For
 
-- ChatGPT consumer app settings
-- ChatGPT Apps SDK components
-- Agents SDK orchestration design
-- Anthropic, Gemini, DeepSeek, Aliyun, or other non-OpenAI providers
+- OpenAI, Gemini, Aliyun, Anthropic, or other non-DeepSeek providers
+- DeepSeek website settings unrelated to API integration
+- platform-specific UI layout design
 - prompt engineering tasks that do not change integration code or contracts
