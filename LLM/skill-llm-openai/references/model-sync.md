@@ -107,6 +107,7 @@ After a sync task, the skill should have:
 
 - an updated `model-catalog.md`
 - an updated `pricing-matrix.md`
+- an updated `request-urls.md` when endpoint paths, base URLs, or API surfaces changed
 - an updated `capability-matrix.md`
 - exact recency cutoff dates in reviewed catalog rows
 - exact context window, max input, and max output fields when officially verified, otherwise `unknown`

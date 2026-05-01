@@ -1,4 +1,4 @@
-# Aliyun Model Sync
+# Aliyun Bailian International Model Sync
 
 Use this workflow only when the user explicitly asks for one of these:
 
@@ -12,7 +12,9 @@ Read `../../_shared/recency-window-policy.md` before starting.
 
 ## Source Rule
 
-Use official Aliyun Bailian documentation only.
+Use official Alibaba Cloud International / Aliyun Bailian International documentation only.
+
+Do not use China Mainland docs, endpoints, availability, or pricing for this skill.
 
 Do not sync from:
 
@@ -34,7 +36,7 @@ The LLM may use normal reading and search tools to locate official documentation
 
 1. Ask the user to confirm the recency boundary. If the user does not specify one, propose the default boundary `6 months`.
 2. Convert that confirmed boundary into one absolute cutoff date using the sync date.
-3. Open the official Aliyun Bailian direct-model documentation that matches the requested model kind.
+3. Open the official Aliyun Bailian International direct-model documentation that matches the requested model kind.
 4. Compare the official model list against `model-catalog.md`.
 5. For every matched row, update:
    - `Catalog Status`
@@ -68,8 +70,9 @@ The LLM may use normal reading and search tools to locate official documentation
 13. Exclude pre-sync placeholders only when they were never official catalog rows; if any downstream code references them, stop and ask for a migration decision.
 14. Collect `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` only when official Aliyun docs clearly expose them for the exact model row.
 15. Update `pricing-matrix.md` in the same sync task using `../../_shared/pricing-matrix-schema.md`.
-16. Update `capability-matrix.md` in the same sync task using `../../_shared/capability-matrix-schema.md`.
-17. Keep `music` empty until official rows are actually verified.
+16. Update `request-urls.md` in the same sync task using `../../_shared/request-url-matrix-schema.md` when a provider endpoint, path, or API surface changes.
+17. Update `capability-matrix.md` in the same sync task using `../../_shared/capability-matrix-schema.md`.
+18. Keep `music` empty until official rows are actually verified.
 
 ## Stream Evidence Rule
 
@@ -174,6 +177,7 @@ After a sync task, the skill should have:
 
 - an updated `model-catalog.md`
 - an updated `pricing-matrix.md`
+- an updated `request-urls.md` when endpoint paths or base URLs changed
 - an updated `capability-matrix.md`
 - exact recency cutoff dates in reviewed catalog rows
 - exact context window, max input, and max output fields when officially verified, otherwise `unknown`

@@ -4,7 +4,7 @@ Use this file for image generation or image edit requests.
 
 ## Current State
 
-This skill bundles selected Aliyun imaging rows in `model-catalog.md` and base imaging capability rows in `capability-matrix.md`.
+This China Mainland skill bundles selected Aliyun imaging rows in `model-catalog.md` and base imaging capability rows in `capability-matrix.md`.
 
 A catalog row only proves that the model is a local selectable model. It does not prove support for edit/reference images, seed, size, count, prompt rewriting, or streaming.
 
@@ -16,6 +16,8 @@ Build the shared request envelope with:
 
 - `RequestKind = imaging`
 - optional `ConnectionProfileKey`
+- `ApiSurface = dashscope-native-sync` for synchronous image generation/edit paths
+- `ApiSurface = dashscope-native-async` only when `request-urls.md` verifies an asynchronous job path for the selected model
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`
 - optional `Inputs.ReferenceImages = [...]`
@@ -25,6 +27,8 @@ Build the shared request envelope with:
 - optional `TimeoutMs`
 
 Before adding any optional field, verify that exact field in `capability-matrix.md`. For example, `Inputs.ReferenceImages` requires verified imaging image-input support, not just a model note that says the family can edit images.
+
+Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
 
 ## Default Flow
 

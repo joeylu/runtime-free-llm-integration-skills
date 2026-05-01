@@ -24,6 +24,7 @@ Use this contract for every `skill-llm-xxxx` integration.
 | `unsupported_option` | The selected model or request kind does not support the option |
 | `auth_error` | Authentication failed |
 | `network_error` | Network transport failed |
+| `request_url_error` | Request URL is missing, unknown, incompatible, or unsafe |
 | `timeout_error` | Request or job exceeded timeout |
 | `rate_limit_error` | Provider throttled the request |
 | `provider_error` | Provider returned a non-success response |
@@ -37,6 +38,7 @@ Use one of these stage keys:
 
 - `validating`
 - `preparing`
+- `resolving-request-url`
 - `sending`
 - `submitting-job`
 - `waiting-provider-accept`

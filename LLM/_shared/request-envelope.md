@@ -8,6 +8,9 @@ Use this normalized request contract across all `skill-llm-xxxx` skills.
 | --- | --- |
 | `RequestKind` | `chat`, `vision`, `imaging`, or `music` |
 | `ConnectionProfileKey` | named connection profile such as `build` or `plan`; resolved before model selection |
+| `ApiSurface` | Provider API surface chosen for the request, such as `responses`, `chat-completions`, `generate-content`, `dashscope-native-sync`, or `dashscope-native-async` |
+| `ResolvedBaseUrl` | Exact non-secret base URL resolved from the connection profile |
+| `ResolvedRequestUrl` | Exact non-secret request URL resolved from provider `request-urls.md` |
 | `Model` | Exact provider model value |
 | `IsStream` | Request stream transport when verified |
 | `ThinkingRequested` | Caller intent to request reasoning output; when omitted, the model's documented thinking default applies |
@@ -47,11 +50,13 @@ For `vision`, `Inputs.Images` is the input image list. Do not use `Inputs.ImageC
 ## Fail-Fast Rules
 
 - If `ConnectionProfileKey` is supplied, the profile must exist, be active, and allow the requested `RequestKind`, `Model`, API surface, and options.
-- Do not silently fall back from one connection profile, API key, or base URL to another.
+- Resolve `ApiSurface`, `ResolvedBaseUrl`, and `ResolvedRequestUrl` before sending the provider request.
+- Do not silently fall back from one connection profile, API key, base URL, API surface, or request URL to another.
 - If a requested option is not verified in the provider capability matrix, stop.
 - If both `ThinkingRequested` and `ReasoningEffort` are supplied, they must describe the same effective thinking state.
 - Do not silently map one request kind to another.
 - Do not pass unsupported fields just because the caller supplied them.
+- Do not put API keys, signed URLs, or other secrets in `ResolvedRequestUrl`.
 - Put true provider-specific escape hatches under `ProviderOptions`, not under misleading shared field names.
 
 ## Example

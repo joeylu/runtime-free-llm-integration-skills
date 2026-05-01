@@ -19,8 +19,8 @@ They do not define model capabilities. Capabilities still come from `capability-
 
 | Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Chat Model | Default Vision Model | Default Imaging Model | Default Music Model | Allowed Request Kinds | Allowed API Surfaces | Model Allowlist | Capability Restrictions | Last Verified At | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `build` | `DeepSeek Build` | `deepseek` | `build` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_BUILD_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions,anthropic-compat,beta` | `catalog-selected` | `strict tool schemas require beta surface` | `2026-05-01` | `intended for implementation or production-like execution flows` |
-| `plan` | `DeepSeek Plan` | `deepseek` | `plan` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_PLAN_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions,anthropic-compat` | `catalog-selected` | `strict tool schemas disabled by profile` | `2026-05-01` | `intended for planning, review, and analysis flows` |
+| `build` | `DeepSeek Build` | `deepseek` | `build` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_BUILD_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions,beta` | `catalog-selected` | `strict tool schemas require beta surface` | `2026-05-01` | `intended for implementation or production-like execution flows` |
+| `plan` | `DeepSeek Plan` | `deepseek` | `plan` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_PLAN_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions` | `catalog-selected` | `strict tool schemas disabled by profile` | `2026-05-01` | `intended for planning, review, and analysis flows` |
 
 ## Custom Base URL Rule
 

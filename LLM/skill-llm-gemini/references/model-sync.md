@@ -32,10 +32,11 @@ The LLM may use normal reading and search tools to locate official documentation
 3. Review official model rows and release/deprecation notes.
 4. Update `model-catalog.md` first.
 5. Update `pricing-matrix.md` with region, currency, unit, metered side, context band, and unit price rows.
-6. Update `capability-matrix.md` only for capabilities verified from official docs.
-7. Collect `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` only when official Gemini docs clearly expose them for the exact model row.
-8. Update transport files only when a provider API surface changes.
-9. Keep unknown fields as `unknown`; do not infer support from similar providers, pricing tiers, observed request failures, SDK enum comments, or unlabeled price text.
+6. Update `request-urls.md` when endpoint paths, base URLs, or API surfaces change.
+7. Update `capability-matrix.md` only for capabilities verified from official docs.
+8. Collect `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` only when official Gemini docs clearly expose them for the exact model row.
+9. Update transport files only when a provider API surface changes.
+10. Keep unknown fields as `unknown`; do not infer support from similar providers, pricing tiers, observed request failures, SDK enum comments, or unlabeled price text.
 
 ## Selection Rule
 

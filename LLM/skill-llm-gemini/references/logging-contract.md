@@ -15,28 +15,31 @@ Add Gemini-specific raw payload snapshots only when debugging value outweighs st
 Store at least:
 
 - `provider = gemini`
-- `connection profile key`
-- `endpoint kind`
-- `request kind`
+- `connection_profile_key`
+- `endpoint_kind`
+- `api_surface`
+- `base_url`
+- `request_url`
+- `request_kind`
 - `model`
-- `catalog verification state`
-- `stream or non-stream`
-- `thinking level`
-- `thinking requested`
-- `thinking applied`
-- `reasoning summary requested`
-- `reasoning output visibility`
-- `response format`
-- `tool count`
+- `catalog_verification_state`
+- `is_stream`
+- `reasoning_effort`
+- `thinking_requested`
+- `thinking_applied`
+- `reasoning_summary_requested`
+- `reasoning_output_visibility`
+- `response_format`
+- `tool_count`
 - `temperature`
-- `image size`
-- `reference image count`
+- `image_size`
+- `reference_image_count`
 - `usage`
-- `latency`
-- `finish reason`
-- `error code`
-- `error stage`
-- `retry count`
+- `latency_ms`
+- `finish_reason`
+- `error_code`
+- `error_stage`
+- `retry_count`
 
 ## Helpful Provider Extras
 

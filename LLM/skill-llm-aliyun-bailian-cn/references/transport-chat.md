@@ -8,6 +8,7 @@ Build the shared request envelope with:
 
 - `RequestKind = chat`
 - optional `ConnectionProfileKey`
+- `ApiSurface = chat-completions`
 - `Model = <API Model>`
 - `Inputs.Messages = [...]`
 - optional `IsStream`
@@ -23,6 +24,8 @@ Use `non-stream` when the caller wants a single completed response and `Supports
 Use `stream` only when `Supports Stream = verified` and the capability matrix verifies the requested model and option combination.
 
 For Aliyun sync work, `Supports Stream = verified` may come from the official stream transport doc plus the matching official text-model family page. It does not require a model-row-specific stream example every time.
+
+Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
 
 ## Effective Thinking Rule
 

@@ -14,12 +14,15 @@ Build the shared request envelope with:
 
 - `RequestKind = music`
 - optional `ConnectionProfileKey`
+- `ApiSurface = dashscope-native`
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`
 - optional `Inputs.Lyrics = <text>`
 - optional `Inputs.DurationSeconds`
 - optional `Inputs.Seed`
 - optional `TimeoutMs`
+
+Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
 
 ## Default Flow
 

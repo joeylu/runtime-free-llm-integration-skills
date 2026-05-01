@@ -10,11 +10,11 @@ A connection profile is one named provider connection configuration, such as `bu
 | --- | --- |
 | `Profile Key` | stable profile key used by requests, such as `build` or `plan` |
 | `Display Name` | short human-readable profile name |
-| `Provider` | provider identifier such as `openai` or `aliyun-bailian` |
+| `Provider` | provider identifier such as `openai`, `aliyun-bailian-cn`, or `aliyun-bailian-intl` |
 | `Purpose` | intended usage such as `build`, `plan`, `runtime`, `eval`, or `admin` |
 | `Profile Status` | `active`, `disabled`, or `template` |
 | `Endpoint Kind` | `official`, `openai-compatible`, `provider-compatible`, `gateway`, or `custom` |
-| `Base URL` | exact base URL or a non-secret config ref |
+| `Base URL` | exact base URL, SDK base URL, or a non-secret config ref |
 | `API Key Ref` | secret reference name, never the secret value |
 | `API Key Source` | `env`, `secret-manager`, `user-setting`, `credential-store`, or `external` |
 | `Default Chat Model` | default `API Model` for `chat`, or `none` |
@@ -34,9 +34,11 @@ A connection profile is one named provider connection configuration, such as `bu
 - Resolve `ConnectionProfileKey` before selecting the final model.
 - A profile can restrict request kinds, models, API surfaces, or features.
 - A profile must not expand provider capabilities beyond the provider `capability-matrix.md`.
+- A profile's `Base URL` is not enough to identify the HTTP request. Resolve the final request URL from the provider `request-urls.md` before sending.
 - If the requested profile is missing, disabled, or lacks a required secret reference, stop with `config_error`.
 - Do not silently fall back from one profile to another.
 - Do not silently fall back from one base URL to another.
+- Do not silently rewrite one request URL template to another.
 - If `Endpoint Kind` is not the official provider endpoint, treat provider compatibility as a profile property that must be verified for the requested API surface.
 - If a custom or gateway endpoint does not clearly support a requested field, stop instead of assuming official-provider parity.
 

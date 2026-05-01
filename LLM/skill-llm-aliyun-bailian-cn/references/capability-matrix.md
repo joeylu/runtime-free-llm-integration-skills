@@ -1,6 +1,6 @@
-# Aliyun Capability Matrix
+# Aliyun Bailian China Mainland Capability Matrix
 
-Use this file to verify whether a locally selected model-kind combination supports a requested feature.
+Use this file to verify whether a locally selected China Mainland model-kind combination supports a requested feature.
 
 Meanings:
 
@@ -13,7 +13,7 @@ Meanings:
 
 If a requested option is `unknown` or `unsupported`, stop before implementation.
 
-Only the locally selected active rows from `model-catalog.md` are tracked here.
+Only locally selected active rows from `model-catalog.md` are tracked here.
 
 ## Current Matrix
 
@@ -21,7 +21,6 @@ Only the locally selected active rows from `model-catalog.md` are tracked here.
 
 | Model Type | API Model | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `qwen3.6-max-preview` | `verified` | `verified` | `mixed` | `on` | `verified` | `128k` | `all-modes` | `thinking: 0.6; non-thinking: 0.7` | `non-thinking-only` | `unknown` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `unknown` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `stream verified by official Aliyun stream transport doc plus the official text-generation model page; deep-thinking page says qwen3.6 max preview is mixed-thinking and defaults on; qwen API ref documents enable_thinking and thinking_budget for Qwen3.6; structured-output doc scopes Qwen3.6 Max to non-thinking mode; raw reasoning is exposed as reasoning_content when thinking is enabled` |
 | `chat` | `qwen3.6-plus` | `verified` | `verified` | `mixed` | `on` | `verified` | `80k` | `all-modes` | `thinking: 0.6; non-thinking: 0.7` | `non-thinking-only` | `unknown` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `unknown` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `stream verified by both the official stream doc and official qwen3.6-plus stream=true examples; deep-thinking page says qwen3.6 plus is mixed-thinking and defaults on; qwen API ref documents enable_thinking and thinking_budget for Qwen3.6; structured-output doc scopes Qwen3.6 Plus to non-thinking mode; raw reasoning is exposed as reasoning_content when thinking is enabled` |
 | `chat` | `qwen3.6-flash` | `verified` | `verified` | `mixed` | `on` | `verified` | `128k` | `all-modes` | `thinking: 0.6; non-thinking: 0.7` | `non-thinking-only` | `unknown` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `unknown` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `stream verified by official Aliyun stream transport doc plus the official text-generation model page listing qwen3.6-flash in the same Qwen text family; deep-thinking page says qwen3.6 flash is mixed-thinking and defaults on; qwen API ref documents enable_thinking and thinking_budget for Qwen3.6; structured-output doc scopes Qwen3.6 Flash to non-thinking mode; raw reasoning is exposed as reasoning_content when thinking is enabled` |
 | `chat` | `glm-5.1` | `verified` | `verified` | `mixed` | `on` | `unknown` | `128k max listed on text-generation page; request field not documented` | `all-modes` | `all-modes: 1.0` | `non-thinking-only` | `unknown` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `unknown` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `glm page gives explicit stream=true and enable_thinking=true examples; deep-thinking page says glm-5.1 is mixed-thinking and defaults on; glm parameter-default table gives temperature 1.0; glm feature table says structured output is only supported in non-thinking mode` |

@@ -1,4 +1,4 @@
-# Aliyun Logging Contract
+# Aliyun Bailian International Logging Contract
 
 Use this file when the caller wants request logging, troubleshooting, or trace retention.
 
@@ -14,27 +14,32 @@ Add Aliyun-specific raw payload snapshots only when debugging value outweighs st
 
 Store at least:
 
-- `provider = aliyun-bailian`
-- `connection profile key` when the host uses profiles
-- `request kind`
+- `provider = aliyun-bailian-intl`
+- `connection_profile_key` when the host uses profiles
+- `endpoint_kind`
+- `api_surface`
+- `base_url`
+- `request_url`
+- `request_kind`
 - `model`
-- `catalog verification state`
-- `stream or non-stream`
-- `thinking requested`
-- `thinking applied`
+- `catalog_verification_state`
+- `is_stream`
+- `thinking_requested`
+- `thinking_applied`
 - `temperature`
 - `usage`
-- `latency`
-- `finish reason`
-- `error code`
-- `error stage`
-- `retry count`
+- `latency_ms`
+- `finish_reason`
+- `error_code`
+- `error_stage`
+- `retry_count`
 
 ## Helpful Provider Extras
 
 Store these when available:
 
 - official endpoint path
+- price region
 - provider request id
 - job id for imaging or music
 - raw finish reason

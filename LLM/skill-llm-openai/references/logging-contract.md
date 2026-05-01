@@ -15,25 +15,28 @@ Add OpenAI-specific raw payload snapshots only when debugging value outweighs st
 Store at least:
 
 - `provider = openai`
-- `connection profile key`
-- `endpoint kind`
-- `request kind`
+- `connection_profile_key`
+- `endpoint_kind`
+- `api_surface`
+- `base_url`
+- `request_url`
+- `request_kind`
 - `model`
-- `catalog verification state`
-- `stream or non-stream`
-- `reasoning effort`
-- `thinking requested`
-- `thinking applied`
-- `reasoning output visibility`
-- `response format`
-- `tool count`
+- `catalog_verification_state`
+- `is_stream`
+- `reasoning_effort`
+- `thinking_requested`
+- `thinking_applied`
+- `reasoning_output_visibility`
+- `response_format`
+- `tool_count`
 - `temperature`
 - `usage`
-- `latency`
-- `finish reason`
-- `error code`
-- `error stage`
-- `retry count`
+- `latency_ms`
+- `finish_reason`
+- `error_code`
+- `error_stage`
+- `retry_count`
 
 ## Helpful Provider Extras
 

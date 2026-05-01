@@ -6,9 +6,12 @@ Use these normalized fields across all `skill-llm-xxxx` integrations.
 
 | Field | Meaning |
 | --- | --- |
-| `provider` | provider identifier such as `aliyun-bailian` |
+| `provider` | provider identifier such as `aliyun-bailian-cn` or `aliyun-bailian-intl` |
 | `connection_profile_key` | selected connection profile key such as `build` or `plan` |
 | `endpoint_kind` | endpoint kind such as `official`, `gateway`, or `custom` |
+| `api_surface` | provider API surface such as `responses`, `chat-completions`, `generate-content`, or `dashscope-native-sync` |
+| `base_url` | resolved non-secret base URL |
+| `request_url` | resolved non-secret request URL with secret query values redacted |
 | `request_kind` | `chat`, `vision`, `imaging`, or `music` |
 | `model` | exact provider model |
 | `is_stream` | whether stream transport was used |
@@ -34,9 +37,15 @@ Use these normalized fields across all `skill-llm-xxxx` integrations.
 - `job_id`
 - `raw_request_snapshot`
 - `raw_response_snapshot`
+- `catalog_verification_state`
+- `reasoning_summary_requested`
+- `image_size`
+- `reference_image_count`
 - `result_count`
 - `warnings`
 
 ## Rule
 
 Log normalized fields first so dashboards and troubleshooting stay provider-agnostic.
+
+Do not log API keys, signed query strings, bearer tokens, or raw presigned media URLs.

@@ -7,6 +7,7 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 | Control | Show When |
 | --- | --- |
 | connection profile selector | more than one active profile exists for the provider |
+| provider selector | more than one active provider exists for the same vendor family, such as Aliyun Bailian China Mainland and International |
 | model dropdown | always |
 | stream toggle | capability matrix verifies stream |
 | thinking toggle | `Thinking Mode = mixed` and the provider uses a boolean thinking control |
@@ -32,12 +33,14 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 - Bind model dropdown value to `API Model`.
 - Bind connection profile text to `Display Name`.
 - Bind connection profile value to `Profile Key`.
+- Bind provider selection to the exact provider identifier, not only to a vendor display name.
 - Bind progress UI to the shared progress contract, not raw provider payloads.
 - Bind error banners, toasts, or dialogs to the shared error contract.
 - In production UI, hide unsupported controls instead of rendering dead controls.
 - In debug, admin, or integration-test UI, prefer disabled controls with a reason so the user can see which capability blocked the option.
 - If capability state is `unknown`, either hide the control or block with an explicit explanation. Do not guess.
 - If the selected connection profile restricts request kind, model, surface, or feature, hide or disable the blocked control with the profile reason.
+- If the request URL row is `unknown` or missing for the selected provider/profile/surface, block the request before showing a test-connection success state.
 - If `Reasoning Effort Field = verified`, prefer the reasoning effort selector over a boolean thinking toggle.
 - If `Thinking Default = on` and `Json Object Mode = non-thinking-only`, do not silently flip thinking off when the user picks strict JSON. Block and explain that JSON requires explicitly disabling thinking.
 - If `Temperature Mode`, `Json Object Mode`, `Json Schema Mode`, or `Tool Calling Mode` depends on the effective thinking state, bind the control to that state instead of treating it as a static yes-or-no field.

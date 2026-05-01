@@ -1,7 +1,0 @@
-interface:
-  display_name: "Aliyun Bailian Direct Models"
-  short_description: "Wire Aliyun Bailian chat, vision, image, and music model flows."
-  default_prompt: "Use $skill-llm-aliyun to wire an Aliyun Bailian direct-model integration with the right catalog, transport, progress, and error contracts."
-
-policy:
-  allow_implicit_invocation: true

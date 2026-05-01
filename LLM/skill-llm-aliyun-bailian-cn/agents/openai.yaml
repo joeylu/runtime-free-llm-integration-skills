@@ -1,0 +1,7 @@
+interface:
+  display_name: "Aliyun Bailian China Mainland Direct Models"
+  short_description: "Wire Aliyun Bailian China Mainland chat, vision, image, and music model flows."
+  default_prompt: "Use $skill-llm-aliyun-bailian-cn to wire an Aliyun Bailian China Mainland direct-model integration with the right catalog, request URLs, transport, progress, and error contracts."
+
+policy:
+  allow_implicit_invocation: true

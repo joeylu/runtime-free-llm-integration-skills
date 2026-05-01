@@ -8,6 +8,7 @@ Build the shared request envelope with:
 
 - `RequestKind = vision`
 - optional `ConnectionProfileKey`
+- `ApiSurface = chat-completions`
 - `Model = <API Model>`
 - `Inputs.Messages = [...]`
 - `Inputs.Images = [...]`
@@ -25,6 +26,8 @@ One vision request can include a user text message plus one or more image items.
 Use `non-stream` as the default safe path only when `Supports Non-Stream` is `verified` or `inherited`.
 
 Use `stream` only when `Supports Stream = verified` and the capability matrix explicitly verifies that model-kind combination.
+
+Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
 
 ## Image Rule
 

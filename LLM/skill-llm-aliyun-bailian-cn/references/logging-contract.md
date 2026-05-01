@@ -1,4 +1,4 @@
-# DeepSeek Logging Contract
+# Aliyun Bailian China Mainland Logging Contract
 
 Use this file when the caller wants request logging, troubleshooting, or trace retention.
 
@@ -8,14 +8,14 @@ Read `../../_shared/logging-fields.md` first.
 
 Log normalized fields first.
 
-Add DeepSeek-specific raw payload snapshots only when debugging value outweighs storage cost or privacy risk.
+Add Aliyun-specific raw payload snapshots only when debugging value outweighs storage cost or privacy risk.
 
 ## Minimum Log Payload
 
 Store at least:
 
-- `provider = deepseek`
-- `connection_profile_key`
+- `provider = aliyun-bailian-cn`
+- `connection_profile_key` when the host uses profiles
 - `endpoint_kind`
 - `api_surface`
 - `base_url`
@@ -26,10 +26,7 @@ Store at least:
 - `is_stream`
 - `thinking_requested`
 - `thinking_applied`
-- `reasoning_effort`
 - `temperature`
-- `response_format`
-- `tool_count`
 - `usage`
 - `latency_ms`
 - `finish_reason`
@@ -42,12 +39,12 @@ Store at least:
 Store these when available:
 
 - official endpoint path
+- price region
 - provider request id
-- cache-hit input tokens
-- cache-miss input tokens
+- job id for imaging or music
 - raw finish reason
 - raw provider status
 
 ## Fail-Fast Rule
 
-If the user asks for detailed traces that include raw prompts, raw outputs, raw reasoning, or tool arguments, confirm that this is intended before implementation.
+If the user asks for detailed traces that include raw prompts, raw outputs, or binary references, confirm that this is intended before implementation.

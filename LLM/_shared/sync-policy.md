@@ -35,11 +35,12 @@ When syncing:
 2. convert the confirmed boundary into one absolute cutoff date
 3. update the provider skill's model catalog
 4. update the provider skill's pricing matrix with region, currency, unit, metered side, context band, and unit price rows
-5. update the provider skill's capability matrix
-6. collect context window, max input token, and max output token values when official docs clearly expose them
-7. keep removed rows visible as `deprecated` or `removed`
-8. stamp exact dates, cutoff dates, and source URLs
-9. use the same cutoff date to re-review existing catalog rows
+5. update the provider skill's request URL matrix when endpoint paths, base URLs, or API surfaces change
+6. update the provider skill's capability matrix
+7. collect context window, max input token, and max output token values when official docs clearly expose them
+8. keep removed rows visible as `deprecated` or `removed`
+9. stamp exact dates, cutoff dates, and source URLs
+10. use the same cutoff date to re-review existing catalog rows
 
 ## Fail-Fast Rule
 
