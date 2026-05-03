@@ -32,6 +32,8 @@ audit this repo for stale provider references
 - Aliyun Bailian / DashScope International / Singapore
 - DeepSeek API
 - Gemini Developer API
+- MiniMax China Mainland API
+- MiniMax International API
 
 ## 3. Keep The Structure
 
@@ -44,6 +46,8 @@ LLM/skill-llm-aliyun-bailian-cn/
 LLM/skill-llm-aliyun-bailian-intl/
 LLM/skill-llm-deepseek/
 LLM/skill-llm-gemini/
+LLM/skill-llm-minimax-cn/
+LLM/skill-llm-minimax-intl/
 ```
 
 Do not copy only one provider `SKILL.md`; provider skills depend on shared contracts in `LLM/_shared`.
@@ -63,6 +67,15 @@ For Aliyun Bailian, choose the regional provider first:
 ```text
 Use Aliyun Bailian China Mainland and Aliyun Bailian International as separate providers.
 Do not switch between their base URLs or request URLs automatically.
+```
+
+For MiniMax, choose the regional provider first:
+
+```text
+Use MiniMax China Mainland and MiniMax International as separate providers.
+Do not switch between minimaxi.com and minimax.io base URLs automatically.
+Use MiniMax plan profile for chat only.
+Use MiniMax build profile for chat, image generation, and music generation; video links are reference-only until shared contracts add RequestKind=video.
 ```
 
 ## 5. Core Rules

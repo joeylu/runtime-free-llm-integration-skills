@@ -1,6 +1,6 @@
 # runtime-free-llm-integration-skills
 
-Runtime-free skills for coding agents to build fail-fast LLM provider integration, starting with OpenAI, Aliyun Bailian / DashScope China Mainland, Aliyun Bailian / DashScope International, DeepSeek, and Gemini.
+Runtime-free skills for coding agents to build fail-fast LLM provider integration, starting with OpenAI, Aliyun Bailian / DashScope China Mainland, Aliyun Bailian / DashScope International, DeepSeek, Gemini, MiniMax China Mainland, and MiniMax International.
 
 ## What problem does this solve?
 
@@ -43,6 +43,10 @@ The current version includes these concrete provider skills:
 - Aliyun Bailian / DashScope International / Singapore
 - DeepSeek API
 - Gemini Developer API
+- MiniMax China Mainland API
+- MiniMax International API
+
+MiniMax provider skills separate `build` and `plan` profiles: `plan` is chat-only, while `build` includes verified HTTP chat, image generation, and music generation rows. MiniMax HTTP video links are documented as reference-only until the shared contracts add a video request kind.
 
 The shared structure is designed so more LLM providers can be added later.
 
@@ -64,6 +68,8 @@ The shared structure is designed so more LLM providers can be added later.
 - Aliyun Bailian / DashScope International provider skill
 - DeepSeek API provider skill
 - Gemini Developer API provider skill
+- MiniMax China Mainland provider skill
+- MiniMax International provider skill
 
 ## Who is this for?
 
@@ -101,4 +107,6 @@ LLM/skill-llm-aliyun-bailian-cn/
 LLM/skill-llm-aliyun-bailian-intl/
 LLM/skill-llm-deepseek/
 LLM/skill-llm-gemini/
+LLM/skill-llm-minimax-cn/
+LLM/skill-llm-minimax-intl/
 ```

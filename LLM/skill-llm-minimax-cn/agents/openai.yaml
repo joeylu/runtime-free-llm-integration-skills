@@ -1,0 +1,7 @@
+interface:
+  display_name: "MiniMax China Mainland Direct Models"
+  short_description: "Wire MiniMax China Mainland chat plus build-only image and music flows."
+  default_prompt: "Use $skill-llm-minimax-cn to wire MiniMax China Mainland chat or build-profile image/music integration with the right profiles, catalog, request URLs, transport, progress, and error contracts. Keep plan profile chat-only and treat video as reference-only until shared contracts add RequestKind=video."
+
+policy:
+  allow_implicit_invocation: true
