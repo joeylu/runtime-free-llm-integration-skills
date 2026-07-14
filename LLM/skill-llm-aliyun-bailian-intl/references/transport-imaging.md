@@ -4,9 +4,9 @@ Use this file for image generation or image edit requests.
 
 ## Current State
 
-This International skill does not bundle selected imaging rows yet. Keep imaging blocked until `model-catalog.md`, `request-urls.md`, and `capability-matrix.md` all verify the exact International path.
+This International skill does not bundle documented imaging rows yet. Keep imaging blocked until `model-catalog.md`, `request-urls.md`, and `capability-matrix.md` all verify the exact International path.
 
-A catalog row only proves that the model is a local selectable model. It does not prove support for edit/reference images, seed, size, count, prompt rewriting, or streaming.
+A catalog row identifies the model; optional imaging fields still require capability verification. It does not prove support for edit/reference images, seed, size, count, prompt rewriting, or streaming.
 
 Do not invent imaging model names or unsupported parameters.
 
@@ -14,10 +14,10 @@ Do not invent imaging model names or unsupported parameters.
 
 Build the shared request envelope with:
 
-- `RequestKind = image-generation`
+- `RequestKind = imaging`
 - optional `ConnectionProfileKey`
 - `ApiSurface = dashscope-native-sync` for synchronous image generation/edit paths
-- `ApiSurface = dashscope-native-async` only when `request-urls.md` verifies an asynchronous job path for the selected model
+- `ApiSurface = dashscope-native-async` only when `request-urls.md` verifies an asynchronous job path for the documented model
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`
 - optional `Inputs.ReferenceImages = [...]`

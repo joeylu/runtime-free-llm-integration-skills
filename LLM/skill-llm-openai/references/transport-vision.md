@@ -1,6 +1,6 @@
 # OpenAI Vision Transport
 
-Use this file for text-plus-image understanding with the selected GPT-5.6 models.
+Use this file for text-plus-image understanding with the documented GPT-5.6 models.
 
 ## Surface Choice
 
@@ -8,14 +8,14 @@ Prefer Responses. Chat Completions is available only as the compatibility surfac
 
 ## Shared Input
 
-- `RequestKind = multimodal-chat`
+- `RequestKind = vision`
 - `ConnectionProfileKey`
 - `Model`
 - `ApiSurface`
 - `Inputs.Messages`
 - one or more `Inputs.Images`
 
-Do not route image-bearing input through `RequestKind = text-chat`.
+Do not route image-bearing input through `RequestKind = chat`.
 
 ## Responses Image Mapping
 
@@ -42,7 +42,7 @@ Use the documented image content form in `messages`. Preserve the same detail se
 
 ## Unsupported Modalities
 
-The selected GPT-5.6 rows support text and image input and text output. Audio and video input are not supported by these model rows. Do not reinterpret them as image attachments.
+The documented GPT-5.6 rows support text and image input and text output. Audio and video input are not supported by these model rows. Do not reinterpret them as image attachments.
 
 ## Reasoning, State, Cache, Structured Output, and Tools
 
@@ -52,4 +52,4 @@ Apply `transport-chat.md` after the image blocks are mapped. Never drop images t
 
 Use `ResultKind = vision` and normalize text, structured content, caller tools, hosted tools, reasoning summaries/items, annotations, continuation state, and usage exactly as in `transport-chat.md`.
 
-Source: `https://developers.openai.com/api/docs/guides/images-vision`, `https://developers.openai.com/api/reference/resources/responses/methods/create`, `https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create`, and the three selected model pages.
+Source: `https://developers.openai.com/api/docs/guides/images-vision`, `https://developers.openai.com/api/reference/resources/responses/methods/create`, `https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create`, and the three documented model pages.

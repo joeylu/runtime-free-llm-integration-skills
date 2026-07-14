@@ -1,11 +1,11 @@
 # Gemini Chat Transport
 
-Use this for `RequestKind = text-chat` after profile, model, surface, URL, and capability resolution.
+Use this for `RequestKind = chat` after profile, model, surface, URL, and capability resolution.
 
-## Surface Selection
+## Surface Resolution
 
 - New integration: use `interactions`.
-- Existing compatibility integration: keep `generate-content` or `stream-generate-content` only when explicitly selected.
+- Existing compatibility integration: keep `generate-content` or `stream-generate-content` only when explicitly requested.
 - Never retry a failed request on a different surface automatically.
 
 ## Interactions Request Mapping
@@ -22,7 +22,7 @@ Map normalized fields as follows:
 | `StoreResponse` | `store` | default is true; false prevents later ID continuation |
 | `ReasoningEffort` | `generation_config.thinking_level` | only allowed values from the exact capability row |
 | `ReasoningSummary` | `generation_config.thinking_summaries` | map `true` to `"auto"`; omit when false or unspecified |
-| `MaxOutputTokens` | `generation_config.max_output_tokens` | validate against the selected model maximum |
+| `MaxOutputTokens` | `generation_config.max_output_tokens` | validate against the documented model maximum |
 | `Tools` | `tools` entries of type `function` | caller executes these functions |
 | `HostedTools` | provider tool declarations | validate through `hosted-tools.md` |
 | `ToolChoice` | `generation_config.tool_choice` | allow only `auto`, `any`, `none`, or explicit Preview `validated`; do not invent OpenAI-style values |
@@ -55,7 +55,7 @@ GenerateContent has no server-side `ContinuationId` in this contract. Multi-turn
 - `minimal` can still reason.
 - Reject `ThinkingBudget` and legacy `thinking_budget`.
 - Reject caller-supplied `Temperature`, `top_p`, and `top_k`; the official migration guidance recommends the provider defaults.
-- Do not set `candidate_count` for selected Gemini 3.x rows.
+- Do not set `candidate_count` for documented Gemini 3.x rows.
 
 ## Caller-Defined Function Loop
 

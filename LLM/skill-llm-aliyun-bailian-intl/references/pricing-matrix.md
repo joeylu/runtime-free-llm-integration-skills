@@ -1,21 +1,10 @@
-# Aliyun Bailian International / Singapore Pricing Matrix
+# Aliyun Bailian International Pricing Matrix
 
-- `SchemaVersion: 2`
-- `StructuralSnapshotDate: 2026-07-14`
-- Prices are never read from model-catalog compatibility summaries.
+Use this file as the structured billing source for documented Aliyun Bailian International rows.
 
-Read `../../_shared/pricing-matrix-schema.md` first. A row is usable only when its complete billing/deployment/serving scope matches the resolved profile and `Pricing Status = current`.
+Do not reconstruct pricing from `model-catalog.md` notes.
 
-## Current Matrix
-
-| Request Kind | API Model | API Surface | API Version | Billing Region | Deployment Scope | Serving Region | Service Tier | Price Currency | Price Unit | Metered Side | Metered Item | Price Condition | Unit Price | Effective At | Expires At | Pricing Status | Last Verified At | Evidence Refs | Notes |
+| Model Type | API Model | Price Region | Price Currency | Price Unit | Metered Side | Metered Item | Context Band | Billing Plan | Service Tier | List Unit Price | Effective Unit Price | Discount Kind | Valid From | Valid Until | Cache Class | Multiplier | Price Condition | Last Verified At | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `text-chat` | `qwen3.7-max` | `all-documented-surfaces` | `all-documented-versions` | `singapore` | `international` | `singapore` | `standard` | `USD` | `per-million-tokens` | `input` | `text tokens` | `0 < tokens <= 1M; Singapore list price` | `2.5` | `unknown` | `none` | `current` | `2026-07-14` | `evset-aliyun-bailian-intl-pricing-matrix-text-chat-qwen3-7-max-all-documented-surfaces-all-documented-versions-ac7578d70f` | `Any separately advertised limited-time discount is excluded unless it has its own dated row.` |
-| `text-chat` | `qwen3.7-max` | `all-documented-surfaces` | `all-documented-versions` | `singapore` | `international` | `singapore` | `standard` | `USD` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 1M; Singapore list price` | `7.5` | `unknown` | `none` | `current` | `2026-07-14` | `evset-aliyun-bailian-intl-pricing-matrix-text-chat-qwen3-7-max-all-documented-surfaces-all-documented-versions-394ac03737` | `Any separately advertised limited-time discount is excluded unless it has its own dated row.` |
-
-## Rules
-
-- Do not apply a price across regions, deployment scopes, service tiers, or conditions.
-- Promotions require their own effective and expiry window; missing or expired promotions are not estimated.
-- `unknown` rows are informative hard stops, not zero cost.
-- Claim details and official locators live in `../../_evidence/evidence.json`.
+| `chat` | `qwen3.7-max` | `international` | `USD` | `per-million-tokens` | `input` | `text tokens` | `0 < tokens <= 1M` | `real-time` | `standard` | `2.5` | `1.25` | `limited-time-50-percent` | `2026-07-13` | `unknown` | `none` | `0.5` | `Singapore list price; limited-time 50% discount advertised separately` | `2026-07-13` | `https://www.alibabacloud.com/help/en/model-studio/model-pricing` |
+| `chat` | `qwen3.7-max` | `international` | `USD` | `per-million-tokens` | `output` | `text tokens` | `0 < tokens <= 1M` | `real-time` | `standard` | `7.5` | `3.75` | `limited-time-50-percent` | `2026-07-13` | `unknown` | `none` | `0.5` | `Singapore list price; chain of thought plus answer; limited-time 50% discount advertised separately` | `2026-07-13` | `https://www.alibabacloud.com/help/en/model-studio/model-pricing` |

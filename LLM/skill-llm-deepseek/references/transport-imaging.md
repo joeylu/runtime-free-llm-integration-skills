@@ -4,7 +4,7 @@ Use this file for image generation or image edit requests.
 
 ## Current State
 
-This skill does not bundle selected DeepSeek imaging rows yet.
+This skill does not bundle documented DeepSeek imaging rows yet.
 
 Do not invent imaging model names or route chat rows into image generation.
 
@@ -12,7 +12,7 @@ Do not invent imaging model names or route chat rows into image generation.
 
 Build the shared request envelope with:
 
-- `RequestKind = image-generation`
+- `RequestKind = imaging`
 - `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`

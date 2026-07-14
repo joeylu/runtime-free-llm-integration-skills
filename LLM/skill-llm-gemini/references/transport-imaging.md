@@ -13,7 +13,7 @@ Use this for image generation or editing after choosing `gemini-3.1-flash-image`
 
 | Shared Field | Interactions Field | Rule |
 | --- | --- | --- |
-| `Model` | `model` | stable selected image model |
+| `Model` | `model` | stable documented image model |
 | `Inputs.Prompt` | text `input` item | required |
 | `Inputs.ReferenceImages` | typed image input items | only within model-specific reference limits |
 | `Inputs.ImageSize` | `response_format.image_size` | exact uppercase values such as `1K`, `2K`, `4K`; Flash also supports `0.5K` |
@@ -30,7 +30,7 @@ For `gemini-3.1-flash-image`, `IsStream = true` maps to body `stream: true` on t
 
 ## GenerateContent Compatibility
 
-GenerateContent remains supported, but its image configuration and response parts differ from Interactions. Keep a dedicated adapter and contract test for the current official GenerateContent image payload. Never copy Interactions snake_case `response_format` fields directly into GenerateContent.
+GenerateContent remains supported, but its image configuration and response parts differ from Interactions. Keep a dedicated adapter and an explicit mapping for the current official GenerateContent image payload. Never copy Interactions snake_case `response_format` fields directly into GenerateContent.
 
 Map returned image parts from the provider response into `ImageOutputs`; preserve any accompanying text separately.
 
@@ -45,7 +45,7 @@ Validate category-specific limits; do not check only the total.
 
 - Flash sizes: `0.5K`, `1K`, `2K`, `4K`.
 - Pro sizes: `1K`, `2K`, `4K`.
-- Use only official aspect ratios for the selected model.
+- Use only official aspect ratios for the documented model.
 - Reject lowercase size forms such as `1k`.
 - `Inputs.ImageCount` is unsupported. Do not promise an exact number of generated images.
 - `Inputs.Seed` is unsupported in this local contract.

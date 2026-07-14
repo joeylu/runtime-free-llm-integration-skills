@@ -1,29 +1,34 @@
 # MiniMax International Connection Profiles
 
-- `SchemaVersion: 2`
-- `StructuralSnapshotDate: 2026-07-14`
-
-Read `../../_shared/connection-profile-schema.md` first. The Canonical Profiles table is authoritative.
-
-## Canonical Profiles
-
-| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Text Model | Default Multimodal Model | Default Image Model | Default Music Model | Allowed Request Kinds | Default Route Map | Allowed Surface Versions | Model Allowlist | Capability Restrictions | Billing Region | Deployment Scope | Serving Region | Last Verified At | Evidence Refs | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `build` | `MiniMax International Build` | `minimax-intl` | `build` | `template` | `official` | `https://api.minimax.io/v1` | `MINIMAX_INTL_BUILD_API_KEY` | `env` | `MiniMax-M2.7` | `none` | `image-01` | `music-2.6` | `text-chat,image-generation,music-generation` | `text-chat=chat-completions@v1;image-generation=image-generation@v1;music-generation=music-generation@v1` | `chat-completions@v1,image-generation@v1,music-generation@v1` | `catalog-selected` | `selected chat, imaging, and music rows only; video HTTP endpoint remains reference-only until a complete selected catalog/profile/URL/capability/pricing/transport contract is added` | `global` | `international` | `global` | `2026-07-14` | `evset-minimax-intl-connection-profiles-build-44575cf5b2` | `intended for implementation or production-like execution flows` |
-| `plan` | `MiniMax International Plan` | `minimax-intl` | `plan` | `template` | `official` | `https://api.minimax.io/v1` | `MINIMAX_INTL_PLAN_API_KEY` | `env` | `MiniMax-M2.7` | `none` | `none` | `none` | `text-chat` | `text-chat=chat-completions@v1` | `chat-completions@v1` | `catalog-selected` | `chat-only; block imaging, music, video, CLI, and MCP multimodal flows in this skill` | `global` | `international` | `global` | `2026-07-14` | `evset-minimax-intl-connection-profiles-plan-64879f7d6b` | `intended for planning, review, and analysis flows` |
-
-## Legacy Compatibility View
-
-This derived table keeps the original 19-column contract. Legacy request-kind names are normalized once at the request boundary; they do not change the canonical route map.
-
-| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Chat Model | Default Vision Model | Default Imaging Model | Default Music Model | Allowed Request Kinds | Allowed API Surfaces | Model Allowlist | Capability Restrictions | Last Verified At | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `build` | `MiniMax International Build` | `minimax-intl` | `build` | `template` | `official` | `https://api.minimax.io/v1` | `MINIMAX_INTL_BUILD_API_KEY` | `env` | `MiniMax-M2.7` | `none` | `image-01` | `music-2.6` | `chat,imaging,music` | `chat-completions,image-generation,music-generation` | `catalog-selected` | `selected chat, imaging, and music rows only; video HTTP endpoint remains reference-only until a complete selected catalog/profile/URL/capability/pricing/transport contract is added` | `2026-07-14` | `intended for implementation or production-like execution flows` |
-| `plan` | `MiniMax International Plan` | `minimax-intl` | `plan` | `template` | `official` | `https://api.minimax.io/v1` | `MINIMAX_INTL_PLAN_API_KEY` | `env` | `MiniMax-M2.7` | `none` | `none` | `none` | `chat` | `chat-completions` | `catalog-selected` | `chat-only; block imaging, music, video, CLI, and MCP multimodal flows in this skill` | `2026-07-14` | `intended for planning, review, and analysis flows` |
+Connection profiles supply base URLs and credential references. The request supplies the model, and `request-urls.md` supplies the final path.
 
 ## Rules
 
-- Resolve a profile before model, surface, version, capability, URL, or price selection.
-- Profile restrictions may narrow capabilities but never expand them.
-- Do not fall back to another profile, region, key, surface, or version.
-- Claim details are in `../../_evidence/evidence.json`.
+- Store secret references only.
+- Resolve the profile before the final request URL.
+- Match model capabilities through `model-catalog.md` and `capability-matrix.md`.
+- Never silently change profile, base URL, credential, region, API surface, or request path.
+- Re-verify advanced fields for gateways and custom endpoints.
+
+## Profiles
+
+| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Request Kinds | API Surfaces | Capability Restrictions | Last Verified At | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `build` | `MiniMax International Build` | `minimax-intl` | `build` | `template` | `official` | `https://api.minimax.io/v1` | `MINIMAX_INTL_BUILD_API_KEY` | `env` | `chat,vision,imaging,music` | `chat-completions,image-generation,music-generation` | `chat, vision, imaging, and music endpoints; video HTTP endpoint is reference-only until shared RequestKind adds video` | `2026-07-14` | `intended for implementation or production-like execution flows` |
+| `plan` | `MiniMax International Plan` | `minimax-intl` | `plan` | `template` | `official` | `https://api.minimax.io/v1` | `MINIMAX_INTL_PLAN_API_KEY` | `env` | `chat` | `chat-completions` | `chat only; image, music, and video access is not verified for this profile` | `2026-07-14` | `intended for planning, review, and analysis flows` |
+
+## Custom Base URL Rule
+
+If the owner changes one profile's `Base URL` to a gateway or proxy, also change that row's `Endpoint Kind`.
+
+For gateway or custom endpoints, verify support for:
+
+- MiniMax OpenAI-compatible Chat Completions
+- MiniMax official Image Generation
+- MiniMax official Music Generation
+- MiniMax official Video Generation links when used as reference-only documentation
+- streaming
+- thinking output shape
+- temperature
+
+If the endpoint does not clearly support one of those fields, block that option for the profile instead of assuming official MiniMax parity. Do not copy a gateway base URL from `build` to `plan`, or from `plan` to `build`, unless the owner explicitly configures both rows.

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Direct LLM Integration Router"
+  short_description: "Route exact provider, region, and maintained model requests to one direct-integration skill."
+  default_prompt: "Use $skill-llm-router to select exactly one provider-region skill from an explicitly named provider, region, or maintained model. Do not recommend or silently substitute models."
+
+policy:
+  allow_implicit_invocation: true

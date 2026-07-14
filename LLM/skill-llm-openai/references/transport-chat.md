@@ -1,18 +1,18 @@
 # OpenAI Chat Transport
 
-Use this file for text-first requests with the selected GPT-5.6 models.
+Use this file for text-first requests with the documented GPT-5.6 models.
 
 ## Surface Choice
 
 - Prefer `responses`.
 - Use `chat-completions` only for explicit compatibility requirements and only with fields verified on that exact row.
-- Do not move a request between surfaces after validation.
+- Do not move a request between surfaces after route resolution.
 
 ## Shared Input
 
 Required:
 
-- `RequestKind = text-chat`
+- `RequestKind = chat`
 - `ConnectionProfileKey`
 - `Model`
 - `ApiSurface`
@@ -40,7 +40,7 @@ Map:
 - provider option `TextVerbosity` -> `text.verbosity`, one of `low`, `medium`, `high`
 - `ResponseFormat` -> `text.format`
 - caller functions -> `tools` items of type `function`
-- hosted tools -> `tools` declarations validated through `hosted-tools.md`
+- hosted tools -> `tools` declarations gated through `hosted-tools.md`
 - `ToolChoice` -> the verified Responses `tool_choice` form
 
 ### Reasoning
@@ -49,7 +49,7 @@ Map:
 - Omitted effort defaults to `medium`. If `ThinkingRequested` and `ReasoningEffort` are both present, they must agree.
 - `none` means `ThinkingApplied = false`; every other allowed value means `ThinkingApplied = true`.
 - `ReasoningMode` accepts `standard` or `pro`; omission means `standard`. Mode and effort are independent.
-- Pro mode remains the same selected model ID. Do not switch to a separate Pro slug.
+- Pro mode remains the same documented model ID. Do not switch to a separate Pro slug.
 - `ReasoningContext` accepts `auto`, `current_turn`, or `all_turns`; omission is equivalent to `auto`.
 - Raw reasoning is not visible. `reasoning.summary = "auto"` may return a provider-visible summary; encrypted content is opaque state.
 - Reasoning tokens are billed as output tokens and count inside `max_output_tokens` together with visible output.
@@ -77,7 +77,7 @@ When `store = false` or the organization requires stateless handling:
 4. append new input and replay the complete required history;
 5. preserve function calls, function outputs, IDs, caller linkage, and reasoning items.
 
-Do not advertise a response ID as reusable when the selected storage policy does not support that continuation.
+Do not advertise a response ID as reusable when the resolved storage mode does not support that continuation.
 
 ### Structured Output
 
@@ -97,7 +97,7 @@ Do not advertise a response ID as reusable when the selected storage policy does
 
 ### Hosted Tools
 
-Validate every declaration through `hosted-tools.md`. Keep hosted executions separate from caller functions in both state and normalized output.
+Gate every declaration through `hosted-tools.md`. Keep hosted executions separate from caller functions in both state and normalized output.
 
 ## Chat Completions Mapping
 
@@ -118,7 +118,7 @@ Map only verified compatibility fields:
 
 Chat Completions reasoning rules:
 
-- Allowed `reasoning_effort` values for the selected GPT-5.6 models are `none`, `low`, `medium`, `high`, `xhigh`, and `max`; do not send the generic `minimal` enum value.
+- Allowed `reasoning_effort` values for the documented GPT-5.6 models are `none`, `low`, `medium`, `high`, `xhigh`, and `max`; do not send the generic `minimal` enum value.
 - Omitted effort defaults to `medium`. If `ThinkingRequested` and `ReasoningEffort` are both present, they must agree.
 - `none` means `ThinkingApplied = false`; every other allowed value means `ThinkingApplied = true`.
 - Reasoning tokens are included in completion-token accounting, but this surface does not return Responses reasoning summaries or reusable encrypted reasoning items.

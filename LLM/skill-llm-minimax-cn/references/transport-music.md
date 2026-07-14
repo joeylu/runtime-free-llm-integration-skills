@@ -1,9 +1,7 @@
 # MiniMax China Mainland Music Transport
 
-- `SchemaVersion: 2`
-- `LastReviewedAt: 2026-07-14`
 - Route: `music-generation@music-generation@v1`
-- Selected model: `music-2.6` on the `build` profile only.
+- Model: `music-2.6` on the `build` profile only.
 
 ## Required Base Input
 
@@ -40,12 +38,12 @@ Reject an empty prompt in instrumental mode. Also reject non-instrumental optimi
 | `ProviderOptions.lyrics_optimizer` | `lyrics_optimizer` |
 | `ProviderOptions.is_instrumental` | `is_instrumental` |
 
-When `IsStream = true`, `output_format` must be `hex`; reject `url`. Non-stream URL results expire after 24 hours. `Inputs.DurationSeconds` and `Inputs.Seed` remain blocked because the selected row does not verify them.
+When `IsStream = true`, `output_format` must be `hex`; reject `url`. Non-stream URL results expire after 24 hours. `Inputs.DurationSeconds` and `Inputs.Seed` remain blocked because the documented row does not verify them.
 
 ## Streaming and Response Mapping
 
 - For non-stream responses, map returned audio into `AudioOutputs` and duration/sample-rate/channel/bitrate/size into `ProviderMeta`.
 - For streaming, preserve provider chunk order and assemble hex audio without logging payload bytes.
-- Set `ResultKind = music-generation` and `Transport.IsStream` to the actual mode.
+- Set `ResultKind = music` and `Transport.IsStream` to the actual mode.
 
 Official reference: `https://platform.minimaxi.com/docs/api-reference/music-generation`.

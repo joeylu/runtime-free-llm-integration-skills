@@ -12,20 +12,20 @@ The `qwen3.7-max` alias currently resolves to the text-only `qwen3.7-max-2026-05
 
 Do not silently switch surfaces. Resolve the exact capability row by:
 
-`RequestKind = text-chat + Model + ApiSurface`
+`RequestKind = chat + Model + ApiSurface`
 
 ## Shared Input Shape
 
 Build the shared request envelope with:
 
-- `RequestKind = text-chat`
+- `RequestKind = chat`
 - optional `ConnectionProfileKey`
 - `ApiSurface = responses | chat-completions`
 - `Model = <API Model>`
 - `Inputs.Messages = [...]` or a direct text input only on `responses`
 - optional `Instructions`
 - optional `IsStream`
-- only the reasoning, tool, continuation, cache, temperature, and response-format fields verified for the selected surface
+- only the reasoning, tool, continuation, cache, temperature, and response-format fields verified for the resolved surface
 
 Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
 
@@ -171,13 +171,13 @@ For `qwen3.7-max`, `preserve_thinking = true` includes historical assistant `rea
 
 `ContinuationId`, `StoreResponse`, `HostedTools`, and `CacheMode = session` are not Chat Completions controls in this skill. Block them instead of translating them to another mechanism.
 
-Caller-defined function mode compatibility remains blocked while `Tool Calling Mode = unknown` for the selected Chat Completions row.
+Caller-defined functions are allowed when `Tool Calling Mode = all-modes`. In thinking mode, do not force a specific function through `tool_choice`; use automatic tool selection or disable thinking only when the exact model row permits it.
 
 ### Effective Thinking and Structured Output
 
 Resolve effective thinking from the explicit request and then the exact row default.
 
-For `qwen3.7-max`, both `json_object` and `json_schema` are blocked because structured output is explicitly unsupported on the selected Chat Completions row.
+For `qwen3.7-max`, both `json_object` and `json_schema` are blocked because structured output is explicitly unsupported on the resolved Chat Completions row.
 
 Never silently turn thinking off to satisfy a response-format request.
 

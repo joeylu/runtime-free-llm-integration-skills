@@ -19,7 +19,7 @@ Use this file only for normalized `HostedTools`. Caller-defined functions remain
 
 ## Combination Rules
 
-- Gemini 3.5 supports combining hosted tools and caller-defined functions, but every declaration must be validated against the selected surface.
+- Gemini 3.5 supports combining hosted tools and caller-defined functions, but every declaration must be validated against the resolved surface.
 - Normalize provider-executed records into `HostedToolCalls`; normalize caller-owned function requests into `ToolCalls`.
 - Never run a caller-defined function merely because its name resembles a hosted tool.
 - Do not silently turn on hosted tools for factual questions; the caller must request them.

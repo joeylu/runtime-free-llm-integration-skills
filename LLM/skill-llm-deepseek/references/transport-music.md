@@ -4,7 +4,7 @@ Use this file for music or audio generation requests.
 
 ## Current State
 
-This skill does not bundle selected DeepSeek music rows yet.
+This skill does not bundle documented DeepSeek music rows yet.
 
 Do not invent music model names.
 
@@ -12,7 +12,7 @@ Do not invent music model names.
 
 Build the shared request envelope with:
 
-- `RequestKind = music-generation`
+- `RequestKind = music`
 - `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`

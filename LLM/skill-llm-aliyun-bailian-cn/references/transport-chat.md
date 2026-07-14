@@ -10,20 +10,20 @@ Use `chat-completions` for compatibility flows that need manual message history,
 
 Do not silently switch surfaces. Resolve the exact capability row by:
 
-`RequestKind = text-chat + Model + ApiSurface`
+`RequestKind = chat + Model + ApiSurface`
 
 ## Shared Input Shape
 
 Build the shared request envelope with:
 
-- `RequestKind = text-chat`
+- `RequestKind = chat`
 - optional `ConnectionProfileKey`
 - `ApiSurface = responses | chat-completions`
 - `Model = <API Model>`
 - `Inputs.Messages = [...]` or a direct text input only on `responses`
 - optional `Instructions`
 - optional `IsStream`
-- only the reasoning, tool, continuation, cache, temperature, and response-format fields verified for the selected surface
+- only the reasoning, tool, continuation, cache, temperature, and response-format fields verified for the resolved surface
 
 Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
 
@@ -169,7 +169,7 @@ For `qwen3.7-plus`, `preserve_thinking = true` includes historical assistant `re
 
 `ContinuationId`, `StoreResponse`, `HostedTools`, and `CacheMode = session` are not Chat Completions controls in this skill. Block them instead of translating them to another mechanism.
 
-Caller-defined function mode compatibility remains blocked while `Tool Calling Mode = unknown` for the selected Chat Completions row.
+Caller-defined functions are allowed when `Tool Calling Mode = all-modes`. In thinking mode, do not force a specific function through `tool_choice`; use automatic tool selection or disable thinking only when the exact model row permits it.
 
 ### Effective Thinking and Structured Output
 
@@ -206,3 +206,17 @@ When both surfaces are allowed:
 - `https://help.aliyun.com/zh/model-studio/compatibility-with-openai-responses-api`
 - `https://help.aliyun.com/zh/model-studio/qwen-api-via-openai-chat-completions`
 - `https://help.aliyun.com/zh/model-studio/context-cache`
+
+## GLM 5.2 Rules
+
+- `glm-5.2` defaults to thinking on.
+- `reasoning_effort` accepts `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, and `max`.
+- Structured output is supported only when thinking is disabled.
+- Preserve provider `reasoning_content` in multi-turn history unless the request intentionally uses the documented clear-thinking control.
+
+## Kimi K2.7 Code Rules
+
+- `kimi-k2.7-code` is thinking-only; do not send `enable_thinking=false`.
+- Temperature default is `1.0`.
+- Function Calling is supported; structured output is not.
+- Preserve `reasoning_content` returned by the provider when continuing a tool-use conversation.

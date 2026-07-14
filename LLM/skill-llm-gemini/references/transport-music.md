@@ -1,8 +1,8 @@
 # Gemini Music Transport
 
-No local music model is selected in `model-catalog.md`, and no music capability row is bundled.
+No music model is documented in `model-catalog.md`, and no music capability row is bundled.
 
-If a caller requests `RequestKind = music-generation`, stop before implementation. An explicit sync must first add:
+If a caller requests `RequestKind = music`, stop before implementation. An explicit sync must first add:
 
 - exact model and lifecycle status
 - request URL and API surface

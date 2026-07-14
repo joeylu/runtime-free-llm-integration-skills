@@ -1,45 +1,16 @@
 # MiniMax China Mainland Model Catalog
 
-- `CoverageMode: curated-allowlist`
-- `SchemaVersion: 2`
-- `StructuralSnapshotDate: 2026-07-14`
-- Every factual row is valid only through its own `Last Verified At` and `Evidence Refs`.
-- New models are not made default automatically.
+Models with maintained runtime rules in this provider skill.
 
-Read `../../_shared/model-catalog-schema.md` before using this file.
+Region: China Mainland.
 
-## Selector Rule
+| Model Type | Operation | Input Modalities | Output Modalities | Flow Kind | API Model | Status | Identifier Kind | Resolves To | Effective From | Deprecates At | Retires At | Replacement Model | Region Scope | Context Window Tokens | Max Input Tokens | Max Output Tokens | Notes | Last Verified At | Source |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `chat` | `text-generation` | `text` | `text` | `chat` | `MiniMax-M3` | `active` | `opaque-provider-id` | `n/a` | `unknown` | `unknown` | `unknown` | `n/a` | `china-mainland` | `1000000` | `unknown` | `524288` | `1M M-series model with adaptive thinking, multimodal messages, and function tools` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` |
+| `vision` | `multimodal-understanding` | `text,image,video` | `text` | `vision` | `MiniMax-M3` | `active` | `opaque-provider-id` | `n/a` | `unknown` | `unknown` | `unknown` | `n/a` | `china-mainland` | `1000000` | `unknown` | `524288` | `supports image and video input; this skill maintains image-input rules` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` |
+| `imaging` | `image-generation` | `text` | `image` | `text-to-image` | `image-01` | `active` | `opaque-provider-id` | `n/a` | `unknown` | `unknown` | `unknown` | `n/a` | `china-mainland` | `n/a` | `n/a` | `n/a` | `text-to-image` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/image-generation-t2i` |
+| `music` | `music-generation` | `text` | `audio` | `text-to-music` | `music-2.6` | `active` | `opaque-provider-id` | `n/a` | `unknown` | `unknown` | `unknown` | `n/a` | `china-mainland` | `n/a` | `n/a` | `n/a` | `music generation; streaming requires hex output` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/music-generation` |
 
-Use only Canonical Registry rows where `Local Selection = selected`, `Provider Lifecycle` is callable, `Verification State = verified`, and `Review Freshness = current`. Then resolve the exact profile, URL, API version, capability row, and pricing scope.
+## Usage
 
-## Canonical Registry
-
-| Request Kind | API Model | Display Name | Primary API Surface | Provider Lifecycle | Provider Shutdown At | Provider Earliest Retirement At | Local Selection | Selection Reason | Is Default | Verification State | Review Freshness | Last Verified At | Official Context Display | Exact Context Tokens | Official Max Input Display | Exact Max Input Tokens | Official Max Output Display | Exact Max Output Tokens | Recommended Max Output Tokens | Limit Unit Convention | Is Moving Alias | Alias Target At Verification | Alias Mode | Alias Target Verified At | Replacement Model | Evidence Refs |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `text-chat` | `MiniMax-M2.7` | `MiniMax M2.7` | `chat-completions` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `204,800` | `204800` | `unknown` | `unknown` | `204,800` | `204800` | `65536` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-text-chat-minimax-m2-7-1c8f5d565f` |
-| `text-chat` | `MiniMax-M2.7-highspeed` | `MiniMax M2.7 Highspeed` | `chat-completions` | `stable` | `none` | `none` | `selected` | `selected latency-optimized alternative` | `no` | `verified` | `current` | `2026-07-14` | `204,800` | `204800` | `unknown` | `unknown` | `204,800` | `204800` | `65536` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-text-chat-minimax-m2-7-highspeed-e0ecde46f3` |
-| `text-chat` | `MiniMax-M3` | `MiniMax M3` | `chat-completions` | `stable` | `none` | `none` | `not-selected` | `current flagship candidate added without changing local default` | `no` | `verified` | `current` | `2026-07-14` | `1,000,000` | `1000000` | `unknown` | `unknown` | `524,288` | `524288` | `131072` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-text-chat-minimax-m3-c67b84097f` |
-| `multimodal-chat` | `MiniMax-M3` | `MiniMax M3` | `chat-completions` | `stable` | `none` | `none` | `not-selected` | `multimodal flagship candidate; no automatic exposure` | `no` | `verified` | `current` | `2026-07-14` | `1,000,000` | `1000000` | `unknown` | `unknown` | `524,288` | `524288` | `131072` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-multimodal-chat-minimax-m3-7c6b9ba899` |
-| `image-generation` | `image-01` | `image-01` | `image-generation` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-image-generation-image-01-d8c85c6ce7` |
-| `music-generation` | `music-2.6` | `Music 2.6` | `music-generation` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-music-generation-music-2-6-e499ca096d` |
-| `text-chat` | `MiniMax-M2.5` | `MiniMax M2.5` | `chat-completions` | `stable` | `none` | `none` | `not-selected` | `legacy candidate retained for compatibility history` | `no` | `verified` | `current` | `2026-07-14` | `204,800` | `204800` | `unknown` | `unknown` | `204,800` | `204800` | `65536` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-text-chat-minimax-m2-5-54c9462d7c` |
-| `image-generation` | `image-01-live` | `image-01-live` | `image-generation` | `stable` | `none` | `none` | `not-selected` | `candidate requires separate product and style-control decision` | `no` | `verified` | `current` | `2026-07-14` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-cn-model-catalog-image-generation-image-01-live-86f51910d5` |
-
-## Legacy Compatibility View
-
-This derived table preserves the original column contract during migration. It is not the source of truth for provider lifecycle or selection. New integrations must use the Canonical Registry above.
-
-| Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `MiniMax-M2.7` | `MiniMax M2.7` | `MiniMax-M2.7` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-03-18` | `2026-01-14` | `204800` | `unknown` | `204800` | `china-mainland` | `per-million-tokens` | `CNY 2.1` | `CNY 8.4` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` |
-| `chat` | `MiniMax-M2.7-highspeed` | `MiniMax M2.7 Highspeed` | `MiniMax-M2.7-highspeed` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-03-18` | `2026-01-14` | `204800` | `unknown` | `204800` | `china-mainland` | `per-million-tokens` | `CNY 4.2` | `CNY 16.8` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` |
-| `chat` | `MiniMax-M3` | `MiniMax M3` | `MiniMax-M3` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-06-01` | `2026-01-14` | `1000000` | `unknown` | `524288` | `china-mainland` | `per-million-tokens` | `CNY 2.10 <=512K` | `CNY 8.40 <=512K` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` |
-| `vision` | `MiniMax-M3` | `MiniMax M3` | `MiniMax-M3` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-06-01` | `2026-01-14` | `1000000` | `unknown` | `524288` | `china-mainland` | `per-million-tokens` | `CNY 2.10 <=512K` | `CNY 8.40 <=512K` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` |
-| `imaging` | `image-01` | `image-01` | `image-01` | `active` | `selected` | `yes` | `verified` | `candidate` | `2025-02-15` | `2026-01-14` | `n/a` | `n/a` | `n/a` | `china-mainland` | `per-image` | `n/a` | `CNY 0.025` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/image-generation-t2i` |
-| `music` | `music-2.6` | `Music 2.6` | `music-2.6` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-01` | `2026-01-14` | `n/a` | `n/a` | `n/a` | `china-mainland` | `per-song` | `n/a` | `CNY 1.0 per song/up-to-5-minutes` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/music-generation` |
-| `chat` | `MiniMax-M2.5` | `MiniMax M2.5` | `MiniMax-M2.5` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-02-01` | `2026-01-14` | `204800` | `unknown` | `204800` | `china-mainland` | `unknown` | `unknown` | `unknown` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` |
-| `imaging` | `image-01-live` | `image-01-live` | `image-01-live` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2025-02-15` | `2026-01-14` | `n/a` | `n/a` | `n/a` | `china-mainland` | `per-image` | `n/a` | `CNY 0.025` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/image-generation-t2i` |
-
-## Evidence
-
-Evidence sets and field-level claims live in `../../_evidence/evidence.json`. Pricing details live in `pricing-matrix.md`; capability and endpoint details live in their exact surface/version matrices.
+Match the exact `API Model`, then read `capability-matrix.md` and the corresponding transport. Model maintenance follows `../../_shared/sync-policy.md`.

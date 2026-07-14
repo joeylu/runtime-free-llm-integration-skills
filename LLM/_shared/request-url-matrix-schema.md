@@ -1,35 +1,33 @@
-# Shared Request URL Matrix Schema v2
+# Shared Request URL Matrix Schema
 
-Resolve the exact request URL before capability lookup and before sending.
+`connection-profiles.md` resolves the base URL and credential reference. `request-urls.md` resolves the HTTP method and full URL template for one request kind, model scope, API surface, and API version.
 
-## Required Key
-
-`Request Kind + Model Scope + API Surface + API Version + Endpoint Kind`
+Read `route-key-schema.md` first.
 
 ## Required Columns
 
 | Column | Meaning |
 | --- | --- |
-| `Request Kind` | Canonical request kind |
-| `Model Scope` | Exact model ID, comma-separated IDs sharing the same endpoint, or `catalog-selected` |
-| `API Surface` | One exact surface |
-| `API Version` | Exact API version encoded by path/header/query, or `none` / `provider-default` |
+| `Request Kind` | provider skill request kind |
+| `Model Scope` | exact model IDs, model-family pattern, `documented-models`, or `all` |
+| `API Surface` | exact provider API surface |
+| `API Version` | exact version in the path or protocol, or `n/a` |
 | `Endpoint Kind` | `official`, `openai-compatible`, `provider-compatible`, `gateway`, or `custom` |
-| `HTTP Method` | Exact method |
-| `Base URL` | Exact base URL or `{Profile.Base URL}` |
-| `Request Path Template` | Exact path without secret data |
-| `Request URL Template` | Base plus path |
-| `Stream Variant` | `same-url`, `body-param`, `query-param`, `same-url-sse`, `separate-url`, `n/a`, or `unknown` |
-| `Request URL Status` | `verified`, `inherited`, `unknown`, or `removed` |
-| `Last Verified At` | Exact review date or `unverified` |
-| `Evidence Refs` | Endpoint evidence-set IDs |
-| `Notes` | Surface-specific constraints |
+| `HTTP Method` | request method such as `POST` |
+| `Base URL` | exact base URL or `{Profile.Base URL}` |
+| `Request Path Template` | path and query template relative to `Base URL`, or `n/a` |
+| `Request URL Template` | full URL template |
+| `Stream Variant` | `same-url`, `query-param`, `body-param`, `separate-url`, or `n/a` |
+| `Request URL Status` | `verified`, `inherited`, `unknown`, or `project-owned` |
+| `Last Verified At` | absolute verification date or `unverified` |
+| `Source` | exact official URL or explicit project-owned note |
+| `Notes` | short routing constraint |
 
 ## Rules
 
-- Surface names do not imply versions. Store the version explicitly.
-- Stable versions are preferred for new integrations when feature parity is verified.
-- Beta versions remain explicit compatibility rows; do not silently rewrite stable to beta or beta to stable.
-- `Base URL` alone never identifies a complete request.
-- API keys, signed URLs, and user secrets must not appear in URL templates.
-- If the final URL or required version is unknown, stop.
+- Match request kind, model scope, API surface, API version, and endpoint kind exactly.
+- Store URL templates, never secrets or signed user URLs.
+- Keep regional domains explicit.
+- Stop when the matching row is missing, `unknown`, or incompatible with the resolved profile.
+- Never silently fall back to another URL, surface, version, or region.
+- Redact secret query parameters before logging resolved URLs.

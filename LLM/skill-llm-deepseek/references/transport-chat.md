@@ -1,9 +1,7 @@
 # DeepSeek Chat Transport
 
-- `SchemaVersion: 2`
-- `LastReviewedAt: 2026-07-14`
-- Canonical route: `text-chat@chat-completions@provider-default`
-- Strict-tool route: `text-chat@beta@beta`
+- Canonical route family: `chat::{model}::chat-completions::v1::openai-compatible`
+- Strict-tool route family: `chat::{model}::beta::v1::openai-compatible`
 
 Resolve the profile, exact surface, API version, URL, model, and capability row before mapping any field.
 
@@ -34,13 +32,20 @@ The beta route is explicit. Do not retry ordinary requests on beta, retry beta r
 
 - `ThinkingRequested = true` -> `thinking.type = enabled`.
 - `ThinkingRequested = false` -> `thinking.type = disabled`.
-- `ReasoningEffort = none` -> thinking disabled.
-- `low` or `medium` -> thinking enabled with provider value `high`.
-- `high` -> provider value `high`.
-- `xhigh` -> provider value `max`.
-- `max` -> provider value `max`.
+Use this exact normalized-to-wire table:
 
-If `ThinkingRequested` and `ReasoningEffort` disagree, stop. Do not send `ThinkingBudget`; selected V4 rows mark it unsupported.
+| Normalized value | `thinking.type` | `reasoning_effort` wire field |
+| --- | --- | --- |
+| `none` | `disabled` | **omit the field** |
+| `low` | `enabled` | `high` |
+| `medium` | `enabled` | `high` |
+| `high` | `enabled` | `high` |
+| `xhigh` | `enabled` | `max` |
+| `max` | `enabled` | `max` |
+
+Never serialize `reasoning_effort = "none"`; the official wire enum is only `high` or `max`.
+
+If `ThinkingRequested` and `ReasoningEffort` disagree, stop. Do not send `ThinkingBudget`; documented V4 rows mark it unsupported.
 
 ## Thinking-Mode Request Guards
 
@@ -54,10 +59,6 @@ After resolving effective thinking, enforce all of these before sending:
 
 Missing or altered required history is a pre-send `invalid_continuation`/capability error, not a provider retry opportunity.
 
-## Role Boundary
-
-The official agent-integration compatibility notes mark the `developer` role unsupported. Normalize repository-level developer instructions into the verified provider instruction strategy before message construction; never send a `developer` message directly. Read `role-support-matrix.md` for the exact route.
-
 ## Structured Output and Tools
 
 - `json_object` is allowed where the exact capability row permits it.
@@ -68,21 +69,10 @@ The official agent-integration compatibility notes mark the `developer` role uns
 
 ## Response Mapping
 
-- `ResultKind = text-chat`
+- `ResultKind = chat`
 - final assistant text -> `TextContent`
 - `reasoning_content` -> `ThinkingContent`
 - function calls -> `ToolCalls`
 - cache-hit/cache-miss and other token details -> `Usage`
 - provider finish reason -> `FinishReason`
 - actual route -> `Transport`
-
-## No Alias Guessing
-
-`deepseek-chat` and `deepseek-reasoner` are lifecycle-bound aliases recorded in `model-catalog.md`. Do not infer their target or mode from the alias name, and do not select them after their recorded provider shutdown time.
-
-Official references:
-
-- `https://api-docs.deepseek.com/guides/thinking_mode`
-- `https://api-docs.deepseek.com/guides/tool_calls`
-- `https://api-docs.deepseek.com/quick_start/agent_integrations/oh_my_pi/`
-- `https://api-docs.deepseek.com/updates/`

@@ -1,62 +1,44 @@
 # MiniMax China Mainland Chat Transport
 
-- `SchemaVersion: 2`
-- `LastReviewedAt: 2026-07-14`
-- Route: `text-chat@chat-completions@v1`
-- Reviewed candidate route: `multimodal-chat@chat-completions@v1` for `MiniMax-M3`; candidate status does not make it selectable.
-
-Resolve `ConnectionProfileKey`, `ApiSurface`, `ApiVersion`, `ResolvedRequestUrl`, and the exact capability row before mapping fields.
+Use `MiniMax-M3` through the OpenAI-compatible Chat Completions surface documented in `request-urls.md`.
 
 ## Request Mapping
 
-| Shared Field | MiniMax Field | Gate |
+| Shared Field | MiniMax Field | Rule |
 | --- | --- | --- |
-| `Model` | `model` | selected catalog row |
-| `Inputs.Messages` | `messages` | required |
-| `IsStream` | `stream` | verified |
-| `MaxOutputTokens` | `max_completion_tokens` | verified range below |
-| `Temperature` | `temperature` | verified; `0 <= value <= 2` |
-| `Tools` | `tools` | function tools verified |
-| `ProviderOptions.service_tier` | `service_tier` | `standard` or `priority`; pricing scope must match |
-| `ProviderOptions.reasoning_split` | `reasoning_split` | boolean output-format switch; it does not enable/disable thinking |
+| `Model` | `model` | exact catalog model ID |
+| `Inputs.Messages` | `messages` | required; supports text, image, video, and tool-call content |
+| `IsStream` | `stream` | boolean; default `false` |
+| `MaxOutputTokens` | `max_completion_tokens` | `1..524288`; recommended `131072` |
+| `Temperature` | `temperature` | range `[0,2]`; default `1` |
+| `Tools` | `tools` | function tools supported |
+| `ProviderOptions.thinking` | `thinking` | omit for adaptive thinking or send an officially documented M3 value |
+| `ProviderOptions.reasoning_split` | `reasoning_split` | output-format switch only |
+| `ProviderOptions.service_tier` | `service_tier` | `standard` or `priority`; priority pricing is 1.5x standard |
 
-Do not send deprecated `max_tokens`. `ToolChoice`, strict tool-schema semantics, and parallel-tool semantics remain fail-closed while their exact capability fields are `unknown`.
+Use `max_completion_tokens`; `max_tokens` is deprecated.
 
-## Output-Limit Rule
+`reasoning_split = true` moves thinking content into provider reasoning fields. It does not enable or disable thinking.
 
-- `MiniMax-M2.7` and `MiniMax-M2.7-highspeed`: `1..204800`; official recommended value `65536`.
-- `MiniMax-M3`: `1..524288`; official recommended value `131072`.
+For `MiniMax-M3`, an omitted `thinking` field selects the documented `adaptive` default. Preserve `adaptive` as the resolved default state in diagnostics; for mode-sensitive gating on this exact Chat Completions route, the official MiniMax mapping treats adaptive as thinking on. Sending `thinking.type = disabled` explicitly selects non-thinking mode. Do not copy this default or mapping to Responses, Anthropic-compatible, or any other surface.
 
-A recommendation is not a maximum. Reject values above the exact model maximum before sending.
+## Multimodal Messages
 
-## Thinking Rule
-
-- M2.x thinking cannot be disabled. Reject `ThinkingRequested = false` and any normalized effort meaning no thinking.
-- MiniMax-M3 defaults to adaptive thinking when `thinking` is omitted. Because M3 is locally `not-selected`, do not route to it unless the catalog/profile is explicitly changed first.
-- `reasoning_split = true` separates provider thinking into `reasoning_content` and `reasoning_details`; it does not change whether thinking occurs.
-
-For M2.7 responses that return `<think>...</think>` inside assistant content, separate the leading thinking block only when it can be parsed deterministically. Otherwise keep the raw content and emit a warning; do not delete text.
-
-## Multimodal Candidate Boundary
-
-`MiniMax-M3` official messages support text, image, video, and tool-call content. This repository currently models only image input under `multimodal-chat`; video content remains blocked until a typed shared input rule and role/content matrix are added.
+`MiniMax-M3` accepts image and video content in messages. This skill maps image input through the shared vision contract. Add video mapping only when the host project has an explicit typed video-input contract.
 
 ## Streaming
 
-Use the same URL with `stream = true`. Preserve chunk order, tool-call fragments, provider reasoning fields, usage, finish reason, and cancellation. Apply any think-tag split only after complete assembly.
+Use the same request URL with `stream = true`. Preserve chunk order, reasoning fields, tool-call fragments, usage, finish reason, errors, and cancellation.
 
 ## Response Mapping
 
-- `ResultKind = text-chat` or `multimodal-chat` according to the selected canonical request kind
 - assistant answer -> `TextContent`
-- provider reasoning fields or safely parsed think block -> `ThinkingContent`
+- provider thinking output -> `ThinkingContent`
 - function calls -> `ToolCalls`
 - usage -> `Usage`
 - provider finish reason -> `FinishReason`
 - stream metadata -> `Transport`
 
-## Fail-Fast Rule
-
-Stop before sending when the profile/model/route is not allowed, a requested field is `unknown` or `unsupported`, `MaxOutputTokens` is out of range, M2.x thinking is requested off, or a `priority` tier lacks a matching price row.
+Stop before sending when the request uses an unknown capability, an incompatible profile or surface, or an output limit outside the documented range.
 
 Official reference: `https://platform.minimaxi.com/docs/api-reference/text-chat-openai`.

@@ -1,7 +1,7 @@
 interface:
   display_name: "DeepSeek Direct Models"
-  short_description: "Wire DeepSeek text, thinking, JSON, streaming, and tool flows."
-  default_prompt: "Use $skill-llm-deepseek to build a direct DeepSeek text-chat integration. Keep standard and beta surfaces separate, reject tool_choice while thinking, preserve required tool history, enforce role rules, and resolve exact profile, URL, capability, pricing, progress, error, and evidence contracts."
+  short_description: "Wire DeepSeek chat, thinking, JSON, streaming, and tool flows."
+  default_prompt: "Use $skill-llm-deepseek to wire a DeepSeek API direct-model integration with the right catalog, connection profile, request URLs, transport, thinking, structured output, tool, progress, and error contracts."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

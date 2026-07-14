@@ -1,62 +1,18 @@
 # Quickstart
 
-## 1. Keep the pack together
+1. Choose the provider and region.
+2. Read that provider's `SKILL.md` in its stated order.
+3. Match the requested model in `model-catalog.md`.
+4. Resolve the connection profile and exact full route row in `request-urls.md`, including API version and endpoint kind.
+5. Check the exact full route key in `capability-matrix.md`.
+6. Apply the matching transport and shared request, response, error, progress, and logging contracts.
 
-Do not copy only one `SKILL.md`. Provider skills also use their `references/` folder, shared rules, and the evidence file.
-
-Keep these folders together:
-
-```text
-LLM/_shared/
-LLM/_evidence/
-LLM/skill-llm-*/
-```
-
-## 2. Pick a provider and region
-
-Be explicit. For example:
+Example:
 
 ```text
-Use Aliyun Bailian China Mainland. Do not use International endpoints or prices.
+Use LLM/skill-llm-aliyun-bailian-cn/SKILL.md.
+Integrate glm-5.2 through the documented Chat Completions surface.
+Follow the exact capability and transport rules; do not switch regions or models silently.
 ```
 
-```text
-Use MiniMax International with the build profile.
-```
-
-```text
-Use Gemini Interactions v1. Do not fall back to v1beta or generateContent.
-```
-
-## 3. Tell the agent what to build
-
-This is enough for most tasks:
-
-```text
-Read COMMANDS.md and LLM/skill-llm-openai/SKILL.md.
-Build a settings page for OpenAI text and image generation.
-Use selected models and verified capabilities only.
-Show connection errors clearly and do not silently fall back.
-```
-
-The agent should resolve the provider, profile, model, API surface, URL, capabilities, roles, and price before it writes request code.
-
-## 4. Refresh model data when needed
-
-Ask for a sync when you need current models, prices, limits, or capabilities:
-
-```text
-Sync the MiniMax International skill from official sources, then audit it.
-Keep newly found models as candidates unless they are already selected by policy.
-Run the repository validator when finished.
-```
-
-Provider data changes over time, so do not treat an old local snapshot as live truth.
-
-## 5. Validate repository changes
-
-```bash
-python tools/validate_repo.py
-```
-
-A passing result means the local files agree with each other. It does not prove that an API key works or that provider documentation has not changed since the recorded review date.
+When updating models, follow `LLM/_shared/sync-policy.md`: replace clear successors, ask before adding unrelated models, verify paired regions independently, and update dependent runtime rules together.

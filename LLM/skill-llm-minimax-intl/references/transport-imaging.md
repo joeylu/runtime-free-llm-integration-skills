@@ -1,9 +1,7 @@
 # MiniMax International Imaging Transport
 
-- `SchemaVersion: 2`
-- `LastReviewedAt: 2026-07-14`
 - Route: `image-generation@image-generation@v1`
-- Selected model: `image-01` on the `build` profile only.
+- Model: `image-01` on the `build` profile only.
 
 ## Required Input
 
@@ -16,7 +14,7 @@
 
 ## Verified Optional Mapping
 
-| Shared/provider field | MiniMax field | Validation |
+| Shared/provider field | MiniMax field | Constraint |
 | --- | --- | --- |
 | `Inputs.Seed` | `seed` | integer |
 | `Inputs.ImageCount` | `n` | integer `1..9`; default is provider-defined `1` when omitted |
@@ -37,7 +35,7 @@ Reject a request that sends both explicit width/height and `aspect_ratio`. The p
 
 ## Response Mapping
 
-- `ResultKind = image-generation`
+- `ResultKind = imaging`
 - returned URLs or base64 values -> `ImageOutputs`
 - response `id` -> provider trace metadata
 - success/failed counts -> `ProviderMeta`

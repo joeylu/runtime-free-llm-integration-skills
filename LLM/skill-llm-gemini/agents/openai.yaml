@@ -1,7 +1,7 @@
 interface:
   display_name: "Gemini Direct Models"
-  short_description: "Wire Gemini stable Interactions and explicit compatibility routes."
-  default_prompt: "Use $skill-llm-gemini to build a direct Gemini Developer API integration. Prefer Interactions v1, keep v1beta and generateContent explicit, and resolve exact model, profile, surface/version, URL, role/history, capability, state, tools, pricing, transport, errors, progress, and evidence."
+  short_description: "Wire Gemini 3.5, Interactions, compatible GenerateContent, multimodal, tools, state, cache, and Nano Banana flows."
+  default_prompt: "Use $skill-llm-gemini to build a direct Gemini Developer API integration with exact model, profile, API-surface, URL, capability, state, thinking, tool, structured-output, image, progress, error, and logging contracts."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

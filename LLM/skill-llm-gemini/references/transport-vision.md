@@ -1,6 +1,6 @@
 # Gemini Vision Transport
 
-Use this for `RequestKind = multimodal-chat` and image understanding. Chat state, thinking, tools, schema, cache, and stream rules inherit from `transport-chat.md`.
+Use this for `RequestKind = vision` and image understanding. Chat state, thinking, tools, schema, cache, and stream rules inherit from `transport-chat.md`.
 
 ## Input Contract
 
@@ -11,7 +11,7 @@ The shared request requires ordered `Inputs.Messages` and `Inputs.Images`. Valid
 - reachable file or valid inline bytes
 - no secret-bearing URLs in logs
 
-This skill does not silently reinterpret audio, video, or PDF input as `Inputs.Images`. Those modalities are supported by the selected text models, but a host project must add a typed media-input extension and re-verify its upload, token, and response behavior.
+This skill does not silently reinterpret audio, video, or PDF input as `Inputs.Images`. Those modalities are supported by the documented text models, but a host project must add a typed media-input extension and re-verify its upload, token, and response behavior.
 
 ## Interactions Mapping
 
@@ -21,11 +21,11 @@ For stateful follow-ups, `previous_interaction_id` can preserve prior multimodal
 
 ## GenerateContent Mapping
 
-Map images into content parts on the selected `generate-content` or `stream-generate-content` surface. For stateless multi-turn requests, replay the full unmodified content history and thought signatures.
+Map images into content parts on the resolved `generate-content` or `stream-generate-content` surface. For stateless multi-turn requests, replay the full unmodified content history and thought signatures.
 
 ## Media Resolution
 
-Use provider media-resolution controls only after exact verification for the selected model, media type, and API surface. Do not infer image token cost or fidelity from pixel dimensions alone.
+Use provider media-resolution controls only after exact verification for the documented model, media type, and API surface. Do not infer image token cost or fidelity from pixel dimensions alone.
 
 ## Tools and Structured Output
 
@@ -38,4 +38,4 @@ Use provider media-resolution controls only after exact verification for the sel
 
 Map final text to `TextContent`, schema output to `StructuredContent`, function requests to `ToolCalls`, hosted activity to `HostedToolCalls`, grounding to `Annotations`, signatures to `ReasoningItems`, and usage to the normalized `Usage` object.
 
-Image understanding does not produce `ImageOutputs`. Image generation belongs to `RequestKind = image-generation`.
+Image understanding does not produce `ImageOutputs`. Image generation belongs to `RequestKind = imaging`.

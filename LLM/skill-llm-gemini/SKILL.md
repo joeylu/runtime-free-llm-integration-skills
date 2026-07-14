@@ -1,96 +1,85 @@
 ---
 name: skill-llm-gemini
-description: Standardize direct Gemini Developer API integration through exact model, surface, API version, URL, capability, role, pricing, transport, and evidence contracts. Prefer stable Interactions v1 for new integrations while retaining explicit v1beta and generateContent compatibility rows. Do not use for Vertex AI, consumer Gemini behavior, or non-Gemini providers.
+description: Runtime contract for direct Gemini Developer API integration. Use it to resolve exact Gemini model IDs, Interactions or GenerateContent URLs, thinking controls, tools, structured output, multimodal input, image generation/editing, state, streaming, caching, response mapping, pricing references, and logging. Model choice remains with the user or host project.
 ---
 
-# Skill LLM Gemini Developer API
+# Skill LLM Gemini
 
-## Mission
+## Purpose
 
-Own the provider-specific layer for **Gemini Developer API only, not Vertex AI** while reusing the shared contracts under `../_shared`.
-
-This skill is a curated, fail-fast integration contract. It is not a complete live provider inventory and it does not prove remote runtime availability without an authenticated request.
+Define how an agent integrates a Gemini model already named by the user or host project. This skill does not make model recommendations and does not cover Vertex AI.
 
 ## Read Order
 
-Read the shared contracts first:
+Read shared contracts first:
 
-1. `../_shared/model-catalog-schema.md`
-2. `../_shared/capability-matrix-schema.md`
-3. `../_shared/request-url-matrix-schema.md`
-4. `../_shared/pricing-matrix-schema.md`
+1. `../_shared/route-key-schema.md`
+2. `../_shared/model-catalog-schema.md`
+3. `../_shared/pricing-matrix-schema.md`
+4. `../_shared/capability-matrix-schema.md`
 5. `../_shared/connection-profile-schema.md`
-6. `../_shared/role-support-matrix-schema.md`
-7. `../_shared/evidence-manifest-schema.md`
-8. `../_shared/request-envelope.md`
-9. `../_shared/response-envelope.md`
-10. `../_shared/error-contract.md`
-11. `../_shared/progress-contract.md`
-12. `../_shared/ui-binding.md`
+6. `../_shared/request-url-matrix-schema.md`
+7. `../_shared/request-envelope.md`
+8. `../_shared/response-envelope.md`
+9. `../_shared/error-contract.md`
+10. `../_shared/progress-contract.md`
+11. `../_shared/ui-binding.md`
+12. `../_shared/sync-policy.md`
 13. `../_shared/logging-fields.md`
-14. `../_shared/sync-policy.md`
-15. `../_shared/recency-window-policy.md`
 
-Then read the provider files:
+Then read:
 
 1. `references/connection-profiles.md`
-2. `references/model-catalog.md`
-3. `references/request-urls.md`
-4. `references/capability-matrix.md`
-5. `references/role-support-matrix.md`
-6. `references/pricing-matrix.md`
-7. the matching `references/transport-*.md` file
-8. references/logging-contract.md when logging is requested
-9. references/model-sync.md only for explicit current-data sync
-10. references/hosted-tools.md when provider-hosted tools are requested
+2. `references/request-urls.md`
+3. `references/model-catalog.md`
+4. `references/pricing-matrix.md`
+5. `references/capability-matrix.md`
+6. the transport for the requested kind
+7. `references/logging-contract.md` when logging is implemented
+8. `references/model-sync.md` only for an explicit update or verification task
 
-## Core Boundary Rules
+Read `references/hosted-tools.md` when provider-hosted tools are requested.
 
-- Use provider identifier `gemini`.
-- Resolve `ConnectionProfileKey` before model, surface, API version, URL, capability, role, or price selection.
-- Select only catalog rows that satisfy the shared selector rule: locally selected, provider-callable, verified, and current.
-- Resolve one exact `Request Kind + API Model + API Surface + API Version` capability row. A comma-separated surface or version is invalid.
-- Resolve one exact request URL row. Never construct a URL by guessing or silently retry another surface, version, profile, key, region, or provider.
-- Validate input roles and tool history against `references/role-support-matrix.md`. OpenAI compatibility does not imply complete role compatibility.
-- Use `references/pricing-matrix.md` only after billing region, deployment scope, serving region, service tier, and effective window match the request.
-- Treat `Provider Lifecycle`, `Local Selection`, and `Review Freshness` as independent. Do not infer lifecycle from age, replacement, or local preference.
-- Keep caller-defined `Tools` separate from provider-hosted `HostedTools`.
-- Reject unsupported, unknown, stale, conflicted, or out-of-scope options before sending. Never disable or rewrite a requested feature silently.
-- Use the bundled reviewed data by default. Perform a live official-source sync only when the task asks for current verification or the required evidence is stale/missing.
-- A sync may use reproducible automated extraction from official sources, but every changed fact requires reviewed claim-level evidence before it becomes verified.
-- Store secret references only. Do not place API keys, signed URLs, or authorization headers in skill files or normal logs.
+## Runtime Rules
 
-## Standard Workflow
+- Send the exact documented model ID from `model-catalog.md`.
+- Resolve connection profile, request kind, API surface, API version, endpoint kind, full route key, base URL, and request URL before capability lookup.
+- Match capabilities by the exact full `RouteKey` row, including API version and endpoint kind.
+- Interactions `v1`, Interactions `v1beta`, `generate-content`, and `stream-generate-content` are separate surfaces. Do not migrate or fall back between them silently.
+- Use stable Interactions `v1` when the project requests Interactions without an explicit beta requirement. Keep `v1beta` explicit.
+- Reject model IDs documented as shut down. Do not rewrite them to another model.
+- For Gemini 3.x text rows in this skill, caller overrides for `temperature`, `top_p`, and `top_k` are blocked where the capability matrix records provider-default-only behavior.
+- Map verified thinking levels through `ReasoningEffort`; do not combine them with legacy `thinking_budget`.
+- Preserve thought signatures and function-call identity exactly when replay is required. Do not display signatures or raw model thoughts.
+- Keep caller-defined `Tools` separate from `HostedTools`.
+- Interactions custom safety settings and explicit caching are unsupported in the documented rows. GenerateContent explicit caching requires an existing cache resource and its exact transport mapping.
+- A continued Interaction must resend tools, system instruction, and generation configuration when needed; the continuation ID does not preserve them.
+- When `store=false`, do not treat the returned Interaction ID as reusable state.
+- Reject requested fields marked `unsupported` or `unknown`.
 
-1. Confirm this provider and region boundary.
-2. Normalize the caller's legacy request-kind alias once, then use only canonical request kinds.
-3. Resolve the connection profile and its allowed kinds, surfaces, versions, models, and regional scope.
-4. Select a catalog row using the shared selector rule; never auto-select a newer candidate.
-5. Resolve the exact route from `request-urls.md`.
-6. Resolve the exact capability and role rows; validate every caller field and every required history field.
-7. Resolve pricing only when the exact billing scope is present.
-8. Build the shared request envelope and map it through the matching provider transport.
-9. Send with the requested stream semantics; do not change surface or model after an error.
-10. Normalize output through the shared response envelope, error, progress, UI, and logging contracts.
-11. For current-data changes, update evidence first and run `python tools/validate_repo.py` after all dependent matrices are updated.
+## Request Flow
 
-## Supported Request-Kind Boundary
+1. Read the requested model, request kind, and API surface.
+2. Resolve the connection profile and exact request URL row.
+3. Resolve the exact catalog and capability rows.
+4. Validate thinking, tools, structured output, media input, cache, state, and stream fields.
+5. Apply the matching transport and hosted-tool rules.
+6. Normalize the response, errors, progress, and logs through the shared contracts.
 
-This skill exposes `text-chat`, `multimodal-chat`, and `image-generation` when selected by the catalog and profile.
+## Gemini Field Mapping
 
-A request kind is implemented only when the selected catalog row, profile, URL, capability, role, pricing policy, and transport all agree. The mere existence of an official endpoint does not make it selectable here.
-
-## Provider-Specific Rules
-
-- Prefer `interactions@v1` for new work. Treat `interactions@v1beta`, `generate-content@v1beta`, and `stream-generate-content@v1beta` as explicit compatibility routes.
-- Never let an API surface imply an API version; resolve both before capability lookup.
-- Preserve provider state and continuation IDs only on rows whose exact Interactions version verifies them.
-- Map Gemini role and function content through `references/role-support-matrix.md`; do not send an OpenAI `developer` role by assumption.
-- Image generation/editing and image understanding are different request kinds and must use different selected rows.
+- Interactions `ContinuationId` maps to `previous_interaction_id`; `StoreResponse` maps to `store`; streaming uses `stream: true` on the same endpoint.
+- GenerateContent multi-turn state replays the complete content history, including required thought signatures and function-call identity.
+- Thinking-level values and defaults are model-specific and come from the capability matrix.
+- Structured-output payloads differ between Interactions and GenerateContent.
+- Interactions reasoning summaries map through `generation_config.thinking_summaries` only where verified.
+- `vision` means image understanding through typed media parts. Audio, video, and PDF require their own typed host inputs and must not be disguised as `Inputs.Images`.
+- `imaging` means image generation or editing. Reference images are imaging inputs; `Inputs.ImageCount` is an output-count field and requires separate verification.
 
 ## Out of Scope
 
-- Vertex AI endpoints or credentials
-- consumer Gemini application behavior
-- non-Gemini providers
-- prompt-only work that does not change integration code or contracts
+- Vertex AI endpoints, service accounts, regions, or provisioned throughput
+- Gemini consumer application settings
+- automatic model discovery during ordinary implementation
+- raw chain-of-thought display
+- model ranking or permission policy

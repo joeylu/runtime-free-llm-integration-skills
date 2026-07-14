@@ -1,98 +1,82 @@
 ---
 name: skill-llm-openai
-description: Standardize direct OpenAI API integration through exact model, surface, version, URL, capability, role, pricing, transport, and evidence contracts. Use for selected GPT-5.6 text/multimodal models and gpt-image-2 direct Image API work. Do not use for ChatGPT consumer settings, Apps SDK or Agents SDK orchestration, Realtime/audio, or non-OpenAI providers.
+description: Runtime contract for direct OpenAI API integration. Use it to resolve exact OpenAI model IDs, Responses or Chat Completions URLs, request fields, reasoning, tools, structured output, image input, Image API calls, streaming, response mapping, pricing references, and logging. Model choice remains with the user or host project.
 ---
 
 # Skill LLM OpenAI
 
-## Mission
+## Purpose
 
-Own the provider-specific layer for **OpenAI direct API only** while reusing the shared contracts under `../_shared`.
-
-This skill is a curated, fail-fast integration contract. It is not a complete live provider inventory and it does not prove remote runtime availability without an authenticated request.
+Define how an agent integrates a model already named by the user or host project. This skill does not recommend, approve, rank, or automatically replace models during ordinary implementation.
 
 ## Read Order
 
-Read the shared contracts first:
+Read shared contracts first:
 
-1. `../_shared/model-catalog-schema.md`
-2. `../_shared/capability-matrix-schema.md`
-3. `../_shared/request-url-matrix-schema.md`
-4. `../_shared/pricing-matrix-schema.md`
+1. `../_shared/route-key-schema.md`
+2. `../_shared/model-catalog-schema.md`
+3. `../_shared/pricing-matrix-schema.md`
+4. `../_shared/capability-matrix-schema.md`
 5. `../_shared/connection-profile-schema.md`
-6. `../_shared/role-support-matrix-schema.md`
-7. `../_shared/evidence-manifest-schema.md`
-8. `../_shared/request-envelope.md`
-9. `../_shared/response-envelope.md`
-10. `../_shared/error-contract.md`
-11. `../_shared/progress-contract.md`
-12. `../_shared/ui-binding.md`
+6. `../_shared/request-url-matrix-schema.md`
+7. `../_shared/request-envelope.md`
+8. `../_shared/response-envelope.md`
+9. `../_shared/error-contract.md`
+10. `../_shared/progress-contract.md`
+11. `../_shared/ui-binding.md`
+12. `../_shared/sync-policy.md`
 13. `../_shared/logging-fields.md`
-14. `../_shared/sync-policy.md`
-15. `../_shared/recency-window-policy.md`
 
-Then read the provider files:
+Then read:
 
 1. `references/connection-profiles.md`
-2. `references/model-catalog.md`
-3. `references/request-urls.md`
-4. `references/capability-matrix.md`
-5. `references/role-support-matrix.md`
-6. `references/pricing-matrix.md`
-7. the matching `references/transport-*.md` file
-8. references/logging-contract.md when logging is requested
-9. references/model-sync.md only for explicit current-data sync
-10. references/hosted-tools.md when hosted tools are requested
+2. `references/request-urls.md`
+3. `references/model-catalog.md`
+4. `references/pricing-matrix.md`
+5. `references/capability-matrix.md`
+6. the transport for the requested kind
+7. `references/logging-contract.md` when logging is implemented
+8. `references/model-sync.md` only for an explicit update or verification task
 
-## Core Boundary Rules
+Read `references/hosted-tools.md` when provider-hosted tools are requested.
 
-- Use provider identifier `openai`.
-- Resolve `ConnectionProfileKey` before model, surface, API version, URL, capability, role, or price selection.
-- Select only catalog rows that satisfy the shared selector rule: locally selected, provider-callable, verified, and current.
-- Resolve one exact `Request Kind + API Model + API Surface + API Version` capability row. A comma-separated surface or version is invalid.
-- Resolve one exact request URL row. Never construct a URL by guessing or silently retry another surface, version, profile, key, region, or provider.
-- Validate input roles and tool history against `references/role-support-matrix.md`. OpenAI compatibility does not imply complete role compatibility.
-- Use `references/pricing-matrix.md` only after billing region, deployment scope, serving region, service tier, and effective window match the request.
-- Treat `Provider Lifecycle`, `Local Selection`, and `Review Freshness` as independent. Do not infer lifecycle from age, replacement, or local preference.
-- Keep caller-defined `Tools` separate from provider-hosted `HostedTools`.
-- Reject unsupported, unknown, stale, conflicted, or out-of-scope options before sending. Never disable or rewrite a requested feature silently.
-- Use the bundled reviewed data by default. Perform a live official-source sync only when the task asks for current verification or the required evidence is stale/missing.
-- A sync may use reproducible automated extraction from official sources, but every changed fact requires reviewed claim-level evidence before it becomes verified.
-- Store secret references only. Do not place API keys, signed URLs, or authorization headers in skill files or normal logs.
+## Runtime Rules
 
-## Standard Workflow
+- Send the exact documented model ID. This skill currently maintains rules for `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, and `gpt-image-2`.
+- Do not replace a requested model with another model or moving alias.
+- Resolve connection profile, request kind, API surface, API version, endpoint kind, full route key, base URL, and request URL before capability lookup.
+- Match capabilities by the exact full `RouteKey` row, including API version and endpoint kind.
+- Prefer no surface implicitly: use the surface required by the project. Responses and Chat Completions have different payloads and continuation rules.
+- Use `gpt-image-2` through the direct Image API rows. Responses hosted image generation is a separate tool flow whose main model is a GPT model.
+- Reject requested fields marked `unsupported` or `unknown`; do not silently drop or translate them to another surface.
+- Keep caller-defined functions in `Tools` and provider-hosted tools in `HostedTools`.
+- Preserve response item IDs, call IDs, required linkage, encrypted reasoning items, and assistant `phase` when continuing a documented stateful flow.
+- Never expose raw chain-of-thought. Map visible summaries to `ReasoningSummary` and opaque state to `ReasoningItems` or provider metadata.
+- Store API-key references only. Never write secrets, authorization headers, MCP credentials, or signed URLs into these files or normal logs.
+- Use `pricing-matrix.md` for estimates, including context bands and cache charges.
 
-1. Confirm this provider and region boundary.
-2. Normalize the caller's legacy request-kind alias once, then use only canonical request kinds.
-3. Resolve the connection profile and its allowed kinds, surfaces, versions, models, and regional scope.
-4. Select a catalog row using the shared selector rule; never auto-select a newer candidate.
-5. Resolve the exact route from `request-urls.md`.
-6. Resolve the exact capability and role rows; validate every caller field and every required history field.
-7. Resolve pricing only when the exact billing scope is present.
-8. Build the shared request envelope and map it through the matching provider transport.
-9. Send with the requested stream semantics; do not change surface or model after an error.
-10. Normalize output through the shared response envelope, error, progress, UI, and logging contracts.
-11. For current-data changes, update evidence first and run `python tools/validate_repo.py` after all dependent matrices are updated.
+## Request Flow
 
-## Supported Request-Kind Boundary
+1. Read the requested provider, region, model, and request kind from the host project or user.
+2. Resolve the connection profile and exact request URL row.
+3. Resolve the exact catalog and capability rows.
+4. Validate every optional field before constructing the request.
+5. Apply the matching transport.
+6. Normalize the provider response, errors, progress, and logs through the shared contracts.
 
-This skill exposes `text-chat`, `multimodal-chat`, and `image-generation` when selected by the catalog and profile.
+## OpenAI Field Mapping
 
-A request kind is implemented only when the selected catalog row, profile, URL, capability, role, pricing policy, and transport all agree. The mere existence of an official endpoint does not make it selectable here.
-
-## Provider-Specific Rules
-
-- Use the full selected model ID. Do not submit the moving `gpt-5.6` alias from this skill.
-- Prefer `responses@v1` for new agent-style text and multimodal work; use `chat-completions@v1` only when its compatibility contract is required.
-- Treat Responses and Chat Completions as different surfaces. Do not copy state, reasoning, structured-output, cache, or tool fields between them.
-- Keep caller-defined functions in `Tools` and provider-hosted tools in `HostedTools`; verify hosted tools separately in `references/hosted-tools.md`.
-- Use `gpt-image-2` through the direct Image API rows in this skill. Hosted image generation through Responses is a different route.
-- Never expose raw chain-of-thought. Normalize only provider-visible summaries and opaque continuation state.
+- Responses `reasoning.effort` and Chat Completions `reasoning_effort` use the values recorded in the capability matrix.
+- `TextVerbosity` maps to Responses `text.verbosity` or Chat Completions `verbosity` only where verified.
+- Responses `reasoning.mode`, `reasoning.context`, and `previous_response_id` are Responses-only fields.
+- Responses structured output maps through `text.format`; Chat Completions maps through `response_format`.
+- `CacheKey` maps to `prompt_cache_key` where verified; explicit cache controls require the documented Responses mapping.
 
 ## Out of Scope
 
 - ChatGPT consumer configuration
 - Apps SDK or Agents SDK orchestration
-- Realtime/audio or fine-tuning
+- Realtime/audio integration
+- fine-tuning
+- model ranking or model permission policy
 - non-OpenAI providers
-- prompt-only work that does not change integration code or contracts

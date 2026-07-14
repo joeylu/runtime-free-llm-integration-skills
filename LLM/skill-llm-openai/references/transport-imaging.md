@@ -13,7 +13,7 @@ Use this file for direct `gpt-image-2` Image API generation and edits.
 
 Generation:
 
-- `RequestKind = image-generation`
+- `RequestKind = imaging`
 - `Model = gpt-image-2`
 - `ApiSurface = image-api-generations`
 - `Inputs.Prompt`
@@ -57,7 +57,7 @@ Do not validate only the string shape. Apply every published constraint and pres
 - A mask must match the edited image format and dimensions, be below `50MB`, and include an alpha channel.
 - `gpt-image-2` always handles image inputs at high fidelity. Omit `input_fidelity`; reject caller attempts to set it.
 - Transparent backgrounds are unsupported for `gpt-image-2`.
-- Accept multipart file uploads or the documented JSON image reference form only when the host implementation verifies the selected transport encoding.
+- Accept multipart file uploads or the documented JSON image reference form only when the host implementation verifies the resolved transport encoding.
 
 ## Streaming
 

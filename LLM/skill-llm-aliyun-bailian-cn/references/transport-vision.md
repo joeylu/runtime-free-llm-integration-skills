@@ -1,6 +1,6 @@
 # Aliyun Bailian China Mainland Vision Transport
 
-Use this file for image-understanding requests with a model selected from the `vision` catalog.
+Use this file for image-understanding requests with a model resolved from the `vision` catalog.
 
 ## Surface Choice
 
@@ -11,13 +11,13 @@ Use this file for image-understanding requests with a model selected from the `v
 
 Do not silently switch surfaces. Resolve:
 
-`RequestKind = multimodal-chat + qwen3.7-plus + ApiSurface`
+`RequestKind = vision + qwen3.7-plus + ApiSurface`
 
 ## Shared Input Shape
 
 Build:
 
-- `RequestKind = multimodal-chat`
+- `RequestKind = vision`
 - optional `ConnectionProfileKey`
 - `ApiSurface = responses | chat-completions`
 - `Model = qwen3.7-plus`
@@ -36,11 +36,11 @@ Map each image to a user content item with `type = input_image` and a valid publ
 
 Constraints:
 
-- at least one image is required for `RequestKind = multimodal-chat`
+- at least one image is required for `RequestKind = vision`
 - Responses does not accept video or audio input
 - do not map `Inputs.Images` to `input_file`; the current API reference limits `input_file` to `qwen3.5-ocr`, which is not this row
 - do not send a vision request through a chat-only capability row
-- do not infer image limits from the Chat Completions vision table; apply only limits documented for the selected Responses payload
+- do not infer image limits from the Chat Completions vision table; apply only limits documented for the resolved Responses payload
 
 Return final text in `TextContent`, reasoning summaries in `ReasoningSummary`, and hosted tool records in `HostedToolCalls`. Do not populate raw `ThinkingContent` from Responses summaries.
 
@@ -48,9 +48,9 @@ Return final text in `TextContent`, reasoning summaries in `ReasoningSummary`, a
 
 Reuse the `chat-completions` rules in `transport-chat.md`.
 
-Map text and media into the provider's documented multimodal message content format. The selected model documentation supports image and video understanding on this surface.
+Map text and media into the provider's documented multimodal message content format. The documented model documentation supports image and video understanding on this surface.
 
-For the selected row:
+For the resolved row:
 
 - thinking defaults on
 - `ThinkingBudget` and `preserve_thinking` are available when mapped exactly
@@ -64,7 +64,7 @@ Map raw `reasoning_content` to `ThinkingContent` only when returned by Chat Comp
 
 ## UI Rule
 
-- filter the model selector to active selected `vision` rows
+- filter the model selector to documented `vision` rows
 - display a surface selector for `qwen3.7-plus`
 - on Responses, accept images only and hide video/audio attachment controls
 - on Chat Completions, expose only documented image/video inputs

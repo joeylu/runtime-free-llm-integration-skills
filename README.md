@@ -1,88 +1,84 @@
 # runtime-free-llm-integration-skills
 
-This repository gives coding agents a reliable set of rules for building direct LLM provider integrations.
+Logic-only skills for agents that reason about direct LLM API integrations. Each provider skill records exact model IDs, endpoints, request fields, capabilities, limits, response mapping, pricing references, and provider-specific contract constraints.
 
-It is not an SDK, proxy, gateway, or runtime service. Your application still calls each provider directly. The skill pack simply helps the agent choose the right model, endpoint, API surface, capability, role, and price without guessing.
+## Scope
 
-## Why use it?
+When a project uses a documented model, the agent must follow the provider's official API contract and the exact model-and-surface rules in this repository. Model choice belongs to the host project or the user.
 
-LLM APIs often look similar, but the details are not interchangeable. A model may exist in one region but not another, support tools on one API surface but not another, or use a different price and endpoint.
+Core behavior:
 
-This pack keeps those boundaries explicit:
+- use exact provider model IDs, regions, API surfaces, API versions, endpoint kinds, and request URLs;
+- resolve a feature against the exact full route key before proposing or applying it;
+- keep unsupported and unknown behavior explicit;
+- never silently switch provider, region, model, credential, URL, API surface, API version, or endpoint kind;
+- normalize provider request, response, error, progress, and logging semantics through the shared contracts.
 
-- unknown stays unknown;
-- unsupported features stay disabled;
-- failed requests stay failed;
-- no silent model, region, endpoint, or API fallback.
+## Logic-only boundary
 
-## Supported providers
+This repository is a normative documentation layer. It defines decisions, constraints, mappings, and fail-fast conditions for an agent, but it does not perform project development or project acceptance work.
+
+It intentionally does not include:
+
+- executable validators or repository-local checking utilities;
+- repository linters, test harnesses, regression fixtures, or CI jobs;
+- URL reachability checkers or automated evidence verification;
+- installers, project scaffolding, code generators, or deployment scripts;
+- claims that a host project has been compiled, tested, integrated, or accepted.
+
+Terms such as `validation_error`, JSON Schema validation, strict tool schema, and fail-fast gating describe provider or contract semantics. They do not imply that this repository ships an executable validation system.
+
+A host agent may use these documents while working in another project, but any implementation, testing, installation, deployment, and acceptance process belongs to that host project and remains outside this repository's scope.
+
+## Providers
 
 - OpenAI API
-- Gemini Developer API
+- Aliyun Bailian / DashScope China Mainland
+- Aliyun Bailian / DashScope International
 - DeepSeek API
-- Aliyun Bailian / Model Studio China Mainland
-- Alibaba Cloud Model Studio International
-- MiniMax China Mainland
-- MiniMax International
+- Gemini Developer API
+- MiniMax China Mainland API
+- MiniMax International API
 
-China Mainland and International services are separate providers in this repository. Their keys, endpoints, models, and prices must not be mixed.
+Regional skills remain separate because base URLs, availability, pricing, and behavior can differ.
 
-## How to use it
+## Model Updates
 
-1. Keep the whole `LLM/` folder together.
-2. Pick one provider and region.
-3. Ask your coding agent to read `COMMANDS.md` and that provider's `SKILL.md`.
-4. Describe what you want to build.
+1. When a documented model has a clear newer replacement, replace the old model and update its catalog, capability, pricing, URL, transport, and example references together.
+2. When a new model has no documented predecessor in this repository, ask the user before adding it.
+3. For providers with regional skills, verify the replacement independently in each region during the same update.
+4. Keep old identifiers only in a dated migration note.
 
-For example:
+See `LLM/_shared/sync-policy.md`.
 
-```text
-Read COMMANDS.md and LLM/skill-llm-openai/SKILL.md.
-Build a settings page for OpenAI text and image generation.
-Use only selected models and verified capabilities. Do not silently fall back.
-```
-
-For a model-data refresh:
+## Structure
 
 ```text
-Sync the Aliyun Bailian China Mainland skill from official documentation,
-then audit the repository and run the validator.
+LLM/_shared/
+router/skill-llm-router/
+LLM/skill-llm-openai/
+LLM/skill-llm-aliyun-bailian-cn/
+LLM/skill-llm-aliyun-bailian-intl/
+LLM/skill-llm-deepseek/
+LLM/skill-llm-gemini/
+LLM/skill-llm-minimax-cn/
+LLM/skill-llm-minimax-intl/
 ```
 
-See [QUICKSTART.md](QUICKSTART.md) for a few more ready-to-use prompts.
+Each provider skill contains connection profiles, request URLs, a maintained model catalog, capability and pricing matrices, transport rules, examples, logging rules, and update sources.
 
-## What's inside?
+## Host discovery and distribution
 
-```text
-LLM/_shared/                 shared request, response, error, and schema rules
-LLM/_evidence/               reviewed official-source evidence
-LLM/skill-llm-<provider>/    provider-specific rules and reference tables
-tools/validate_repo.py       local consistency checker
-```
+Skill discovery, copying, linking, plugin packaging, installation, and workspace policy are responsibilities of the host agent environment. This repository defines no installer and assumes no specific installation workflow.
 
-Each provider skill includes its own model catalog, connection profiles, request URLs, capabilities, roles, pricing, and transport notes.
+Provider skills are explicit-only. The router skill is the sole logical entry point that may be configured for implicit routing. A host environment must preserve that invocation boundary when it distributes or registers these skills.
 
-The catalog is a curated allowlist, not a complete live registry. Finding a newer model does not automatically make it selected or default.
+## Review model
 
-## A few useful terms
+Review this repository as documentation:
 
-New integrations use request kinds such as:
-
-- `text-chat`
-- `multimodal-chat`
-- `image-generation`
-- `music-generation`
-
-Older names such as `chat`, `vision`, `imaging`, and `music` are kept only for compatibility at the input boundary.
-
-## Validation
-
-After changing repository data, run:
-
-```bash
-python tools/validate_repo.py
-```
-
-This checks the local files, evidence links, tables, routes, and cross-file rules. It does not replace live API testing or a fresh review of provider documentation.
-
-For the details behind this update, see [CHANGELOG.md](CHANGELOG.md), [MODEL-MIGRATION-2026-07-14.md](MODEL-MIGRATION-2026-07-14.md), and [VALIDATION-2026-07-14.md](VALIDATION-2026-07-14.md).
+- confirm that wording is unambiguous and that shared and provider-specific boundaries do not conflict;
+- compare model, endpoint, capability, pricing, and example claims with official provider documentation;
+- preserve `unknown` when official evidence is unavailable;
+- record official sources and absolute review dates on verified data rows;
+- report inconsistencies as documentation findings rather than treating the repository as an executable test suite.

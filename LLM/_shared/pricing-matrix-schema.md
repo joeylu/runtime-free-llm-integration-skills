@@ -1,42 +1,38 @@
-# Shared Pricing Matrix Schema v2
+# Shared Pricing Matrix Schema
 
-Pricing is selected by an exact billing scope, not by model name alone.
-
-## Required Key
-
-`Request Kind + API Model + API Surface + API Version + Billing Region + Deployment Scope + Serving Region + Service Tier + Metered Side + Metered Item + Price Condition + Effective At`
+Use this file to keep provider pricing data structured and separate from capability rules.
 
 ## Required Columns
 
 | Column | Meaning |
 | --- | --- |
-| `Request Kind` | Canonical request kind |
-| `API Model` | Exact provider model ID |
-| `API Surface` | Exact surface, or `all-documented-surfaces` only when the provider explicitly prices the model independently of surface |
-| `API Version` | Exact version, `provider-default`, or `all-documented-versions` only when official pricing is version-independent |
-| `Billing Region` | Region used for billing, never the vague value `international` when official prices differ by region |
-| `Deployment Scope` | Provider scope such as `global`, `international`, `china-mainland`, or `workspace-specific` |
-| `Serving Region` | Actual serving/deployment region such as `singapore`, `beijing`, or `global` |
-| `Service Tier` | `standard`, `priority`, `batch`, or another exact official tier |
-| `Price Currency` | ISO currency code |
-| `Price Unit` | Exact billing unit |
-| `Metered Side` | `input`, `cached-input`, `cache-write`, `output`, `image-output`, `request`, or another explicit side |
-| `Metered Item` | What is measured |
-| `Price Condition` | Context band, mode, quality, duration, or other condition |
-| `Unit Price` | Numeric price or `unknown` |
-| `Effective At` | Official start date/time if known; otherwise `unknown`; never substitute the review date |
-| `Expires At` | Promotion/end date, `none`, or `unknown` |
-| `Pricing Status` | `current`, `scheduled`, `expired`, `unknown`, or `historical` |
-| `Last Verified At` | Exact review date |
-| `Evidence Refs` | Pricing evidence-set IDs |
-| `Notes` | Non-normative explanation |
+| `Model Type` | compatibility request kind |
+| `API Model` | exact provider model identifier |
+| `Price Region` | exact provider billing region |
+| `Price Currency` | ISO 4217 code or `unknown` |
+| `Price Unit` | billing unit such as `per-million-tokens`, `per-image`, or `mixed` |
+| `Metered Side` | input/output/cache/image/audio/tool side |
+| `Metered Item` | what is metered |
+| `Context Band` | exact official token, size, duration, or other band |
+| `Billing Plan` | `real-time`, `batch`, or another documented plan |
+| `Service Tier` | `standard`, `priority`, `flex`, or provider-defined tier |
+| `List Unit Price` | undiscounted published unit price, or `unknown`/`n/a` |
+| `Effective Unit Price` | currently applicable unit price, or `unknown`/`n/a` |
+| `Discount Kind` | `none`, a structured discount label, or `unknown` |
+| `Valid From` | effective start date/time or `unknown` |
+| `Valid Until` | effective end date/time, `open-ended`, or `unknown` |
+| `Cache Class` | `none`, `cache-read`, `cache-write`, or `cache-storage` |
+| `Multiplier` | multiplier from list to effective price when directly documented |
+| `Price Condition` | residual constraint that is not represented by structured columns |
+| `Last Verified At` | absolute verification date or `unverified` |
+| `Source` | exact official source URL |
 
 ## Rules
 
-- `all-documented-surfaces` and `all-documented-versions` are allowed only when the official pricing source prices the model independently of those dimensions.
-- A price is usable only when every key dimension needed by the provider is known and `Pricing Status = current`.
-- Never apply a Singapore price to Global, US, EU, or another deployment scope.
-- Promotions require an explicit effective window when the provider publishes one. Expired rows remain historical and are never used for estimates.
-- If the provider shows a current discounted price without an end date, record that current price, `Expires At = unknown`, and do not invent a future rollback.
-- Pricing pages are authoritative for price; model cards and examples are not substitutes.
-- Do not parse compatibility summaries in `model-catalog.md` for billing.
+- Keep one row per priceable side, item, region, plan, tier, currency, unit, and context band.
+- Do not combine input and output prices in one row.
+- Keep list price and temporary effective price separate.
+- Never compound a promotional discount with batch, priority, cache, or other discounts unless the provider explicitly documents compounding.
+- If a promotion has no published end date, set `Valid Until = unknown`; consumers must refresh before relying on it.
+- Use `unknown` for missing prices. Do not infer from sibling models or unofficial calculators.
+- Treat this matrix as the source of truth for billing UI and estimates.

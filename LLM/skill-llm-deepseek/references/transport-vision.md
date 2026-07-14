@@ -4,7 +4,7 @@ Use this file for image-understanding requests.
 
 ## Current State
 
-This skill does not bundle selected DeepSeek vision rows yet.
+This skill does not bundle documented DeepSeek vision rows yet.
 
 Do not route image input through rows listed only under `chat`.
 
@@ -12,7 +12,7 @@ Do not route image input through rows listed only under `chat`.
 
 Build the shared request envelope with:
 
-- `RequestKind = multimodal-chat`
+- `RequestKind = vision`
 - `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
 - `Model = <API Model>`
 - `Inputs.Messages = [...]`

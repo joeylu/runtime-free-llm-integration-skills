@@ -20,10 +20,10 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 | tool/function editor | `Tool Calling Mode` is compatible with the resolved thinking state |
 | strict tool schema toggle | `Strict Tool Schema Mode = verified` |
 | parallel tool calls toggle | `Parallel Tool Calls = verified` |
-| image picker | `RequestKind = multimodal-chat` or a verified image-generation edit flow |
+| image picker | `RequestKind = vision` or imaging edit flow |
 | seed input | capability matrix verifies seed |
 | size input | capability matrix verifies size |
-| image count input | `RequestKind = image-generation` and capability matrix verifies output image count |
+| image count input | `RequestKind = imaging` and capability matrix verifies output image count |
 | duration input | capability matrix verifies duration |
 | cancel button | cancellation is safe on that host surface |
 
@@ -39,8 +39,8 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 - In production UI, hide unsupported controls instead of rendering dead controls.
 - In debug, admin, or integration-test UI, prefer disabled controls with a reason so the user can see which capability blocked the option.
 - If capability state is `unknown`, either hide the control or block with an explicit explanation. Do not guess.
-- If the selected connection profile restricts request kind, model, surface, or feature, hide or disable the blocked control with the profile reason.
-- If the request URL row is `unknown` or missing for the selected provider/profile/surface, block the request before showing a test-connection success state.
+- If the resolved connection profile or endpoint lacks a request kind, surface, or feature, hide or disable the incompatible control with the reason.
+- If the request URL row is `unknown` or missing for the resolved provider/profile/surface, block the request before showing a test-connection success state.
 - If `Reasoning Effort Field = verified`, prefer the reasoning effort selector over a boolean thinking toggle.
 - If `Thinking Default = on` and `Json Object Mode = non-thinking-only`, do not silently flip thinking off when the user picks strict JSON. Block and explain that JSON requires explicitly disabling thinking.
 - If `Temperature Mode`, `Json Object Mode`, `Json Schema Mode`, or `Tool Calling Mode` depends on the effective thinking state, bind the control to that state instead of treating it as a static yes-or-no field.
@@ -48,9 +48,9 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 
 ## Result Panels
 
-- Render `TextContent` for `text-chat` and `multimodal-chat`.
+- Render `TextContent` for `chat` and `vision`.
 - Render `StructuredContent` for verified schema outputs.
 - Render `ToolCalls` when the model asks the app to call caller-defined tools.
-- Render `ImageOutputs` for `image-generation`.
-- Render `AudioOutputs` for `speech-generation` and `music-generation`; render transcription text separately.
+- Render `ImageOutputs` for `imaging`.
+- Render `AudioOutputs` for `music`.
 - Render usage, latency, and finish reason in a secondary diagnostics area when the caller wants debugging visibility.

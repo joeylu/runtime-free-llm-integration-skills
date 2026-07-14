@@ -21,7 +21,7 @@ Use this contract for every `skill-llm-xxxx` integration.
 | `config_error` | Local configuration is missing or invalid |
 | `validation_error` | The request is invalid before sending |
 | `capability_unverified` | Requested feature is not verified in the capability matrix |
-| `unsupported_option` | The selected model or request kind does not support the option |
+| `unsupported_option` | The documented model or request kind does not support the option |
 | `auth_error` | Authentication failed |
 | `network_error` | Network transport failed |
 | `request_url_error` | Request URL is missing, unknown, incompatible, or unsafe |

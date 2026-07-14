@@ -1,23 +1,20 @@
 # MiniMax China Mainland Request URLs
 
-- `SchemaVersion: 2`
-- `StructuralSnapshotDate: 2026-07-14`
 - Key: `Request Kind + Model Scope + API Surface + API Version + Endpoint Kind`
 
-Read `../../_shared/request-url-matrix-schema.md` first. Resolve a connection profile before substituting `{Profile.Base URL}`. No row authorizes silent surface or version fallback.
+Read `../../_shared/request-url-matrix-schema.md` first. Resolve a connection profile before substituting `{Profile.Base URL}`. Never silently change surface, version, or endpoint.
 
 ## Current Matrix
 
-| Request Kind | Model Scope | API Surface | API Version | Endpoint Kind | HTTP Method | Base URL | Request Path Template | Request URL Template | Stream Variant | Request URL Status | Last Verified At | Evidence Refs | Notes |
+| Request Kind | Model Scope | API Surface | API Version | Endpoint Kind | HTTP Method | Base URL | Request Path Template | Request URL Template | Stream Variant | Request URL Status | Last Verified At | Source | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `text-chat` | `all-reviewed` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/chat/completions` | `{Profile.Base URL}/chat/completions` | `body-param` | `verified` | `2026-07-14` | `evset-minimax-cn-request-urls-text-chat-all-reviewed-chat-completions-v1-1ee355b3f0` | `China Mainland OpenAI-compatible chat path; template profile base URL is https://api.minimaxi.com/v1` |
-| `multimodal-chat` | `all-reviewed` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `unknown` | `unknown` | `n/a` | `unknown` | `unverified` | `evset-minimax-cn-request-urls-multimodal-chat-all-reviewed-chat-completions-v1-fd66241325` | `keep blocked until a vision model sync verifies the exact model and endpoint behavior` |
-| `image-generation` | `image-01` | `image-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/image_generation` | `{Profile.Base URL}/image_generation` | `n/a` | `verified` | `2026-07-14` | `evset-minimax-cn-request-urls-image-generation-image-01-image-generation-v1-dded324bbe` | `build profile only; plan profile must block this request kind` |
-| `music-generation` | `music-2.6` | `music-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/music_generation` | `{Profile.Base URL}/music_generation` | `n/a` | `verified` | `2026-07-14` | `evset-minimax-cn-request-urls-music-generation-music-2-6-music-generation-v1-b413c3a57a` | `build profile only; plan profile must block this request kind` |
+| `chat` | `documented-models` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/chat/completions` | `{Profile.Base URL}/chat/completions` | `body-param` | `verified` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` | `China Mainland OpenAI-compatible chat path; template profile base URL is https://api.minimaxi.com/v1` |
+| `vision` | `MiniMax-M3` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/chat/completions` | `{Profile.Base URL}/chat/completions` | `body-param` | `verified` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` | `MiniMax-M3 image input uses the OpenAI-compatible Chat Completions endpoint` |
+| `imaging` | `image-01` | `image-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/image_generation` | `{Profile.Base URL}/image_generation` | `n/a` | `verified` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/image-generation-t2i` | `build profile only; plan profile must block this request kind` |
+| `music` | `music-2.6` | `music-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/music_generation` | `{Profile.Base URL}/music_generation` | `n/a` | `verified` | `2026-07-14` | `https://platform.minimaxi.com/docs/api-reference/music-generation` | `build profile only; plan profile must block this request kind` |
 
 ## Rules
 
 - Use only `verified` rows for sending.
 - Treat `unknown` paths as hard stops.
 - Do not put secrets or signed user data in a logged resolved URL.
-- Claim details and official source locators are in `../../_evidence/evidence.json`.
