@@ -1,87 +1,78 @@
-# Aliyun Vision Transport
+# Aliyun Bailian China Mainland Vision Transport
 
-Use this file for image-understanding requests.
+Use this file for image-understanding requests with a model selected from the `vision` catalog.
 
-## Input Shape
+## Surface Choice
 
-Build the shared request envelope with:
+`qwen3.7-plus` has two verified image-understanding surfaces:
 
-- `RequestKind = vision`
+- `responses`: image-only vision through `input_image`, with Responses reasoning, continuation, tools, and streaming semantics
+- `chat-completions`: compatibility path for image and video inputs, manual history, `thinking_budget`, `preserve_thinking`, and the verified non-thinking `json_object` mode
+
+Do not silently switch surfaces. Resolve:
+
+`RequestKind = multimodal-chat + qwen3.7-plus + ApiSurface`
+
+## Shared Input Shape
+
+Build:
+
+- `RequestKind = multimodal-chat`
 - optional `ConnectionProfileKey`
-- `ApiSurface = chat-completions`
-- `Model = <API Model>`
+- `ApiSurface = responses | chat-completions`
+- `Model = qwen3.7-plus`
 - `Inputs.Messages = [...]`
 - `Inputs.Images = [...]`
 - optional `IsStream`
-- optional `ThinkingRequested`
-- optional `ThinkingBudget`
-- optional `Temperature`
-- optional `ResponseFormat`
+- only fields verified by the exact surface row
 
-Example:
-One vision request can include a user text message plus one or more image items.
+Resolve `ResolvedRequestUrl` before sending.
 
-## Transport Choice
+## Responses Mapping
 
-Use `non-stream` as the default safe path only when `Supports Non-Stream` is `verified` or `inherited`.
+Reuse every `responses` rule in `transport-chat.md`, including reasoning effort, functions, hosted tools, continuation, storage, Session Cache, stream events, unsupported fields, and response mapping.
 
-Use `stream` only when `Supports Stream = verified` and the capability matrix explicitly verifies that model-kind combination.
+Map each image to a user content item with `type = input_image` and a valid public `image_url` accepted by the provider.
 
-Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
+Constraints:
 
-## Image Rule
+- at least one image is required for `RequestKind = multimodal-chat`
+- Responses does not accept video or audio input
+- do not map `Inputs.Images` to `input_file`; the current API reference limits `input_file` to `qwen3.5-ocr`, which is not this row
+- do not send a vision request through a chat-only capability row
+- do not infer image limits from the Chat Completions vision table; apply only limits documented for the selected Responses payload
 
-Only models listed under the `vision` catalog may be used for image-understanding requests.
+Return final text in `TextContent`, reasoning summaries in `ReasoningSummary`, and hosted tool records in `HostedToolCalls`. Do not populate raw `ThinkingContent` from Responses summaries.
 
-Do not route image input through rows listed only under `chat`.
+## Chat Completions Mapping
 
-## Effective Thinking Rule
+Reuse the `chat-completions` rules in `transport-chat.md`.
 
-Keep the same rule as chat:
+Map text and media into the provider's documented multimodal message content format. The selected model documentation supports image and video understanding on this surface.
 
-- `ThinkingRequested` is caller intent
-- `ThinkingApplied` is normalized provider result
+For the selected row:
 
-Resolve the effective request thinking state in this order:
+- thinking defaults on
+- `ThinkingBudget` and `preserve_thinking` are available when mapped exactly
+- temperature is allowed in both thinking modes with the documented mode-specific defaults
+- `json_object` is non-thinking-only
+- `json_schema` and caller-defined function mode compatibility remain blocked while unverified
 
-1. If the caller explicitly sets `ThinkingRequested`, use that value.
-2. Otherwise, if `Thinking Mode = mixed`, use `Thinking Default`.
-3. Otherwise, if `Thinking Mode = always-on`, use `true`.
-4. Otherwise, use `false`.
+Never disable thinking automatically to satisfy `json_object`.
 
-If `ThinkingRequested = true` and `Thinking Mode` is `unsupported` or `unknown`, stop.
-
-If `ThinkingRequested = false` and `Thinking Mode = always-on`, stop.
-
-Pass `ThinkingBudget` only when `Thinking Budget Field = verified`.
-
-## Temperature Rule
-
-Pass `Temperature` only when `Temperature Mode` is compatible with the effective thinking state.
-
-Do not silently drop the parameter.
-
-## Response Format Rule
-
-Pass `ResponseFormat` only when `Json Object Mode` is compatible with the effective thinking state.
-
-Do not silently switch a default-on mixed-thinking model into non-thinking mode.
-
-## Response Mapping
-
-Map the provider result into the shared response envelope:
-
-- `ResultKind = vision`
-- `TextContent = final understanding output`
-- `ThinkingContent = provider reasoning text when available`
-- `Usage = normalized usage`
-- `Transport.IsStream = true or false`
+Map raw `reasoning_content` to `ThinkingContent` only when returned by Chat Completions.
 
 ## UI Rule
 
-If the caller wants UI:
+- filter the model selector to active selected `vision` rows
+- display a surface selector for `qwen3.7-plus`
+- on Responses, accept images only and hide video/audio attachment controls
+- on Chat Completions, expose only documented image/video inputs
+- show surface-specific reasoning, cache, continuation, tool, and response-format controls
+- clear or reject incompatible values when the surface changes
 
-- show image picker or image attachment surface
-- show model selector filtered to `vision`
-- show response-format control only when `Json Object Mode` is compatible with the resolved thinking state
-- hide controls that are not verified by the capability matrix
+## Official Sources
+
+- `https://help.aliyun.com/zh/model-studio/qwen-api-via-openai-responses`
+- `https://help.aliyun.com/zh/model-studio/vision`
+- `https://help.aliyun.com/zh/model-studio/qwen-api-via-openai-chat-completions`

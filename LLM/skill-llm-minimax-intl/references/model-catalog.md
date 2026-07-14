@@ -1,65 +1,45 @@
 # MiniMax International Model Catalog
 
-Use this file as the local MiniMax International model catalog for direct-model work.
+- `CoverageMode: curated-allowlist`
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
+- Every factual row is valid only through its own `Last Verified At` and `Evidence Refs`.
+- New models are not made default automatically.
 
-Selection context for the current local catalog:
+Read `../../_shared/model-catalog-schema.md` before using this file.
 
-- initial add-provider date: `2026-05-03`
-- recency boundary: `unreviewed`
-- recency cutoff date: `unreviewed`
-- only rows with `Catalog Status = active` and `Selection Status = selected` are valid local options
-- price region: `international`
+## Selector Rule
 
-China Mainland rows are owned by `../skill-llm-minimax-cn` and must not be used by this skill.
+Use only Canonical Registry rows where `Local Selection = selected`, `Provider Lifecycle` is callable, `Verification State = verified`, and `Review Freshness = current`. Then resolve the exact profile, URL, API version, capability row, and pricing scope.
 
-## Dropdown Rule
+## Canonical Registry
 
-When building a model selector:
+| Request Kind | API Model | Display Name | Primary API Surface | Provider Lifecycle | Provider Shutdown At | Provider Earliest Retirement At | Local Selection | Selection Reason | Is Default | Verification State | Review Freshness | Last Verified At | Official Context Display | Exact Context Tokens | Official Max Input Display | Exact Max Input Tokens | Official Max Output Display | Exact Max Output Tokens | Recommended Max Output Tokens | Limit Unit Convention | Is Moving Alias | Alias Target At Verification | Alias Mode | Alias Target Verified At | Replacement Model | Evidence Refs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `text-chat` | `MiniMax-M2.7` | `MiniMax M2.7` | `chat-completions` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `204,800` | `204800` | `unknown` | `unknown` | `204,800` | `204800` | `65536` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-text-chat-minimax-m2-7-1c8f5d565f` |
+| `text-chat` | `MiniMax-M2.7-highspeed` | `MiniMax M2.7 Highspeed` | `chat-completions` | `stable` | `none` | `none` | `selected` | `selected latency-optimized alternative` | `no` | `verified` | `current` | `2026-07-14` | `204,800` | `204800` | `unknown` | `unknown` | `204,800` | `204800` | `65536` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-text-chat-minimax-m2-7-highspeed-e0ecde46f3` |
+| `text-chat` | `MiniMax-M3` | `MiniMax M3` | `chat-completions` | `stable` | `none` | `none` | `not-selected` | `current flagship candidate added without changing local default` | `no` | `verified` | `current` | `2026-07-14` | `1,000,000` | `1000000` | `unknown` | `unknown` | `524,288` | `524288` | `131072` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-text-chat-minimax-m3-c67b84097f` |
+| `multimodal-chat` | `MiniMax-M3` | `MiniMax M3` | `chat-completions` | `stable` | `none` | `none` | `not-selected` | `multimodal flagship candidate; no automatic exposure` | `no` | `verified` | `current` | `2026-07-14` | `1,000,000` | `1000000` | `unknown` | `unknown` | `524,288` | `524288` | `131072` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-multimodal-chat-minimax-m3-7c6b9ba899` |
+| `image-generation` | `image-01` | `image-01` | `image-generation` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-image-generation-image-01-d8c85c6ce7` |
+| `music-generation` | `music-2.6` | `Music 2.6` | `music-generation` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-music-generation-music-2-6-e499ca096d` |
+| `text-chat` | `MiniMax-M2.5` | `MiniMax M2.5` | `chat-completions` | `stable` | `none` | `none` | `not-selected` | `legacy candidate retained for compatibility history` | `no` | `verified` | `current` | `2026-07-14` | `204,800` | `204800` | `unknown` | `unknown` | `204,800` | `204800` | `65536` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-text-chat-minimax-m2-5-54c9462d7c` |
+| `image-generation` | `image-01-live` | `image-01-live` | `image-generation` | `stable` | `none` | `none` | `not-selected` | `candidate requires separate product and style-control decision` | `no` | `verified` | `current` | `2026-07-14` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-minimax-intl-model-catalog-image-generation-image-01-live-86f51910d5` |
 
-- display `API Model`
-- submit `API Model`
-- keep `UI Label` equal to `API Model` if the column is present
-- filter out rows whose `Catalog Status` is not `active`
-- filter out rows whose `Selection Status` is not `selected`
+## Legacy Compatibility View
 
-## Pricing Rule
-
-Use `pricing-matrix.md` for billing region, currency, context band, metered side, and unit price.
-
-The catalog price columns are compatibility summaries only. Do not parse `Input Price`, `Output Price`, or `Pricing Note` to reconstruct billing.
-
-## Active Chat Models
-
-| Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `MiniMax-M2.7` | `MiniMaxM27` | `MiniMax-M2.7` | `active` | `selected` | `yes` | `verified` | `unreviewed` | `2026-03-18` | `unreviewed` | `204800` | `unknown` | `2048` | `international` | `per-million-tokens` | `USD 0.3` | `USD 1.2` | `standard International pay-as-you-go pricing; cache read USD 0.06 and cache write USD 0.375 per 1M tokens` | `2026-05-03` | `release: https://platform.minimax.io/docs/release-notes/models ; api: https://platform.minimax.io/docs/api-reference/text-chat-openai ; pricing: https://platform.minimax.io/docs/guides/pricing-paygo` |
-| `chat` | `MiniMax-M2.7-highspeed` | `MiniMaxM27Highspeed` | `MiniMax-M2.7-highspeed` | `active` | `selected` | `no` | `verified` | `unreviewed` | `2026-03-18` | `unreviewed` | `204800` | `unknown` | `2048` | `international` | `per-million-tokens` | `USD 0.6` | `USD 2.4` | `highspeed International pay-as-you-go row; cache read USD 0.06 and cache write USD 0.375 per 1M tokens` | `2026-05-03` | `release: https://platform.minimax.io/docs/release-notes/models ; api: https://platform.minimax.io/docs/api-reference/text-chat-openai ; pricing: https://platform.minimax.io/docs/guides/pricing-paygo` |
-
-## Active Vision Models
-
-No locally selected MiniMax International vision rows yet.
-
-## Active Imaging Models
+This derived table preserves the original column contract during migration. It is not the source of truth for provider lifecycle or selection. New integrations must use the Canonical Registry above.
 
 | Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `imaging` | `image-01` | `Image01` | `image-01` | `active` | `selected` | `yes` | `verified` | `unreviewed` | `unreviewed` | `unreviewed` | `n/a` | `n/a` | `n/a` | `international` | `per-image` | `n/a` | `USD 0.0035` | `International pay-as-you-go image pricing is per generated image` | `2026-05-03` | `api: https://platform.minimax.io/docs/api-reference/image-generation-t2i ; pricing: https://platform.minimax.io/docs/guides/pricing-paygo` |
+| `chat` | `MiniMax-M2.7` | `MiniMax M2.7` | `MiniMax-M2.7` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-03-18` | `2026-01-14` | `204800` | `unknown` | `204800` | `international` | `per-million-tokens` | `USD 0.3` | `USD 1.2` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/text-chat-openai` |
+| `chat` | `MiniMax-M2.7-highspeed` | `MiniMax M2.7 Highspeed` | `MiniMax-M2.7-highspeed` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-03-18` | `2026-01-14` | `204800` | `unknown` | `204800` | `international` | `per-million-tokens` | `USD 0.6` | `USD 2.4` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/text-chat-openai` |
+| `chat` | `MiniMax-M3` | `MiniMax M3` | `MiniMax-M3` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-06-01` | `2026-01-14` | `1000000` | `unknown` | `524288` | `international` | `per-million-tokens` | `USD 0.30 <=512K` | `USD 1.20 <=512K` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/text-chat-openai` |
+| `vision` | `MiniMax-M3` | `MiniMax M3` | `MiniMax-M3` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-06-01` | `2026-01-14` | `1000000` | `unknown` | `524288` | `international` | `per-million-tokens` | `USD 0.30 <=512K` | `USD 1.20 <=512K` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/text-chat-openai` |
+| `imaging` | `image-01` | `image-01` | `image-01` | `active` | `selected` | `yes` | `verified` | `candidate` | `2025-02-15` | `2026-01-14` | `n/a` | `n/a` | `n/a` | `international` | `per-image` | `n/a` | `USD 0.0035` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/image-generation-t2i` |
+| `music` | `music-2.6` | `Music 2.6` | `music-2.6` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-01` | `2026-01-14` | `n/a` | `n/a` | `n/a` | `international` | `per-song` | `n/a` | `USD 0.15 per song/up-to-5-minutes` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/music-generation` |
+| `chat` | `MiniMax-M2.5` | `MiniMax M2.5` | `MiniMax-M2.5` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-02-01` | `2026-01-14` | `204800` | `unknown` | `204800` | `international` | `unknown` | `unknown` | `unknown` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/text-chat-openai` |
+| `imaging` | `image-01-live` | `image-01-live` | `image-01-live` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2025-02-15` | `2026-01-14` | `n/a` | `n/a` | `n/a` | `international` | `per-image` | `n/a` | `USD 0.0035` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/image-generation-t2i` |
 
-## Active Music Models
+## Evidence
 
-| Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `music` | `music-2.6` | `Music26` | `music-2.6` | `active` | `selected` | `yes` | `verified` | `unreviewed` | `unreviewed` | `unreviewed` | `n/a` | `n/a` | `n/a` | `international` | `unknown` | `unknown` | `unknown` | `official Music Generation API verifies the model and endpoint; no International pay-as-you-go price row for music-2.6 was selected in this pass` | `2026-05-03` | `api: https://platform.minimax.io/docs/api-reference/music-generation ; pricing: https://platform.minimax.io/docs/guides/pricing-paygo` |
-
-## Build-Only Video Reference
-
-MiniMax International build-profile HTTP video generation is documented, but video is not a local catalog model type because `../_shared/model-catalog-schema.md` supports only `chat`, `vision`, `imaging`, and `music`.
-
-Use `references/build-multimodal-http.md` for links, then stop before first-class video implementation unless the owner extends the shared schemas.
-
-## Candidate Rows Not Selected In This Local Pass
-
-| Model Type | API Model | Reason |
-| --- | --- | --- |
-| `chat` | `MiniMax-M2.5` | `candidate-not-selected; older chat row, not needed for the first M2.7 local set` |
-| `imaging` | `image-01-live` | `candidate-not-selected; not needed for the base HTTP image-generation flow selected in this pass` |
+Evidence sets and field-level claims live in `../../_evidence/evidence.json`. Pricing details live in `pricing-matrix.md`; capability and endpoint details live in their exact surface/version matrices.

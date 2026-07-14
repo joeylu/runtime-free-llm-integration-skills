@@ -1,66 +1,55 @@
 # Gemini Model Catalog
 
-Use this file as the local Gemini model catalog for direct-model work.
+- `CoverageMode: curated-allowlist`
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
+- Every factual row is valid only through its own `Last Verified At` and `Evidence Refs`.
+- New models are not made default automatically.
 
-Selection context for the current local catalog:
+Read `../../_shared/model-catalog-schema.md` before using this file.
 
-- sync date: `2026-05-01`
-- recency boundary: `6 months`
-- recency cutoff date: `2025-11-01`
-- only rows with `Catalog Status = active` and `Selection Status = selected` are valid local options
+## Selector Rule
 
-Meanings:
+Use only Canonical Registry rows where `Local Selection = selected`, `Provider Lifecycle` is callable, `Verification State = verified`, and `Review Freshness = current`. Then resolve the exact profile, URL, API version, capability row, and pricing scope.
 
-- `Catalog Status`: local availability flag used by this skill
-- `Selection Status`: whether the row was chosen into the local model set
-- `Recency Classification`: whether the row is inside the last confirmed sync boundary
+## Canonical Registry
 
-## Dropdown Rule
+| Request Kind | API Model | Display Name | Primary API Surface | Provider Lifecycle | Provider Shutdown At | Provider Earliest Retirement At | Local Selection | Selection Reason | Is Default | Verification State | Review Freshness | Last Verified At | Official Context Display | Exact Context Tokens | Official Max Input Display | Exact Max Input Tokens | Official Max Output Display | Exact Max Output Tokens | Recommended Max Output Tokens | Limit Unit Convention | Is Moving Alias | Alias Target At Verification | Alias Mode | Alias Target Verified At | Replacement Model | Evidence Refs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `text-chat` | `gemini-3.5-flash` | `Gemini 3.5 Flash` | `interactions` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `1,048,576` | `1048576` | `1,048,576` | `1048576` | `65,536` | `65536` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-gemini-model-catalog-text-chat-gemini-3-5-flash-72da6d4a7c` |
+| `multimodal-chat` | `gemini-3.5-flash` | `Gemini 3.5 Flash` | `interactions` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `1,048,576` | `1048576` | `1,048,576` | `1048576` | `65,536` | `65536` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-gemini-model-catalog-multimodal-chat-gemini-3-5-flash-c69ba91f34` |
+| `text-chat` | `gemini-3.1-pro-preview` | `Gemini 3.1 Pro Preview` | `interactions` | `preview` | `none` | `none` | `selected` | `selected higher-quality preview alternative` | `no` | `verified` | `current` | `2026-07-14` | `1,048,576` | `1048576` | `1,048,576` | `1048576` | `65,536` | `65536` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-gemini-model-catalog-text-chat-gemini-3-1-pro-preview-2cbb54d4f3` |
+| `multimodal-chat` | `gemini-3.1-pro-preview` | `Gemini 3.1 Pro Preview` | `interactions` | `preview` | `none` | `none` | `selected` | `selected higher-quality preview alternative` | `no` | `verified` | `current` | `2026-07-14` | `1,048,576` | `1048576` | `1,048,576` | `1048576` | `65,536` | `65536` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-gemini-model-catalog-multimodal-chat-gemini-3-1-pro-preview-88051ed784` |
+| `image-generation` | `gemini-3.1-flash-image` | `Gemini 3.1 Flash Image` | `interactions` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `131,072` | `131072` | `131,072` | `131072` | `32,768` | `32768` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-gemini-model-catalog-image-generation-gemini-3-1-flash-image-25a90100fc` |
+| `image-generation` | `gemini-3-pro-image` | `Gemini 3 Pro Image` | `interactions` | `stable` | `none` | `none` | `selected` | `selected higher-quality alternative` | `no` | `verified` | `current` | `2026-07-14` | `65,536` | `65536` | `65,536` | `65536` | `32,768` | `32768` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-gemini-model-catalog-image-generation-gemini-3-pro-image-99b9b1f75d` |
+| `text-chat` | `gemini-3-flash-preview` | `Gemini 3 Flash Preview` | `interactions` | `preview` | `none` | `none` | `not-selected` | `provider preview remains available; locally replaced by gemini-3.5-flash` | `no` | `verified` | `current` | `2026-07-14` | `1,048,576` | `1048576` | `1,048,576` | `1048576` | `65,536` | `65536` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `gemini-3.5-flash` | `evset-gemini-model-catalog-text-chat-gemini-3-flash-preview-bc0619c8a3` |
+| `multimodal-chat` | `gemini-3-flash-preview` | `Gemini 3 Flash Preview` | `interactions` | `preview` | `none` | `none` | `not-selected` | `provider preview remains available; locally replaced by gemini-3.5-flash` | `no` | `verified` | `current` | `2026-07-14` | `1,048,576` | `1048576` | `1,048,576` | `1048576` | `65,536` | `65536` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `gemini-3.5-flash` | `evset-gemini-model-catalog-multimodal-chat-gemini-3-flash-preview-0e4bf3572b` |
+| `image-generation` | `gemini-3.1-flash-image-preview` | `Gemini 3.1 Flash Image Preview` | `interactions` | `shutdown` | `2026-06-25` | `none` | `not-selected` | `provider shut down this preview` | `no` | `verified` | `current` | `2026-07-14` | `131,072` | `131072` | `131,072` | `131072` | `32,768` | `32768` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `gemini-3.1-flash-image` | `evset-gemini-model-catalog-image-generation-gemini-3-1-flash-image-preview-f037137507` |
+| `image-generation` | `gemini-3-pro-image-preview` | `Gemini 3 Pro Image Preview` | `interactions` | `shutdown` | `2026-06-25` | `none` | `not-selected` | `provider shut down this preview` | `no` | `verified` | `current` | `2026-07-14` | `65,536` | `65536` | `65,536` | `65536` | `32,768` | `32768` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `gemini-3-pro-image` | `evset-gemini-model-catalog-image-generation-gemini-3-pro-image-preview-a9fd8f1863` |
+| `image-generation` | `gemini-2.5-flash-image` | `Gemini 2.5 Flash Image` | `generate-content` | `scheduled-deprecated` | `unknown` | `2026-10-02` | `not-selected` | `provider lifecycle deadline; use current stable image model` | `no` | `verified` | `current` | `2026-07-14` | `65,536` | `65536` | `65,536` | `65536` | `32,768` | `32768` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `gemini-3.1-flash-image` | `evset-gemini-model-catalog-image-generation-gemini-2-5-flash-image-1f78dd38bd` |
+| `text-chat` | `gemini-3.1-flash-lite` | `Gemini 3.1 Flash-Lite` | `interactions` | `stable` | `none` | `2027-05-07` | `not-selected` | `current low-cost stable candidate; no automatic default switch` | `no` | `verified` | `current` | `2026-07-14` | `1,048,576` | `1048576` | `1,048,576` | `1048576` | `65,536` | `65536` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `unknown` | `evset-gemini-model-catalog-text-chat-gemini-3-1-flash-lite-39a62469d2` |
+| `image-generation` | `gemini-3.1-flash-lite-image` | `Gemini 3.1 Flash Lite Image` | `interactions` | `stable` | `none` | `none` | `not-selected` | `current efficiency image candidate; product decision required before selection` | `no` | `verified` | `current` | `2026-07-14` | `65,536` | `65536` | `65,536` | `65536` | `4,096` | `4096` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-gemini-model-catalog-image-generation-gemini-3-1-flash-lite-image-0bdc690a19` |
 
-When building a model selector:
+## Legacy Compatibility View
 
-- display `API Model`
-- submit `API Model`
-- keep `UI Label` equal to `API Model` if the column is present
-- filter out rows whose `Catalog Status` is not `active`
-- filter out rows whose `Selection Status` is not `selected`
-
-## Pricing Rule
-
-Use `pricing-matrix.md` for billing region, currency, context band, metered side, and unit price.
-
-The catalog price columns are compatibility summaries only. Do not parse `Input Price`, `Output Price`, or `Pricing Note` to reconstruct tiered billing.
-
-## Active Chat Models
-
-| Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `gemini-3-flash-preview` | `Gemini3FlashPreview` | `gemini-3-flash-preview` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-28` | `2025-11-01` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `$0.50 text/image/video; $1.00 audio` | `$3.00 including thinking tokens` | `standard paid tier; free tier may be available but production billing uses paid tier values` | `2026-05-01` | `model: https://ai.google.dev/gemini-api/docs/models/gemini-3-flash-preview ; pricing: https://ai.google.dev/gemini-api/docs/pricing ; thinking: https://ai.google.dev/gemini-api/docs/thinking` |
-| `chat` | `gemini-3.1-pro-preview` | `Gemini31ProPreview` | `gemini-3.1-pro-preview` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-04-28` | `2025-11-01` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `$2.00 <=200k tokens; $4.00 >200k tokens` | `$12.00 <=200k tokens; $18.00 >200k tokens, including thinking tokens` | `standard paid tier; customtools sibling endpoint is not selected in this local pass` | `2026-05-01` | `model: https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview ; pricing: https://ai.google.dev/gemini-api/docs/pricing ; thinking: https://ai.google.dev/gemini-api/docs/thinking` |
-
-## Active Vision Models
+This derived table preserves the original column contract during migration. It is not the source of truth for provider lifecycle or selection. New integrations must use the Canonical Registry above.
 
 | Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `vision` | `gemini-3-flash-preview` | `Gemini3FlashVision` | `gemini-3-flash-preview` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-28` | `2025-11-01` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `$0.50 text/image/video; $1.00 audio` | `$3.00 including thinking tokens` | `model supports text, image, video, audio, and PDF inputs; image input is priced as input tokens` | `2026-05-01` | `model: https://ai.google.dev/gemini-api/docs/models/gemini-3-flash-preview ; pricing: https://ai.google.dev/gemini-api/docs/pricing ; vision: https://ai.google.dev/gemini-api/docs/text-generation` |
-| `vision` | `gemini-3.1-pro-preview` | `Gemini31ProVision` | `gemini-3.1-pro-preview` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-04-28` | `2025-11-01` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `$2.00 <=200k tokens; $4.00 >200k tokens` | `$12.00 <=200k tokens; $18.00 >200k tokens, including thinking tokens` | `model supports text, image, video, audio, and PDF inputs; image input is priced as input tokens` | `2026-05-01` | `model: https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview ; pricing: https://ai.google.dev/gemini-api/docs/pricing ; vision: https://ai.google.dev/gemini-api/docs/text-generation` |
+| `chat` | `gemini-3.5-flash` | `Gemini 3.5 Flash` | `gemini-3.5-flash` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-05-19` | `2026-01-14` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `USD 1.50` | `USD 9.00 including thinking` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash` |
+| `vision` | `gemini-3.5-flash` | `Gemini 3.5 Flash` | `gemini-3.5-flash` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-05-19` | `2026-01-14` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `USD 1.50` | `USD 9.00 including thinking` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash` |
+| `chat` | `gemini-3.1-pro-preview` | `Gemini 3.1 Pro Preview` | `gemini-3.1-pro-preview` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-02-19` | `2026-01-14` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `USD 2.00 <=200K; USD 4.00 >200K` | `USD 12.00 <=200K; USD 18.00 >200K` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview` |
+| `vision` | `gemini-3.1-pro-preview` | `Gemini 3.1 Pro Preview` | `gemini-3.1-pro-preview` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-02-19` | `2026-01-14` | `1048576` | `1048576` | `65536` | `global` | `per-million-tokens` | `USD 2.00 <=200K; USD 4.00 >200K` | `USD 12.00 <=200K; USD 18.00 >200K` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview` |
+| `imaging` | `gemini-3.1-flash-image` | `Gemini 3.1 Flash Image` | `gemini-3.1-flash-image` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-05-28` | `2026-01-14` | `131072` | `131072` | `32768` | `global` | `mixed` | `USD 0.50 per 1M text/image input tokens` | `USD 3.00 text/thinking; USD 60.00 image-output tokens` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-image` |
+| `imaging` | `gemini-3-pro-image` | `Gemini 3 Pro Image` | `gemini-3-pro-image` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-05-28` | `2026-01-14` | `65536` | `65536` | `32768` | `global` | `mixed` | `USD 2.00 per 1M text/image input tokens` | `USD 12.00 text/thinking; USD 120.00 image-output tokens` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3-pro-image` |
+| `chat` | `gemini-3-flash-preview` | `Gemini 3 Flash Preview` | `gemini-3-flash-preview` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2025-12-17` | `2026-01-14` | `1048576` | `1048576` | `65536` | `global` | `n/a` | `n/a` | `n/a` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3-flash-preview` |
+| `vision` | `gemini-3-flash-preview` | `Gemini 3 Flash Preview` | `gemini-3-flash-preview` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2025-12-17` | `2026-01-14` | `1048576` | `1048576` | `65536` | `global` | `n/a` | `n/a` | `n/a` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3-flash-preview` |
+| `imaging` | `gemini-3.1-flash-image-preview` | `Gemini 3.1 Flash Image Preview` | `gemini-3.1-flash-image-preview` | `removed` | `not-selected` | `no` | `verified` | `retired` | `2026-02-26` | `2026-01-14` | `131072` | `131072` | `32768` | `global` | `n/a` | `n/a` | `n/a` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/deprecations` |
+| `imaging` | `gemini-3-pro-image-preview` | `Gemini 3 Pro Image Preview` | `gemini-3-pro-image-preview` | `removed` | `not-selected` | `no` | `verified` | `retired` | `2025-11-20` | `2026-01-14` | `65536` | `65536` | `32768` | `global` | `n/a` | `n/a` | `n/a` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/deprecations` |
+| `imaging` | `gemini-2.5-flash-image` | `Gemini 2.5 Flash Image` | `gemini-2.5-flash-image` | `deprecated` | `not-selected` | `no` | `verified` | `candidate` | `2025-10-02` | `2026-01-14` | `65536` | `65536` | `32768` | `global` | `n/a` | `n/a` | `n/a` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/deprecations` |
+| `chat` | `gemini-3.1-flash-lite` | `Gemini 3.1 Flash-Lite` | `gemini-3.1-flash-lite` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-05-07` | `2026-01-14` | `1048576` | `1048576` | `65536` | `unknown` | `unknown` | `unknown` | `unknown` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite` |
+| `imaging` | `gemini-3.1-flash-lite-image` | `Gemini 3.1 Flash Lite Image` | `gemini-3.1-flash-lite-image` | `active` | `not-selected` | `no` | `verified` | `candidate` | `2026-06-01` | `2026-01-14` | `65536` | `65536` | `4096` | `unknown` | `unknown` | `unknown` | `unknown` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite-image` |
 
-## Active Imaging Models
+## Evidence
 
-| Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `imaging` | `gemini-3.1-flash-image-preview` | `NanoBanana2Preview` | `gemini-3.1-flash-image-preview` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-28` | `2025-11-01` | `131072` | `131072` | `32768` | `global` | `mixed` | `$0.50 per 1M text/image input tokens` | `$3.00 per 1M text/thinking output tokens; $60.00 per 1M image output tokens` | `standard paid tier; image equivalents: $0.045 per 0.5K, $0.067 per 1K, $0.101 per 2K, $0.151 per 4K image` | `2026-05-01` | `model: https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-image-preview ; image docs: https://ai.google.dev/gemini-api/docs/image-generation ; pricing: https://ai.google.dev/gemini-api/docs/pricing` |
-| `imaging` | `gemini-3-pro-image-preview` | `NanoBananaProPreview` | `gemini-3-pro-image-preview` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-04-28` | `2025-11-01` | `65536` | `65536` | `32768` | `global` | `mixed` | `$2.00 per 1M text/image input tokens` | `$12.00 per 1M text/thinking output tokens; $120.00 per 1M image output tokens` | `standard paid tier; image equivalents: $0.134 per 1K/2K image and $0.24 per 4K image` | `2026-05-01` | `model: https://ai.google.dev/gemini-api/docs/models/gemini-3-pro-image-preview ; image docs: https://ai.google.dev/gemini-api/docs/image-generation ; pricing: https://ai.google.dev/gemini-api/docs/pricing` |
-| `imaging` | `gemini-2.5-flash-image` | `NanoBanana` | `gemini-2.5-flash-image` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-04-28` | `2025-11-01` | `65536` | `65536` | `32768` | `global` | `mixed` | `$0.30 per 1M text/image input tokens` | `$0.039 per image up to 1024x1024` | `standard paid tier; official docs also describe image output as $30 per 1M tokens with 1290 tokens per <=1024x1024 output image` | `2026-05-01` | `model: https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-image ; image docs: https://ai.google.dev/gemini-api/docs/image-generation ; pricing: https://ai.google.dev/gemini-api/docs/pricing` |
-
-## Active Music Models
-
-No locally selected music rows yet.
-
-## Candidate Rows Not Selected In This Local Pass
-
-| Model Type | API Model | Reason |
-| --- | --- | --- |
-| `chat` | `gemini-3.1-flash-lite-preview` | `candidate-not-selected; useful low-cost Gemini 3 row, but not selected in the first Gemini structure pass` |
-| `chat` | `gemini-3.1-pro-preview-customtools` | `candidate-not-selected; specialized custom-tools endpoint needs separate transport notes before local selection` |
-| `imaging` | `imagen-4.0-generate-001` | `candidate-not-selected; Imagen family is separate from Nano Banana and needs its own imaging capability pass` |
+Evidence sets and field-level claims live in `../../_evidence/evidence.json`. Pricing details live in `pricing-matrix.md`; capability and endpoint details live in their exact surface/version matrices.

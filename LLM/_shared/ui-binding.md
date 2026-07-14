@@ -20,10 +20,10 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 | tool/function editor | `Tool Calling Mode` is compatible with the resolved thinking state |
 | strict tool schema toggle | `Strict Tool Schema Mode = verified` |
 | parallel tool calls toggle | `Parallel Tool Calls = verified` |
-| image picker | `RequestKind = vision` or imaging edit flow |
+| image picker | `RequestKind = multimodal-chat` or a verified image-generation edit flow |
 | seed input | capability matrix verifies seed |
 | size input | capability matrix verifies size |
-| image count input | `RequestKind = imaging` and capability matrix verifies output image count |
+| image count input | `RequestKind = image-generation` and capability matrix verifies output image count |
 | duration input | capability matrix verifies duration |
 | cancel button | cancellation is safe on that host surface |
 
@@ -48,9 +48,9 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 
 ## Result Panels
 
-- Render `TextContent` for `chat` and `vision`.
+- Render `TextContent` for `text-chat` and `multimodal-chat`.
 - Render `StructuredContent` for verified schema outputs.
 - Render `ToolCalls` when the model asks the app to call caller-defined tools.
-- Render `ImageOutputs` for `imaging`.
-- Render `AudioOutputs` for `music`.
+- Render `ImageOutputs` for `image-generation`.
+- Render `AudioOutputs` for `speech-generation` and `music-generation`; render transcription text separately.
 - Render usage, latency, and finish reason in a secondary diagnostics area when the caller wants debugging visibility.

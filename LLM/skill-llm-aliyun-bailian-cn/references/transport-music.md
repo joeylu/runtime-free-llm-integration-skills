@@ -12,7 +12,7 @@ Do not invent music model names or unsupported parameters.
 
 Build the shared request envelope with:
 
-- `RequestKind = music`
+- `RequestKind = music-generation`
 - optional `ConnectionProfileKey`
 - `ApiSurface = dashscope-native`
 - `Model = <API Model>`

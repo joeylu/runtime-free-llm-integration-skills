@@ -1,97 +1,62 @@
 # Quickstart
 
-This repository is a runtime-free skill pack for helping coding agents build fail-fast LLM provider integrations.
+## 1. Keep the pack together
 
-## 1. Start With Commands
+Do not copy only one `SKILL.md`. Provider skills also use their `references/` folder, shared rules, and the evidence file.
 
-For common workflows, ask your coding agent to read:
-
-```text
-COMMANDS.md
-```
-
-Example:
-
-```text
-List the available commands for this skill pack.
-```
-
-Use command-style requests when you already know what you want:
-
-```text
-init OpenAI chat integration
-sync Gemini models
-implement Aliyun Bailian China Mainland chat and vision
-audit this repo for stale provider references
-```
-
-## 2. Current Providers
-
-- OpenAI API
-- Aliyun Bailian / DashScope China Mainland
-- Aliyun Bailian / DashScope International / Singapore
-- DeepSeek API
-- Gemini Developer API
-- MiniMax China Mainland API
-- MiniMax International API
-
-## 3. Keep The Structure
-
-Keep the full folder structure intact:
+Keep these folders together:
 
 ```text
 LLM/_shared/
-LLM/skill-llm-openai/
-LLM/skill-llm-aliyun-bailian-cn/
-LLM/skill-llm-aliyun-bailian-intl/
-LLM/skill-llm-deepseek/
-LLM/skill-llm-gemini/
-LLM/skill-llm-minimax-cn/
-LLM/skill-llm-minimax-intl/
+LLM/_evidence/
+LLM/skill-llm-*/
 ```
 
-Do not copy only one provider `SKILL.md`; provider skills depend on shared contracts in `LLM/_shared`.
+## 2. Pick a provider and region
 
-## 4. Give A Clear Task
-
-Example:
+Be explicit. For example:
 
 ```text
-Read COMMANDS.md first.
-Then use LLM/skill-llm-openai/SKILL.md and follow its read order.
-Build a website settings page where users can enter an OpenAI API key, select a verified model, test the connection, and enable only verified capabilities.
+Use Aliyun Bailian China Mainland. Do not use International endpoints or prices.
 ```
-
-For Aliyun Bailian, choose the regional provider first:
 
 ```text
-Use Aliyun Bailian China Mainland and Aliyun Bailian International as separate providers.
-Do not switch between their base URLs or request URLs automatically.
+Use MiniMax International with the build profile.
 ```
-
-For MiniMax, choose the regional provider first:
 
 ```text
-Use MiniMax China Mainland and MiniMax International as separate providers.
-Do not switch between minimaxi.com and minimax.io base URLs automatically.
-Use MiniMax plan profile for chat only.
-Use MiniMax build profile for chat, image generation, and music generation; video links are reference-only until shared contracts add RequestKind=video.
+Use Gemini Interactions v1. Do not fall back to v1beta or generateContent.
 ```
 
-## 5. Core Rules
+## 3. Tell the agent what to build
 
-- Use `model-catalog.md` for selectable model IDs.
-- Use `pricing-matrix.md` for billing, estimates, and price display.
-- Use `request-urls.md` to resolve the final request URL before sending a provider request.
-- Use `capability-matrix.md` to gate every feature.
-- Sync model metadata only when explicitly requested.
-- Keep unknown values as `unknown`.
-- Do not silently fall back between providers, regions, profiles, models, base URLs, request URLs, or API surfaces.
-
-The key rule:
+This is enough for most tasks:
 
 ```text
-Unknown means unknown.
-Unsupported means unsupported.
-Failed means failed.
+Read COMMANDS.md and LLM/skill-llm-openai/SKILL.md.
+Build a settings page for OpenAI text and image generation.
+Use selected models and verified capabilities only.
+Show connection errors clearly and do not silently fall back.
 ```
+
+The agent should resolve the provider, profile, model, API surface, URL, capabilities, roles, and price before it writes request code.
+
+## 4. Refresh model data when needed
+
+Ask for a sync when you need current models, prices, limits, or capabilities:
+
+```text
+Sync the MiniMax International skill from official sources, then audit it.
+Keep newly found models as candidates unless they are already selected by policy.
+Run the repository validator when finished.
+```
+
+Provider data changes over time, so do not treat an old local snapshot as live truth.
+
+## 5. Validate repository changes
+
+```bash
+python tools/validate_repo.py
+```
+
+A passing result means the local files agree with each other. It does not prove that an API key works or that provider documentation has not changed since the recorded review date.

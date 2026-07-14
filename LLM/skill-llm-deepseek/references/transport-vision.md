@@ -12,7 +12,7 @@ Do not route image input through rows listed only under `chat`.
 
 Build the shared request envelope with:
 
-- `RequestKind = vision`
+- `RequestKind = multimodal-chat`
 - `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
 - `Model = <API Model>`
 - `Inputs.Messages = [...]`

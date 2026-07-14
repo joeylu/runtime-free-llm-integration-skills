@@ -1,38 +1,29 @@
 # DeepSeek Connection Profiles
 
-Use this file to describe named DeepSeek connection profiles.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
 
-Connection profiles choose API key references, base URLs, allowed request kinds, and profile-level restrictions.
+Read `../../_shared/connection-profile-schema.md` first. The Canonical Profiles table is authoritative.
 
-They do not define model capabilities. Capabilities still come from `capability-matrix.md`.
+## Canonical Profiles
 
-## Rules
+| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Text Model | Default Multimodal Model | Default Image Model | Default Music Model | Allowed Request Kinds | Default Route Map | Allowed Surface Versions | Model Allowlist | Capability Restrictions | Billing Region | Deployment Scope | Serving Region | Last Verified At | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `build` | `DeepSeek Build` | `deepseek` | `build` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_BUILD_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `text-chat` | `text-chat=chat-completions@provider-default` | `chat-completions@provider-default,beta@beta` | `catalog-selected` | `strict tool schemas require beta surface` | `global` | `global` | `global` | `2026-07-14` | `evset-deepseek-connection-profiles-build-44575cf5b2` | `intended for implementation or production-like execution flows` |
+| `plan` | `DeepSeek Plan` | `deepseek` | `plan` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_PLAN_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `text-chat` | `text-chat=chat-completions@provider-default` | `chat-completions@provider-default` | `catalog-selected` | `strict tool schemas disabled by profile` | `global` | `global` | `global` | `2026-07-14` | `evset-deepseek-connection-profiles-plan-64879f7d6b` | `intended for planning, review, and analysis flows` |
 
-- Store only secret references such as environment variable names. Do not store real API keys.
-- Resolve `ConnectionProfileKey` before selecting the final model and API surface.
-- Do not silently fall back between profiles, API keys, base URLs, or compatibility surfaces.
-- A profile may narrow allowed models, request kinds, API surfaces, or features.
-- A profile must not expand a model capability from `unknown` or `unsupported` to usable.
-- Strict tool schemas require an active profile that allows the DeepSeek beta surface.
+## Legacy Compatibility View
 
-## Local Profiles
+This derived table keeps the original 19-column contract. Legacy request-kind names are normalized once at the request boundary; they do not change the canonical route map.
 
 | Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Chat Model | Default Vision Model | Default Imaging Model | Default Music Model | Allowed Request Kinds | Allowed API Surfaces | Model Allowlist | Capability Restrictions | Last Verified At | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `build` | `DeepSeek Build` | `deepseek` | `build` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_BUILD_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions,beta` | `catalog-selected` | `strict tool schemas require beta surface` | `2026-05-01` | `intended for implementation or production-like execution flows` |
-| `plan` | `DeepSeek Plan` | `deepseek` | `plan` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_PLAN_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions` | `catalog-selected` | `strict tool schemas disabled by profile` | `2026-05-01` | `intended for planning, review, and analysis flows` |
+| `build` | `DeepSeek Build` | `deepseek` | `build` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_BUILD_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions,beta` | `catalog-selected` | `strict tool schemas require beta surface` | `2026-07-14` | `intended for implementation or production-like execution flows` |
+| `plan` | `DeepSeek Plan` | `deepseek` | `plan` | `active` | `openai-compatible` | `https://api.deepseek.com` | `DEEPSEEK_PLAN_API_KEY` | `env` | `deepseek-v4-flash` | `none` | `none` | `none` | `chat` | `chat-completions` | `catalog-selected` | `strict tool schemas disabled by profile` | `2026-07-14` | `intended for planning, review, and analysis flows` |
 
-## Custom Base URL Rule
+## Rules
 
-If the owner changes `Base URL` to a gateway or proxy, also change `Endpoint Kind`.
-
-For gateway or custom endpoints, verify support for:
-
-- DeepSeek OpenAI-compatible Chat Completions
-- thinking mode
-- streaming
-- JSON output
-- function calling
-- beta strict tool schemas
-
-If the endpoint does not clearly support one of those fields, block that option for the profile instead of assuming official DeepSeek parity.
+- Resolve a profile before model, surface, version, capability, URL, or price selection.
+- Profile restrictions may narrow capabilities but never expand them.
+- Do not fall back to another profile, region, key, surface, or version.
+- Claim details are in `../../_evidence/evidence.json`.

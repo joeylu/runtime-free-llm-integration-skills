@@ -1,68 +1,55 @@
 # OpenAI Vision Transport
 
-Use this file for image-understanding requests.
+Use this file for text-plus-image understanding with the selected GPT-5.6 models.
 
-## Preferred Surface
+## Surface Choice
 
-Use the Responses API by default.
+Prefer Responses. Chat Completions is available only as the compatibility surface defined in `capability-matrix.md`.
 
-Only models listed under the `vision` catalog may be used for image-understanding requests.
+## Shared Input
 
-## Input Shape
+- `RequestKind = multimodal-chat`
+- `ConnectionProfileKey`
+- `Model`
+- `ApiSurface`
+- `Inputs.Messages`
+- one or more `Inputs.Images`
 
-Build the shared request envelope with:
+Do not route image-bearing input through `RequestKind = text-chat`.
 
-- `RequestKind = vision`
-- `ConnectionProfileKey = <profile key>` when the host uses multiple OpenAI profiles
-- `Model = <API Model>`
-- `Inputs.Messages = [...]`
-- `Inputs.Images = [...]`
-- optional `IsStream`
-- optional `ReasoningEffort`
-- optional `ReasoningSummary`
-- optional `Temperature`
-- optional `ResponseFormat`
-- optional `Tools`
-- optional `ToolChoice`
+## Responses Image Mapping
 
-Example:
-One vision request can include a user text message plus one or more image items.
+Map each image to an `input_image` content block using exactly one verified source:
 
-## Image Rule
+- `image_url` with a fully qualified URL;
+- `image_url` with a base64 data URL;
+- `file_id`.
 
-Resolve the connection profile before mapping request fields.
+Map provider option `ImageDetail` to `detail` with one of:
 
-The selected profile must allow `vision`, the requested API surface, and the selected model.
+- `low`
+- `high`
+- `original`
+- `auto`
 
-Map `Inputs.Images` to OpenAI image input content items.
+Omission defaults to `auto`. For GPT-5.6, `auto` and omitted detail use the same sizing behavior as `original`: original dimensions are preserved rather than resized to a patch or pixel-dimension budget. Large images can therefore consume more tokens and increase latency. Resize before sending or select `low`/`high` when cost and latency need a tighter bound.
 
-Do not route image input through rows listed only under `chat`.
+For caching, the image bytes/reference and `detail` value are part of the reusable prefix. Keep them identical for expected cache hits.
 
-If image-detail behavior matters, use provider-specific fields under `ProviderOptions` and verify them against official docs before implementation.
+## Chat Completions Image Mapping
 
-## Reasoning and Structured Output Rules
+Use the documented image content form in `messages`. Preserve the same detail semantics, but do not send Responses-only reasoning, state, summary, verbosity, or hosted-tool fields.
 
-Use the same reasoning, structured output, and tool rules as `transport-chat.md`.
+## Unsupported Modalities
 
-Do not silently drop images when a requested structured output or tool path is also enabled.
+The selected GPT-5.6 rows support text and image input and text output. Audio and video input are not supported by these model rows. Do not reinterpret them as image attachments.
+
+## Reasoning, State, Cache, Structured Output, and Tools
+
+Apply `transport-chat.md` after the image blocks are mapped. Never drop images to make another option fit, and never move the request to a different surface silently.
 
 ## Response Mapping
 
-Map the provider result into the shared response envelope:
+Use `ResultKind = vision` and normalize text, structured content, caller tools, hosted tools, reasoning summaries/items, annotations, continuation state, and usage exactly as in `transport-chat.md`.
 
-- `ResultKind = vision`
-- `TextContent = final understanding output`
-- `StructuredContent = parsed schema output when requested and validated`
-- `ToolCalls = function_call output items`
-- `ReasoningSummary = provider reasoning summary when returned`
-- `Usage = normalized token usage`
-- `Transport.IsStream = true or false`
-
-## UI Rule
-
-If the caller wants UI:
-
-- show image picker or image attachment surface
-- show model selector filtered to `vision`
-- show reasoning effort and structured-output controls only when compatible with the selected row
-- hide controls that are not verified by the capability matrix
+Source: `https://developers.openai.com/api/docs/guides/images-vision`, `https://developers.openai.com/api/reference/resources/responses/methods/create`, `https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create`, and the three selected model pages.

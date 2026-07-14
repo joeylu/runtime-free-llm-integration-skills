@@ -1,27 +1,21 @@
 # MiniMax International Build Multimodal HTTP
 
-Use this file when the user asks whether MiniMax International build mode can support image, music, or video generation.
+Use this reference when the task asks whether the MiniMax `intl` build profile has official image, music, or video HTTP endpoints.
 
 ## Profile Boundary
 
-Only `ConnectionProfileKey = build` may use the multimodal HTTP entries below.
+Only `ConnectionProfileKey = build` may use the entries below. `plan` remains `text-chat` only. Do not route a disallowed request through another profile, CLI, MCP, chat surface, or hidden fallback.
 
-`ConnectionProfileKey = plan` is chat-only in this skill. Do not route plan-profile multimodal work to HTTP, CLI, MCP, chat, or hidden fallback paths.
+## Endpoint Reference
 
-## Build HTTP Links
-
-| Capability | Shared RequestKind | API Surface | Build Request URL | Official Source | Current Skill Status |
+| Capability | Canonical Request Kind | API Surface | Request URL | Official Source | Skill Status |
 | --- | --- | --- | --- | --- | --- |
-| Image generation | `imaging` | `image-generation` | `https://api.minimax.io/v1/image_generation` | `https://platform.minimax.io/docs/api-reference/image-generation-t2i` | `selected through image-01` |
-| Music generation | `music` | `music-generation` | `https://api.minimax.io/v1/music_generation` | `https://platform.minimax.io/docs/api-reference/music-generation` | `selected through music-2.6` |
-| Video generation | `none` | `video-generation` | `https://api.minimax.io/v1/video_generation` | `https://platform.minimax.io/docs/guides/video-generation` | `reference-only; shared schema has no video request kind` |
+| Image generation | `image-generation` | `image-generation` | `https://api.minimax.io/v1/image_generation` | `https://platform.minimax.io/docs/api-reference/image-generation-t2i` | `selected through image-01` |
+| Music generation | `music-generation` | `music-generation` | `https://api.minimax.io/v1/music_generation` | `https://platform.minimax.io/docs/api-reference/music-generation` | `selected through music-2.6` |
+| Video generation | `video-generation` | `video-generation` | `https://api.minimax.io/v1/video_generation` | `https://platform.minimax.io/docs/guides/video-generation` | `reference-only; not selected or implemented` |
 
-## Video Rule
+## Video Gate
 
-MiniMax build HTTP video exists, but this skill pack cannot implement it as a first-class request yet because the shared contracts currently define only `chat`, `vision`, `imaging`, and `music`.
+The shared schema now defines `video-generation`, but that alone does not implement MiniMax video. This provider skill intentionally has no selected video catalog row, profile route, request-URL row, capability row, pricing row, role row, or transport contract.
 
-If the host project requests MiniMax video generation, stop and ask the owner to approve a shared schema extension before writing implementation code.
-
-## Do Not Infer
-
-Do not infer video request/response shape from imaging or music. Do not send video through `RequestKind = imaging`, `RequestKind = music`, or `RequestKind = chat`.
+A video request therefore fails before construction. Add all required provider rows and reviewed evidence in one explicit extension; do not infer video request or response shape from image or music endpoints.

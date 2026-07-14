@@ -1,114 +1,96 @@
-# MiniMax International Model Sync
+# MiniMax International Model and Metadata Sync
 
-Use this workflow only when the user explicitly asks for one of these:
+Use this workflow when the task requires current model, endpoint, capability, lifecycle, alias, role, or pricing verification for **MiniMax International direct API**.
 
-- latest MiniMax International models
-- sync model list
-- verify current catalog
-- remove downlisted or deprecated models
-- refresh pricing or capability metadata
+Read these shared contracts first:
 
-Read `../../_shared/recency-window-policy.md` before starting.
+- `../../_shared/sync-policy.md`
+- `../../_shared/recency-window-policy.md`
+- `../../_shared/model-catalog-schema.md`
+- `../../_shared/capability-matrix-schema.md`
+- `../../_shared/request-url-matrix-schema.md`
+- `../../_shared/pricing-matrix-schema.md`
+- `../../_shared/evidence-manifest-schema.md`
+- `../../_shared/role-support-matrix-schema.md`
 
-## Source Rule
+## Coverage Contract
+
+`model-catalog.md` uses `CoverageMode: curated-allowlist`.
+
+- A provider model may be official and stable while `Local Selection = not-selected`.
+- Discovering a newer model never changes another model's provider lifecycle.
+- A new candidate is not made selected or default automatically.
+- A discovery lookback, when used, narrows research effort only. It never marks a provider model deprecated, shutdown, removed, or uncallable.
+
+## Official Sources
 
 Use official MiniMax International documentation only.
 
-Prefer:
+Preferred entry points:
 
 - API overview: `https://platform.minimax.io/docs/api-reference/api-overview`
-- OpenAI-compatible chat API: `https://platform.minimax.io/docs/api-reference/text-chat-openai`
-- image generation API: `https://platform.minimax.io/docs/api-reference/image-generation-t2i`
-- music generation API: `https://platform.minimax.io/docs/api-reference/music-generation`
-- video generation guide: `https://platform.minimax.io/docs/guides/video-generation`
-- model release notes: `https://platform.minimax.io/docs/release-notes/models`
-- pay-as-you-go pricing: `https://platform.minimax.io/docs/guides/pricing-paygo`
+- OpenAI-compatible chat: `https://platform.minimax.io/docs/api-reference/text-chat-openai`
+- Image generation: `https://platform.minimax.io/docs/api-reference/image-generation-t2i`
+- Music generation: `https://platform.minimax.io/docs/api-reference/music-generation`
+- Model release notes: `https://platform.minimax.io/docs/release-notes/models`
+- Pay-as-you-go pricing: `https://platform.minimax.io/docs/guides/pricing-paygo`
 
-Do not use MiniMax China Mainland docs, endpoints, availability, or pricing for this skill.
+Do not use MiniMax China Mainland documentation, China Mainland endpoints or prices, Anthropic-compatible surfaces, third-party wrappers, forum posts, or screenshots as factual proof.
 
-Keep the local profile boundary during sync:
+## Source Precedence
 
-- `plan` remains chat-only unless the owner explicitly changes this skill.
-- `build` may sync HTTP `chat`, `imaging`, and `music`.
-- video docs may be recorded in `build-multimodal-http.md`, but do not add first-class video rows until shared schemas define `RequestKind = video`.
+For a specific claim, prefer the narrowest applicable official source in this order:
 
-Do not sync from:
+1. exact endpoint/API reference for request fields, required combinations, enums, and errors;
+2. exact model card or exact model table row for ID, modalities, limits, and stability label;
+3. exact pricing table for currency, unit, region, deployment scope, service tier, and effective window;
+4. lifecycle/deprecation notice for scheduled shutdown, removal, and replacement;
+5. release notes or changelog for release dates, alias transitions, and historical status;
+6. official examples or migration guides for recommended flows and compatibility details.
 
-- blogs
-- forums
-- screenshots
-- repo enum comments
-- third-party wrappers
+When equally authoritative sources conflict, record both claims with `conflict_state = open`, set the affected repository value to `unknown` or `conflicted`, and fail closed. Do not choose silently.
 
-## Live Collection Rule
+## Reproducible Collection
 
-Every sync or metadata collection task must be performed live by the LLM against official MiniMax documentation at the time of the task.
+Automated extraction, comparison, normalization, and table generation are allowed when they operate only on official sources and preserve source URLs and locators. Every changed fact still requires LLM or human review before `Verification State = verified`.
 
-Do not write, use, or rely on scripts, scrapers, crawlers, generated parsers, SDK enum dumps, automated catalog generators, repo enum comments, or any other programmatic processing to collect model rows, capabilities, pricing, context windows, max input tokens, or max output tokens.
+Do not infer facts from SDK enums, model-name similarity, example defaults, observed errors, or a sibling model. Automation may copy and compare evidence; it may not manufacture evidence.
 
-The LLM may use normal reading and search tools to locate official documentation, but the reviewed values must be selected and recorded by the LLM from official docs during that sync.
+## Sync Procedure
 
-## Sync Steps
+1. Define the provider, region `international`, request kinds, surfaces, API versions, and pricing scopes in the task.
+2. Use the default six-month discovery lookback only when no other research window is supplied. Convert it to an absolute date and record it as discovery metadata, not lifecycle state.
+3. Inspect official current indexes plus the exact pages needed for every changed field.
+4. Create or update claim records in `../../_evidence/evidence.json` first. Each claim must include a stable ID, exact field, reviewed value, official URL, reproducible locator, and review date.
+5. Update `model-catalog.md`. Keep `Provider Lifecycle`, `Local Selection`, and `Review Freshness` independent. Preserve official display units and leave exact token integers `unknown` when the provider does not define the unit convention.
+6. Update `request-urls.md` by exact `Request Kind + Model Scope + API Surface + API Version`. One row may not combine surfaces or versions.
+7. Update `capability-matrix.md` by exact `Request Kind + API Model + API Surface + API Version`. Separate model support from surface support and mode-dependent constraints.
+8. Update `pricing-matrix.md` by exact billing region, deployment scope, serving region, service tier, metered item, and effective window. Expired promotional rows remain historical and are never used for current estimates.
+9. Update `role-support-matrix.md` for exact accepted roles, required assistant/tool history, and any explicit normalization. OpenAI compatibility never proves role compatibility by itself.
+10. Update `connection-profiles.md` only after catalog, URL, capability, role, and price scopes agree. Profiles may narrow capabilities but never expand them.
+11. Keep newly discovered mainstream models as `not-selected` candidates with a reason unless the repository owner explicitly selects them. Do not replace an existing default merely because a newer model exists.
+12. Preserve unavailable historical rows with accurate lifecycle and shutdown evidence when they are useful for migration. Do not leave them selectable.
+13. Run `python tools/validate_repo.py` and resolve every error. Treat warnings as review items, not proof that remote facts are current.
 
-1. Ask the user to confirm the recency boundary. If the user does not specify one, propose the default boundary `6 months`.
-2. Convert that confirmed boundary into one absolute cutoff date using the sync date.
-3. Open the official MiniMax International direct-model documentation that matches the requested model kind.
-4. Compare the official model list against `model-catalog.md`.
-5. For every matched row, update all columns required by `../../_shared/model-catalog-schema.md`.
-6. Add new official rows with the same schema.
-7. Re-review rows already present in the current catalog using the same cutoff date.
-8. If the user wants a curated local model set, ask the user to choose which `candidate` rows become `selected` and which selected row is the default for each model type.
-9. Mark selected rows as `active` and `selected`.
-10. Mark unavailable rows that were already catalog rows as `removed` instead of silently deleting them.
-11. Mark rows outside the confirmed boundary as `deprecated` and `retired` even if the provider still lists them as available.
-12. Collect `Context Window Tokens`, `Max Input Tokens`, and `Max Output Tokens` only when official MiniMax docs clearly expose them for the exact model row.
-13. Update `pricing-matrix.md` in the same sync task using `../../_shared/pricing-matrix-schema.md`.
-14. Update `request-urls.md` in the same sync task using `../../_shared/request-url-matrix-schema.md` when a provider endpoint, path, or API surface changes.
-15. Update `capability-matrix.md` in the same sync task using `../../_shared/capability-matrix-schema.md`.
-16. Keep `vision` empty until official rows are actually verified.
-17. Keep `plan` profile chat-only even when reviewing MiniMax multimodal docs.
+## Field Rules
 
-## Fail-Fast Rule
+- A fact is `verified` only when its evidence identifies the exact provider scope and the exact model/surface/version or explicitly applies to that whole protocol family.
+- Use `unknown` when an official source does not expose the value clearly.
+- Never derive max input from context minus max output.
+- Never convert an ambiguous `K` or `M` display into a binary or decimal integer without an official convention.
+- Never apply one region's price to another region or deployment scope.
+- Moving aliases require `Alias Target At Verification` and `Alias Target Verified At`; production profiles should prefer a fixed snapshot when the provider offers one and the project accepts it.
+- Scheduled deprecation requires a provider date/time and a replacement or explicit `unknown`.
+- Price promotions require effective and expiry timestamps. Once expired, they cannot be `current`.
 
-If the official docs do not clearly confirm a field, leave that field as `unknown`.
+## Output Contract
 
-Do not infer support for:
+A completed sync leaves the changed provider with:
 
-- JSON object mode
-- JSON schema mode
-- caller-defined tools
-- strict tool schemas
-- parallel tool calls
-- thinking budget
-- reasoning effort
-- seed
-- image size
-- image count
-- duration
-- context window
-- max input tokens
-- max output tokens
-- price region
-- price currency
-- price unit
-- price context band
-- unit price
-
-Do not infer context values from pricing tiers, observed request failures, sibling model names, repo enum comments, or non-official references.
-
-If official docs conflict on one reviewed row or field, stop and ask the user instead of guessing.
-
-## Output Rule
-
-After a sync task, the skill should have:
-
-- an updated `model-catalog.md`
-- an updated `pricing-matrix.md`
-- an updated `request-urls.md` when endpoint paths or base URLs changed
-- an updated `capability-matrix.md`
-- exact recency cutoff dates in reviewed catalog rows
-- exact context window, max input, and max output fields when officially verified, otherwise `unknown`
-- exact price region, currency, price unit, metered side, context band, and unit price rows in `pricing-matrix.md`
-- exact official source URLs in the changed rows
-- no silently deleted catalog rows
-- no first-class video rows unless shared schemas were extended in the same task
+- an internally consistent curated catalog;
+- exact surface/version URL and capability rows;
+- exact regional pricing scope where pricing is claimed;
+- a role-support matrix;
+- claim-level official evidence;
+- no silent fallback, inferred capability, inferred lifecycle, or inferred price;
+- no automatic model selection or default change without repository-owner intent.

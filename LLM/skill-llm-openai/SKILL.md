@@ -1,135 +1,98 @@
 ---
 name: skill-llm-openai
-description: Standardize OpenAI API direct-model integration for chat, vision, image generation, structured outputs, reasoning effort, streaming, request URLs, and tool calling. Use when Codex needs to choose an OpenAI model, resolve an OpenAI request URL, wire Responses API or Chat Completions compatible request/response flows, expose reasoning effort, JSON object, JSON schema, tool/function calling, stream controls, model selectors, or shared progress and error states. Do not use for ChatGPT consumer-app settings, Apps SDK orchestration, Agents SDK orchestration, non-OpenAI providers, or prompt-only work with no integration change.
+description: Standardize direct OpenAI API integration through exact model, surface, version, URL, capability, role, pricing, transport, and evidence contracts. Use for selected GPT-5.6 text/multimodal models and gpt-image-2 direct Image API work. Do not use for ChatGPT consumer settings, Apps SDK or Agents SDK orchestration, Realtime/audio, or non-OpenAI providers.
 ---
 
 # Skill LLM OpenAI
 
 ## Mission
 
-Own the provider-specific part of OpenAI API direct-model integration while reusing the shared contracts under `../_shared`.
+Own the provider-specific layer for **OpenAI direct API only** while reusing the shared contracts under `../_shared`.
 
-Keep this skill focused on:
-
-- OpenAI model catalog
-- OpenAI request URLs
-- OpenAI model sync workflow
-- OpenAI capability verification
-- OpenAI transport rules by request kind
-- OpenAI-specific logging additions
-
-Do not make this skill own:
-
-- ChatGPT consumer app settings
-- Apps SDK flows
-- Agents SDK orchestration
-- business prompt content
-- platform-specific UI layouts
-- non-OpenAI providers
+This skill is a curated, fail-fast integration contract. It is not a complete live provider inventory and it does not prove remote runtime availability without an authenticated request.
 
 ## Read Order
 
-Read these shared files first:
+Read the shared contracts first:
 
 1. `../_shared/model-catalog-schema.md`
-2. `../_shared/pricing-matrix-schema.md`
-3. `../_shared/capability-matrix-schema.md`
-4. `../_shared/connection-profile-schema.md`
-5. `../_shared/request-url-matrix-schema.md`
-6. `../_shared/recency-window-policy.md`
-7. `../_shared/request-envelope.md`
-8. `../_shared/response-envelope.md`
-9. `../_shared/error-contract.md`
-10. `../_shared/progress-contract.md`
-11. `../_shared/ui-binding.md`
-12. `../_shared/sync-policy.md`
+2. `../_shared/capability-matrix-schema.md`
+3. `../_shared/request-url-matrix-schema.md`
+4. `../_shared/pricing-matrix-schema.md`
+5. `../_shared/connection-profile-schema.md`
+6. `../_shared/role-support-matrix-schema.md`
+7. `../_shared/evidence-manifest-schema.md`
+8. `../_shared/request-envelope.md`
+9. `../_shared/response-envelope.md`
+10. `../_shared/error-contract.md`
+11. `../_shared/progress-contract.md`
+12. `../_shared/ui-binding.md`
 13. `../_shared/logging-fields.md`
+14. `../_shared/sync-policy.md`
+15. `../_shared/recency-window-policy.md`
 
-Then read these OpenAI-specific files:
+Then read the provider files:
 
 1. `references/connection-profiles.md`
-2. `references/request-urls.md`
-3. `references/model-catalog.md`
-4. `references/pricing-matrix.md`
-5. `references/model-sync.md`
-6. `references/capability-matrix.md`
-7. One or more transport files that match the request:
-   - `references/transport-chat.md`
-   - `references/transport-vision.md`
-   - `references/transport-imaging.md`
-   - `references/transport-music.md`
-8. `references/logging-contract.md` when logging is requested
+2. `references/model-catalog.md`
+3. `references/request-urls.md`
+4. `references/capability-matrix.md`
+5. `references/role-support-matrix.md`
+6. `references/pricing-matrix.md`
+7. the matching `references/transport-*.md` file
+8. references/logging-contract.md when logging is requested
+9. references/model-sync.md only for explicit current-data sync
+10. references/hosted-tools.md when hosted tools are requested
 
-## Hard Rules
+## Core Boundary Rules
 
-- Treat this skill as OpenAI API direct-model work. Do not silently switch to Apps SDK or Agents SDK orchestration.
-- Prefer the Responses API for reasoning, tool-calling, structured outputs, image input, or multi-turn state.
-- Use the Image API for the bundled `gpt-image-2` imaging path. Do not wire the Responses image-generation hosted tool until the capability matrix explicitly models that hosted-tool path.
-- Use Chat Completions only when the host project explicitly needs Chat Completions compatibility and the requested options are verified for that surface.
-- Resolve the connection profile before selecting the model. Do not silently fall back between `build`, `plan`, or any other profile.
-- Resolve the request URL from `references/request-urls.md` after selecting the API surface. Do not silently rewrite one request URL to another.
-- Never store real API keys in this skill. Store only secret references such as environment variable names.
-- Use the bundled OpenAI model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
-- When sync is explicitly requested, collect model rows, pricing, capabilities, context window, max input tokens, and max output tokens live from official docs by LLM review only. Do not use scripts, scrapers, SDK enum dumps, or automated catalog generators.
-- When the user asks for sync, confirm one recency boundary first. Propose `6 months` by default and convert it into one absolute cutoff date before reviewing rows.
-- Use `references/pricing-matrix.md` for billing region, currency, context band, metered side, and unit price. Do not reconstruct tiered pricing from catalog notes.
-- Use `API Model` as both the model dropdown display text and submitted value. Do not put prices in model option labels.
-- Use official OpenAI model IDs in the catalog.
-- Keep provider-neutral request, response, progress, error, and UI contracts in `../_shared`. Do not clone those contracts inside this skill.
-- Fail fast on unsupported or unverified combinations. Do not silently disable `stream`, `ReasoningEffort`, `ResponseFormat`, `Tools`, `Temperature`, `ImageSize`, `ImageCount`, or image edit inputs.
-- If a requested advanced capability is marked `unknown`, stop and tell the user to sync the catalog or choose a verified path.
-- Do not expose raw chain-of-thought unless official docs explicitly expose raw reasoning text for the chosen model and API surface.
-- For current OpenAI reasoning models, prefer `ReasoningSummary` and normalized usage over raw `ThinkingContent`.
-- Distinguish caller-defined function tools from OpenAI-hosted tools such as web search, file search, code interpreter, computer use, and image generation.
+- Use provider identifier `openai`.
+- Resolve `ConnectionProfileKey` before model, surface, API version, URL, capability, role, or price selection.
+- Select only catalog rows that satisfy the shared selector rule: locally selected, provider-callable, verified, and current.
+- Resolve one exact `Request Kind + API Model + API Surface + API Version` capability row. A comma-separated surface or version is invalid.
+- Resolve one exact request URL row. Never construct a URL by guessing or silently retry another surface, version, profile, key, region, or provider.
+- Validate input roles and tool history against `references/role-support-matrix.md`. OpenAI compatibility does not imply complete role compatibility.
+- Use `references/pricing-matrix.md` only after billing region, deployment scope, serving region, service tier, and effective window match the request.
+- Treat `Provider Lifecycle`, `Local Selection`, and `Review Freshness` as independent. Do not infer lifecycle from age, replacement, or local preference.
+- Keep caller-defined `Tools` separate from provider-hosted `HostedTools`.
+- Reject unsupported, unknown, stale, conflicted, or out-of-scope options before sending. Never disable or rewrite a requested feature silently.
+- Use the bundled reviewed data by default. Perform a live official-source sync only when the task asks for current verification or the required evidence is stale/missing.
+- A sync may use reproducible automated extraction from official sources, but every changed fact requires reviewed claim-level evidence before it becomes verified.
+- Store secret references only. Do not place API keys, signed URLs, or authorization headers in skill files or normal logs.
 
 ## Standard Workflow
 
-1. Confirm that the task is OpenAI API direct-model access.
-2. Identify the request kind: `chat`, `vision`, `imaging`, or `music`.
-3. Read `references/connection-profiles.md` and resolve `ConnectionProfileKey` when the host has multiple profiles.
-4. Read `references/model-catalog.md` and select only rows whose `Catalog Status` is `active` and `Selection Status` is `selected`.
-5. Read `references/pricing-matrix.md` when billing, estimates, or price display are needed.
-6. Apply profile restrictions before choosing the final model and API surface.
-7. Read `references/request-urls.md` and resolve the exact request URL template for the selected surface.
-8. Read `references/capability-matrix.md` and verify every requested option before wiring the request.
-9. Read the matching transport file for the request kind.
-10. Build the request with the shared request envelope from `../_shared/request-envelope.md`.
-11. Map the provider response into the shared response envelope from `../_shared/response-envelope.md`.
-12. If the user wants UI, apply `../_shared/ui-binding.md`, `../_shared/progress-contract.md`, and `../_shared/error-contract.md`.
-13. If the user wants logging, apply `../_shared/logging-fields.md` and `references/logging-contract.md`.
-14. Sync the model catalog only when the user explicitly asks for latest-model sync, and apply `../_shared/recency-window-policy.md` before reviewing rows.
+1. Confirm this provider and region boundary.
+2. Normalize the caller's legacy request-kind alias once, then use only canonical request kinds.
+3. Resolve the connection profile and its allowed kinds, surfaces, versions, models, and regional scope.
+4. Select a catalog row using the shared selector rule; never auto-select a newer candidate.
+5. Resolve the exact route from `request-urls.md`.
+6. Resolve the exact capability and role rows; validate every caller field and every required history field.
+7. Resolve pricing only when the exact billing scope is present.
+8. Build the shared request envelope and map it through the matching provider transport.
+9. Send with the requested stream semantics; do not change surface or model after an error.
+10. Normalize output through the shared response envelope, error, progress, UI, and logging contracts.
+11. For current-data changes, update evidence first and run `python tools/validate_repo.py` after all dependent matrices are updated.
 
-## Request Kinds
+## Supported Request-Kind Boundary
 
-Use these meanings consistently:
+This skill exposes `text-chat`, `multimodal-chat`, and `image-generation` when selected by the catalog and profile.
 
-- `chat`: text-first conversation requests
-- `vision`: text plus image understanding requests
-- `imaging`: image generation or image edit requests
-- `music`: music or audio generation requests
+A request kind is implemented only when the selected catalog row, profile, URL, capability, role, pricing policy, and transport all agree. The mere existence of an official endpoint does not make it selectable here.
 
-Example:
-`vision` means "send text plus one or more images and receive understanding output", not "generate a new image".
+## Provider-Specific Rules
 
-## OpenAI-Specific Concepts
+- Use the full selected model ID. Do not submit the moving `gpt-5.6` alias from this skill.
+- Prefer `responses@v1` for new agent-style text and multimodal work; use `chat-completions@v1` only when its compatibility contract is required.
+- Treat Responses and Chat Completions as different surfaces. Do not copy state, reasoning, structured-output, cache, or tool fields between them.
+- Keep caller-defined functions in `Tools` and provider-hosted tools in `HostedTools`; verify hosted tools separately in `references/hosted-tools.md`.
+- Use `gpt-image-2` through the direct Image API rows in this skill. Hosted image generation through Responses is a different route.
+- Never expose raw chain-of-thought. Normalize only provider-visible summaries and opaque continuation state.
 
-- `ReasoningEffort` maps to OpenAI `reasoning.effort`.
-- `ReasoningSummary` maps to OpenAI `reasoning.summary`.
-- `ResponseFormat = json_schema` maps to Responses `text.format.type = json_schema` or Chat Completions `response_format.type = json_schema`.
-- `ResponseFormat = json_object` maps to Responses `text.format.type = json_object` or Chat Completions `response_format.type = json_object`.
-- `Tools` maps to caller-defined OpenAI `function` tools unless the request explicitly asks for OpenAI-hosted tools.
-- `ConnectionProfileKey` selects the key/base-URL profile, for example `build` or `plan`.
+## Out of Scope
 
-Example:
-`ReasoningEffort = none` means effective thinking is false. `ReasoningEffort = medium` means effective thinking is true.
-
-Example:
-`ConnectionProfileKey = build` can use `OPENAI_BUILD_API_KEY`, while `ConnectionProfileKey = plan` can use `OPENAI_PLAN_API_KEY`.
-
-## Do Not Use This Skill For
-
-- ChatGPT consumer app settings
-- ChatGPT Apps SDK components
-- Agents SDK orchestration design
-- Anthropic, Gemini, DeepSeek, Aliyun, or other non-OpenAI providers
-- prompt engineering tasks that do not change integration code or contracts
+- ChatGPT consumer configuration
+- Apps SDK or Agents SDK orchestration
+- Realtime/audio or fine-tuning
+- non-OpenAI providers
+- prompt-only work that does not change integration code or contracts

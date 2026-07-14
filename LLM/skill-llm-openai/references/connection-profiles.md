@@ -1,43 +1,29 @@
 # OpenAI Connection Profiles
 
-Use this file to describe named OpenAI connection profiles such as `build` and `plan`.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
 
-Connection profiles choose API key references, base URLs, allowed request kinds, and profile-level restrictions.
+Read `../../_shared/connection-profile-schema.md` first. The Canonical Profiles table is authoritative.
 
-They do not define model capabilities. Capabilities still come from `capability-matrix.md`.
+## Canonical Profiles
 
-## Rules
+| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Text Model | Default Multimodal Model | Default Image Model | Default Music Model | Allowed Request Kinds | Default Route Map | Allowed Surface Versions | Model Allowlist | Capability Restrictions | Billing Region | Deployment Scope | Serving Region | Last Verified At | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `build` | `OpenAI Build` | `openai` | `build` | `active` | `official` | `https://api.openai.com/v1` | `OPENAI_BUILD_API_KEY` | `env` | `gpt-5.6-sol` | `gpt-5.6-sol` | `gpt-image-2` | `none` | `text-chat,multimodal-chat,image-generation` | `text-chat=responses@v1;multimodal-chat=responses@v1;image-generation=image-api-generations@v1` | `responses@v1,chat-completions@v1,image-api-generations@v1,image-api-edits@v1` | `catalog-selected` | `none` | `global` | `global` | `global` | `2026-07-14` | `evset-openai-connection-profiles-build-44575cf5b2` | `implementation and production-like execution; Responses preferred for chat/vision` |
+| `plan` | `OpenAI Plan` | `openai` | `plan` | `active` | `official` | `https://api.openai.com/v1` | `OPENAI_PLAN_API_KEY` | `env` | `gpt-5.6-sol` | `gpt-5.6-sol` | `none` | `none` | `text-chat,multimodal-chat` | `text-chat=responses@v1;multimodal-chat=responses@v1` | `responses@v1,chat-completions@v1` | `catalog-selected` | `imaging disabled unless profile owner explicitly enables it` | `global` | `global` | `global` | `2026-07-14` | `evset-openai-connection-profiles-plan-64879f7d6b` | `planning, review, and analysis with a separate key or billing boundary` |
 
-- Store only secret references such as environment variable names. Do not store real API keys.
-- Resolve `ConnectionProfileKey` before selecting the final model and API surface.
-- Do not silently fall back from `plan` to `build`, or from `build` to `plan`.
-- Do not silently fall back from one `Base URL` to another.
-- A profile may narrow allowed models, request kinds, API surfaces, or features.
-- A profile must not expand a model capability from `unknown` or `unsupported` to usable.
-- If a profile points to a gateway or custom OpenAI-compatible endpoint, verify that the endpoint supports the requested API surface before wiring advanced fields.
+## Legacy Compatibility View
 
-## Local Profiles
+This derived table keeps the original 19-column contract. Legacy request-kind names are normalized once at the request boundary; they do not change the canonical route map.
 
 | Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Chat Model | Default Vision Model | Default Imaging Model | Default Music Model | Allowed Request Kinds | Allowed API Surfaces | Model Allowlist | Capability Restrictions | Last Verified At | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `build` | `OpenAI Build` | `openai` | `build` | `active` | `official` | `https://api.openai.com/v1` | `OPENAI_BUILD_API_KEY` | `env` | `gpt-5.5` | `gpt-5.5` | `gpt-image-2` | `none` | `chat,vision,imaging` | `responses,image-api,chat-completions-compat` | `catalog-selected` | `none` | `2026-04-30` | `intended for implementation or production-like execution flows` |
-| `plan` | `OpenAI Plan` | `openai` | `plan` | `active` | `official` | `https://api.openai.com/v1` | `OPENAI_PLAN_API_KEY` | `env` | `gpt-5.5` | `gpt-5.5` | `none` | `none` | `chat,vision` | `responses,chat-completions-compat` | `catalog-selected` | `imaging disabled by profile unless the owner explicitly enables it` | `2026-04-30` | `intended for planning, review, and analysis flows that may use a separate key or billing boundary` |
+| `build` | `OpenAI Build` | `openai` | `build` | `active` | `official` | `https://api.openai.com/v1` | `OPENAI_BUILD_API_KEY` | `env` | `gpt-5.6-sol` | `gpt-5.6-sol` | `gpt-image-2` | `none` | `chat,vision,imaging` | `responses,chat-completions,image-api-generations,image-api-edits` | `catalog-selected` | `none` | `2026-07-14` | `implementation and production-like execution; Responses preferred for chat/vision` |
+| `plan` | `OpenAI Plan` | `openai` | `plan` | `active` | `official` | `https://api.openai.com/v1` | `OPENAI_PLAN_API_KEY` | `env` | `gpt-5.6-sol` | `gpt-5.6-sol` | `none` | `none` | `chat,vision` | `responses,chat-completions` | `catalog-selected` | `imaging disabled unless profile owner explicitly enables it` | `2026-07-14` | `planning, review, and analysis with a separate key or billing boundary` |
 
-## Custom Base URL Rule
+## Rules
 
-If the owner changes `Base URL` to a gateway or OpenAI-compatible proxy, also change `Endpoint Kind`.
-
-Example:
-Use `Endpoint Kind = gateway` when `Base URL` points to an internal gateway instead of `https://api.openai.com/v1`.
-
-For gateway or custom endpoints, verify support for:
-
-- Responses API
-- Chat Completions compatibility
-- structured outputs
-- streaming
-- reasoning fields
-- tool calling
-- image generation or image edits
-
-If the endpoint does not clearly support one of those fields, block that option for the profile instead of assuming official OpenAI parity.
+- Resolve a profile before model, surface, version, capability, URL, or price selection.
+- Profile restrictions may narrow capabilities but never expand them.
+- Do not fall back to another profile, region, key, surface, or version.
+- Claim details are in `../../_evidence/evidence.json`.

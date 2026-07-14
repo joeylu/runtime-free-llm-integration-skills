@@ -1,88 +1,51 @@
 # MiniMax International Music Transport
 
-Use this file for build-profile MiniMax International music generation requests.
+- `SchemaVersion: 2`
+- `LastReviewedAt: 2026-07-14`
+- Route: `music-generation@music-generation@v1`
+- Selected model: `music-2.6` on the `build` profile only.
 
-## Current State
+## Required Base Input
 
-This skill selects `music-2.6` for build-profile HTTP Music Generation.
-
-`ConnectionProfileKey = plan` must block `RequestKind = music`. Do not route plan-profile music work to CLI, MCP, chat, or any hidden fallback in this skill.
-
-## Input Shape
-
-Build the shared request envelope with:
-
-- `RequestKind = music`
-- `ConnectionProfileKey = build` when MiniMax profiles are used
+- `RequestKind = music-generation`
+- `ConnectionProfileKey = build`
 - `ApiSurface = music-generation`
+- `ApiVersion = v1`
 - `Model = music-2.6`
-- `Inputs.Prompt = <style or music prompt>`
-- `Inputs.Lyrics = <lyrics text>`
-- `ProviderOptions.audio_setting = <explicit MiniMax audio setting object>`
-- optional `TimeoutMs`
+- explicit `ProviderOptions.audio_setting` when the host does not intentionally accept provider defaults
 
-MiniMax music generation is documented as generating a song from lyrics and a prompt. Treat `Inputs.Lyrics` as required for `music-2.6`.
+`Inputs.Prompt` and `Inputs.Lyrics` are conditionally required. Validate them together with `ProviderOptions.is_instrumental` and `ProviderOptions.lyrics_optimizer`; do not impose a single unconditional prompt-or-lyrics rule.
 
-Do not invent `audio_setting` defaults. This local transport requires the host or owner to provide exact `sample_rate`, `bitrate`, and `format` values in `ProviderOptions.audio_setting`, or to sync the docs and record verified provider defaults first.
+## Prompt and Lyrics Condition Matrix
 
-Before adding `Inputs.DurationSeconds`, `Inputs.Seed`, or streaming, check `capability-matrix.md`. Current selected rows do not verify those options.
+| Condition | `Inputs.Prompt` rule | `Inputs.Lyrics` rule |
+| --- | --- | --- |
+| `ProviderOptions.is_instrumental = true` | required, `1..2000` characters | optional; omit when unused |
+| non-instrumental, `ProviderOptions.lyrics_optimizer = false` or omitted | optional, `0..2000` characters | required, `1..3500` characters |
+| non-instrumental, `ProviderOptions.lyrics_optimizer = true`, lyrics empty | required, `1..2000` characters; provider uses it to generate lyrics | optional or empty |
+| non-instrumental, `ProviderOptions.lyrics_optimizer = true`, lyrics supplied | optional, `0..2000` characters | required when supplied, `1..3500` characters |
 
-Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
+Reject an empty prompt in instrumental mode. Also reject non-instrumental optimizer-driven lyric generation when both prompt and lyrics are empty. Do not silently enable the optimizer or instrumental mode, and do not invent missing prompt or lyrics content.
 
 ## Request Mapping
 
-Map the provider request body as:
-
-| Shared Field | MiniMax Field |
+| Shared/provider field | MiniMax field |
 | --- | --- |
 | `Model` | `model` |
 | `Inputs.Prompt` | `prompt` |
 | `Inputs.Lyrics` | `lyrics` |
+| `IsStream` | `stream` |
+| `ProviderOptions.output_format` | `output_format` (`url` or `hex`) |
 | `ProviderOptions.audio_setting` | `audio_setting` |
+| `ProviderOptions.lyrics_optimizer` | `lyrics_optimizer` |
+| `ProviderOptions.is_instrumental` | `is_instrumental` |
 
-## Default Flow
+When `IsStream = true`, `output_format` must be `hex`; reject `url`. Non-stream URL results expire after 24 hours. `Inputs.DurationSeconds` and `Inputs.Seed` remain blocked because the selected row does not verify them.
 
-Treat music as direct non-stream HTTP unless a later sync verifies streaming.
+## Streaming and Response Mapping
 
-Recommended stage pattern:
+- For non-stream responses, map returned audio into `AudioOutputs` and duration/sample-rate/channel/bitrate/size into `ProviderMeta`.
+- For streaming, preserve provider chunk order and assemble hex audio without logging payload bytes.
+- Set `ResultKind = music-generation` and `Transport.IsStream` to the actual mode.
 
-- `validating`
-- `preparing`
-- `submitting-request`
-- `waiting-provider`
-- `downloading-result`
-- `local-processing`
-- `completed`
-
-## Fail-Fast Rule
-
-Before implementation, confirm all of these:
-
-- the selected profile allows `music`
-- the selected model is `music-2.6`
-- `Inputs.Prompt` and `Inputs.Lyrics` are present
-- `ProviderOptions.audio_setting` is explicit
-- `request-urls.md` has a verified `music-generation` row
-- `Supports Non-Stream = verified`
-- requested fields such as `Inputs.DurationSeconds`, `Inputs.Seed`, and stream are verified
-
-If any requirement is missing, stop.
-
-## Response Mapping
-
-Map the provider result into the shared response envelope:
-
-- `ResultKind = music`
-- `AudioOutputs = generated audio result list`
-- `Usage = normalized usage when available`
-- `Transport.IsStream = false`
-
-## UI Rule
-
-If the caller wants UI:
-
-- disable MiniMax music for plan profile
-- show only `music-2.6` unless a sync selects more music rows
-- collect prompt and lyrics separately
-- expose provider audio settings as explicit advanced controls
-- expose audio preview only after the provider returns stable result URLs or binary content
+Official reference: `https://platform.minimax.io/docs/api-reference/music-generation`.

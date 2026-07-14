@@ -1,41 +1,24 @@
 # MiniMax International Capability Matrix
 
-Use this file to verify whether a locally selected International model-kind combination supports a requested feature.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
+- Key: `Request Kind + API Model + API Surface + API Version`
 
-Meanings:
+Read `../../_shared/capability-matrix-schema.md` first. Each row covers one exact surface and one exact API version. `unknown` and `unsupported` both block a requested option; `unsupported` means the official contract explicitly excludes it.
 
-- `verified`: confirmed from official MiniMax International docs during the `2026-05-03` add-provider pass
-- `unsupported`: explicitly listed as unsupported in the official docs
-- `unknown`: not yet verified, so risky features must stop
-- `n/a`: not applicable to that request kind
-
-## Fail-Fast Rule
-
-If a requested option is `unknown` or `unsupported`, stop before implementation.
-
-Only locally selected active rows from `model-catalog.md` are tracked here.
+The matrix contains selected rows and, where explicitly labeled in the catalog, reviewed candidates. A capability row never makes a model locally selectable by itself.
 
 ## Current Matrix
 
-### Chat
+| Request Kind | API Model | API Surface | API Version | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Tool Choice When Thinking | Required Tool-History Fields | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `text-chat` | `MiniMax-M2.7` | `chat-completions` | `v1` | `verified` | `verified` | `always-on` | `on` | `unsupported` | `n/a` | `all-modes` | `all-modes: 1.0` | `unknown` | `unknown` | `all-modes` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-minimax-intl-capability-matrix-text-chat-minimax-m2-7-chat-completions-v1-c7ce6af529` | `M2.x thinking cannot be disabled. Streaming, temperature, max_completion_tokens, and function tools are documented; strict and parallel-tool semantics remain unknown.` |
+| `text-chat` | `MiniMax-M2.7-highspeed` | `chat-completions` | `v1` | `verified` | `verified` | `always-on` | `on` | `unsupported` | `n/a` | `all-modes` | `all-modes: 1.0` | `unknown` | `unknown` | `all-modes` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-minimax-intl-capability-matrix-text-chat-minimax-m2-7-highspeed-chat-completions-v1-f5359999f6` | `M2.x thinking cannot be disabled. Streaming, temperature, max_completion_tokens, and function tools are documented; strict and parallel-tool semantics remain unknown.` |
+| `text-chat` | `MiniMax-M3` | `chat-completions` | `v1` | `verified` | `verified` | `mixed` | `adaptive` | `unsupported` | `n/a` | `all-modes` | `all-modes: 1.0` | `unknown` | `unknown` | `all-modes` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-minimax-intl-capability-matrix-text-chat-minimax-m3-chat-completions-v1-42d7d12139` | `Candidate only. MiniMax-M3 supports adaptive thinking by default, function tools, streaming, and text input; exact strict/parallel/tool-choice semantics remain fail-closed.` |
+| `multimodal-chat` | `MiniMax-M3` | `chat-completions` | `v1` | `verified` | `verified` | `mixed` | `adaptive` | `unsupported` | `n/a` | `all-modes` | `all-modes: 1.0` | `unknown` | `unknown` | `all-modes` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `raw` | `verified` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-minimax-intl-capability-matrix-multimodal-chat-minimax-m3-chat-completions-v1-4bec4b9a16` | `Candidate only. MiniMax-M3 supports image and video content in messages; this row verifies image input only. Video requires a separate canonical request-field contract before exposure.` |
+| `image-generation` | `image-01` | `image-generation` | `v1` | `verified` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `unknown` | `verified` | `verified` | `verified` | `n/a` | `evset-minimax-intl-capability-matrix-image-generation-image-01-image-generation-v1-dded324bbe` | `Text-to-image API verifies seed, n=1..9, aspect ratios, and width/height 512..2048 divisible by 8; width and height must be supplied together and aspect_ratio takes precedence.` |
+| `music-generation` | `music-2.6` | `music-generation` | `v1` | `verified` | `verified` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `unknown` | `n/a` | `n/a` | `unknown` | `evset-minimax-intl-capability-matrix-music-generation-music-2-6-music-generation-v1-b413c3a57a` | `Streaming is supported; stream=true requires hex output. Prompt is required for instrumental mode and for optimizer-driven lyric generation when lyrics are empty; otherwise prompt is optional. Lyrics are conditionally optional for instrumental mode or optimizer-driven generation.` |
 
-| Model Type | API Model | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `MiniMax-M2.7` | `verified` | `verified` | `always-on` | `on` | `unsupported` | `n/a` | `all-modes` | `all-modes: 1.0` | `unknown` | `unknown` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `OpenAI-compatible docs verify non-stream and stream through the stream parameter; API overview and response examples expose M2.7 thinking output in content using think tags; OpenAI-compatible docs list temperature default 1; no disable-thinking, reasoning-effort, JSON, or tool/function schema support was selected in this pass` |
-| `chat` | `MiniMax-M2.7-highspeed` | `verified` | `verified` | `always-on` | `on` | `unsupported` | `n/a` | `all-modes` | `all-modes: 1.0` | `unknown` | `unknown` | `unknown` | `unknown` | `unknown` | `n/a` | `n/a` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `OpenAI-compatible docs verify non-stream and stream through the stream parameter; API overview and response examples expose M2.7 thinking output in content using think tags; OpenAI-compatible docs list temperature default 1; no disable-thinking, reasoning-effort, JSON, or tool/function schema support was selected in this pass` |
+## Resolution Rule
 
-### Vision
-
-No locally selected MiniMax International vision capability rows yet.
-
-### Imaging
-
-| Model Type | API Model | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `imaging` | `image-01` | `verified` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `unknown` | `verified` | `unknown` | `verified` | `n/a` | `Official text-to-image docs verify POST /v1/image_generation with model image-01, prompt, seed, and n. Use ProviderOptions.aspect_ratio and ProviderOptions.prompt_optimizer only when explicitly requested; do not map Inputs.ImageSize to aspect_ratio without owner approval.` |
-
-### Music
-
-| Model Type | API Model | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `music` | `music-2.6` | `verified` | `unknown` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `unknown` | `n/a` | `n/a` | `unknown` | `Official Music Generation docs verify POST /v1/music_generation with model music-2.6, prompt, lyrics, and audio_setting. This skill requires Inputs.Lyrics for music-2.6; do not enable stream, duration, or seed unless a later sync verifies them.` |
+Resolve the connection profile, exact surface, exact API version, and effective thinking state before reading this table. Do not merge capabilities across rows or retry on another surface/version without a new explicit selection. Claim details are in `../../_evidence/evidence.json`.

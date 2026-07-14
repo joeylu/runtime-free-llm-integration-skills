@@ -1,99 +1,88 @@
 # DeepSeek Chat Transport
 
-Use this file for text-first DeepSeek chat requests.
+- `SchemaVersion: 2`
+- `LastReviewedAt: 2026-07-14`
+- Canonical route: `text-chat@chat-completions@provider-default`
+- Strict-tool route: `text-chat@beta@beta`
 
-## Preferred Surface
+Resolve the profile, exact surface, API version, URL, model, and capability row before mapping any field.
 
-Use DeepSeek's OpenAI-compatible Chat Completions API by default.
+## Route Boundary
 
-Use the beta surface only when the requested feature requires it and the selected connection profile allows it.
+| Requested behavior | Required route |
+| --- | --- |
+| ordinary Chat Completions | `chat-completions@provider-default` |
+| strict function schema validation | `beta@beta` |
 
-## Input Shape
+The beta route is explicit. Do not retry ordinary requests on beta, retry beta requests on ordinary Chat Completions, or infer strict support from tool support.
 
-Build the shared request envelope with:
+## Base Request Mapping
 
-- `RequestKind = chat`
-- `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
-- `Model = <API Model>`
-- `Inputs.Messages = [...]`
-- optional `IsStream`
-- optional `ThinkingRequested`
-- optional `ReasoningEffort`
-- optional `Temperature`
-- optional `ResponseFormat`
-- optional `Tools`
-- optional `ToolChoice`
+| Shared field | DeepSeek field |
+| --- | --- |
+| `Model` | `model` |
+| `Inputs.Messages` | `messages` |
+| `IsStream` | `stream` |
+| `ThinkingRequested` | `thinking.type` |
+| `ReasoningEffort` | `reasoning_effort` plus effective `thinking.type` |
+| `Temperature` | `temperature`, non-thinking only |
+| `ResponseFormat = json_object` | `response_format.type = json_object` |
+| `Tools` | OpenAI-compatible function tools |
+| `ToolChoice` | only when effective thinking is false and the exact row permits it |
 
-## Thinking Rule
+## Thinking Resolution
 
-Resolve the connection profile before mapping request fields.
+- `ThinkingRequested = true` -> `thinking.type = enabled`.
+- `ThinkingRequested = false` -> `thinking.type = disabled`.
+- `ReasoningEffort = none` -> thinking disabled.
+- `low` or `medium` -> thinking enabled with provider value `high`.
+- `high` -> provider value `high`.
+- `xhigh` -> provider value `max`.
+- `max` -> provider value `max`.
 
-The selected profile must allow the requested API surface and model.
+If `ThinkingRequested` and `ReasoningEffort` disagree, stop. Do not send `ThinkingBudget`; selected V4 rows mark it unsupported.
 
-Map thinking controls like this:
+## Thinking-Mode Request Guards
 
-- `ThinkingRequested = true` -> `thinking.type = enabled`
-- `ThinkingRequested = false` -> `thinking.type = disabled`
-- `ReasoningEffort = none` -> `thinking.type = disabled`
-- `ReasoningEffort = high` -> `thinking.type = enabled` and `reasoning_effort = high`
-- `ReasoningEffort = max` -> `thinking.type = enabled` and `reasoning_effort = max`
-- `ReasoningEffort = low` or `medium` -> `thinking.type = enabled` and `reasoning_effort = high`
-- `ReasoningEffort = xhigh` -> `thinking.type = enabled` and `reasoning_effort = max`
+After resolving effective thinking, enforce all of these before sending:
 
-Do not use OpenAI Responses-style `reasoning.effort`.
+1. Reject `ToolChoice` when thinking is enabled. DeepSeek's thinking compatibility contract does not support it.
+2. Omit temperature and unsupported sampling controls when thinking is enabled.
+3. For every prior assistant message that contains tool calls, preserve the provider-returned `reasoning_content` exactly.
+4. Keep assistant `content` non-null in tool-call history. Use the provider-compatible empty string only when the provider returned no visible answer; never serialize JSON `null`.
+5. Preserve tool-call IDs and match each tool result to the original call.
 
-Do not accept or pass `ThinkingBudget` for the selected DeepSeek V4 rows. The capability matrix marks `Thinking Budget Field = unsupported`; use `ReasoningEffort` instead.
+Missing or altered required history is a pre-send `invalid_continuation`/capability error, not a provider retry opportunity.
 
-If the caller sends both `ThinkingRequested` and `ReasoningEffort`, they must agree.
+## Role Boundary
 
-Preserve prior assistant `reasoning_content` when that assistant message included tool calls; official DeepSeek docs say omitting it in follow-up requests can return a 400 error.
+The official agent-integration compatibility notes mark the `developer` role unsupported. Normalize repository-level developer instructions into the verified provider instruction strategy before message construction; never send a `developer` message directly. Read `role-support-matrix.md` for the exact route.
 
-When the prior assistant message did not include tool calls, `reasoning_content` may be omitted because DeepSeek says it will be ignored if passed.
+## Structured Output and Tools
 
-## Temperature Rule
-
-Pass `Temperature` only when effective thinking is false.
-
-Official thinking-mode docs say thinking mode does not support temperature and related sampling parameters.
-
-## Structured Output Rule
-
-`ResponseFormat = json_object` maps to:
-
-```json
-{"response_format":{"type":"json_object"}}
-```
-
-Do not claim `json_schema` support unless `Json Schema Mode` is verified.
-
-## Tool Rule
-
-Caller-defined tools map to OpenAI-compatible function tools.
-
-Strict tool schemas require `Strict Tool Schema Mode = verified` and a connection profile that allows the DeepSeek beta surface.
-
-Parallel tool calls remain blocked while `Parallel Tool Calls = unknown`.
+- `json_object` is allowed where the exact capability row permits it.
+- `json_schema` remains blocked while unknown.
+- Function tools are verified.
+- Strict tool schemas require the `beta@beta` row and its verified URL.
+- Parallel tool-call semantics remain blocked while unknown.
 
 ## Response Mapping
 
-Map the provider result into the shared response envelope:
+- `ResultKind = text-chat`
+- final assistant text -> `TextContent`
+- `reasoning_content` -> `ThinkingContent`
+- function calls -> `ToolCalls`
+- cache-hit/cache-miss and other token details -> `Usage`
+- provider finish reason -> `FinishReason`
+- actual route -> `Transport`
 
-- `ResultKind = chat`
-- `TextContent = final output text when available`
-- `ThinkingContent = reasoning_content when returned`
-- `ToolCalls = function_call output items`
-- `Usage = normalized token usage including cache-hit and cache-miss tokens when available`
-- `FinishReason = normalized provider finish reason`
-- `Transport.IsStream = true or false`
+## No Alias Guessing
 
-## UI Rule
+`deepseek-chat` and `deepseek-reasoner` are lifecycle-bound aliases recorded in `model-catalog.md`. Do not infer their target or mode from the alias name, and do not select them after their recorded provider shutdown time.
 
-If the caller wants UI:
+Official references:
 
-- show the model selector
-- show stream toggle only for verified stream paths
-- show thinking toggle because selected V4 rows are mixed-thinking
-- do not show a thinking budget control for selected V4 rows
-- show JSON object output control only when compatible with the selected row
-- show tool editor for verified caller-defined tools
-- hide or disable unknown options with explicit reasons
+- `https://api-docs.deepseek.com/guides/thinking_mode`
+- `https://api-docs.deepseek.com/guides/tool_calls`
+- `https://api-docs.deepseek.com/quick_start/agent_integrations/oh_my_pi/`
+- `https://api-docs.deepseek.com/updates/`

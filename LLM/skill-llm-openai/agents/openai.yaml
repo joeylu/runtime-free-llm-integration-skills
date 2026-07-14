@@ -1,7 +1,7 @@
 interface:
-  display_name: "OpenAI Direct Models"
-  short_description: "Wire OpenAI chat, vision, image, reasoning, structured-output, and tool flows."
-  default_prompt: "Use $skill-llm-openai to wire an OpenAI API direct-model integration with the right catalog, request URLs, transport, reasoning, structured output, tool, progress, and error contracts."
+  display_name: "OpenAI GPT-5.6 Direct Models"
+  short_description: "Wire selected GPT-5.6 and gpt-image-2 direct API routes."
+  default_prompt: "Use $skill-llm-openai to build a direct OpenAI integration with an exact profile, full selected model ID, surface/version, request URL, role/history, reasoning/state/cache/tool capability, regional price scope, normalized response, logging, progress, errors, and evidence."
 
 policy:
   allow_implicit_invocation: true

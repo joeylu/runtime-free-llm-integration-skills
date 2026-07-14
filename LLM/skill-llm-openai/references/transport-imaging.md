@@ -1,79 +1,92 @@
 # OpenAI Imaging Transport
 
-Use this file for image generation or image edit requests.
+Use this file for direct `gpt-image-2` Image API generation and edits.
 
-## Current Selected Surface
+## Path Separation
 
-Use the Image API with `gpt-image-2` for the bundled selected imaging path.
+- `image-api-generations` -> `POST /images/generations`
+- `image-api-edits` -> `POST /images/edits`
+- The Responses `image_generation` hosted tool is not a direct imaging model call. It uses a GPT-5.6 main model and is governed by `hosted-tools.md`.
+- Never submit `gpt-image-2` as the main `model` of a Responses request.
 
-OpenAI also exposes image generation through a Responses hosted tool, but this skill does not currently model that hosted-tool path as a selected local imaging row.
+## Shared Input
 
-Do not wire `gpt-5.5` plus the Responses image-generation hosted tool as `RequestKind = imaging` unless the catalog and capability matrix are expanded for that exact path.
+Generation:
 
-## Input Shape
+- `RequestKind = image-generation`
+- `Model = gpt-image-2`
+- `ApiSurface = image-api-generations`
+- `Inputs.Prompt`
 
-Build the shared request envelope with:
+Edit:
 
-- `RequestKind = imaging`
-- `ConnectionProfileKey = <profile key>` when the host uses multiple OpenAI profiles
-- `Model = <API Model>`
-- `Inputs.Prompt = <text>`
-- optional `Inputs.ReferenceImages = [...]`
-- optional `Inputs.ImageSize`
-- optional `Inputs.ImageCount`
-- optional `TimeoutMs`
-- optional `IsStream`
-- optional `ProviderOptions.Surface = image-api`
+- same base fields
+- `ApiSurface = image-api-edits`
+- one or more `Inputs.ReferenceImages`
+- optional mask under a typed provider option
 
-Before adding any optional field, verify that exact field in `capability-matrix.md`.
+Optional verified mappings:
 
-Resolve the connection profile before mapping request fields.
+- `Inputs.ImageSize` -> `size`; `auto` is allowed and is the provider default, otherwise validate the explicit dimensions below
+- `Inputs.ImageCount` -> `n`, range `1..10`
+- `IsStream` -> `stream`
+- provider option `PartialImages` -> `partial_images`, range `0..3`, only with stream
+- provider option `Quality` -> `quality`, one of `auto`, `low`, `medium`, `high`
+- provider option `OutputFormat` -> `output_format`, one of `png`, `jpeg`, `webp`
+- provider option `OutputCompression` -> `output_compression`, range `0..100`, only for JPEG/WebP
+- provider option `Background` -> `background`, one of `auto` or `opaque`; for `gpt-image-2`, reject `transparent`
+- provider option `Moderation` -> `moderation`, verified values `auto` or `low`
 
-The selected profile must allow `imaging`, `image-api`, and the selected model.
+`Inputs.Seed` is unverified and must fail fast.
 
-## Flow Rule
+## Output Size Rules
 
-For `gpt-image-2`, non-stream Image API requests can be treated as completed-response flows.
+For both generation and edits, `size = "auto"` is the default and bypasses caller-side dimension parsing. Every explicit standard or arbitrary `WIDTHxHEIGHT` value must satisfy all documented constraints:
 
-For stream requests, use stage-based progress and partial-image events. Do not fake percentages.
+- each edge is a multiple of `16px`;
+- maximum edge length is `3840px`;
+- long-edge to short-edge ratio is at most `3:1`;
+- total pixels are between `655,360` and `8,294,400`;
+- outputs above `3,686,400` total pixels are experimental.
 
-Recommended stage pattern:
+Do not validate only the string shape. Apply every published constraint and preserve provider errors for limits that remain provider-defined.
 
-- `validating`
-- `preparing`
-- `sending`
-- `waiting-first-byte`
-- `streaming`
-- `downloading-result`
-- `local-processing`
-- `completed`
+## Edit Rules
 
-## Fail-Fast Rule
+- One or more reference images are required; GPT Image edits accept up to `16` input images, each in a supported image format and within the documented size limit.
+- A mask must match the edited image format and dimensions, be below `50MB`, and include an alpha channel.
+- `gpt-image-2` always handles image inputs at high fidelity. Omit `input_fidelity`; reject caller attempts to set it.
+- Transparent backgrounds are unsupported for `gpt-image-2`.
+- Accept multipart file uploads or the documented JSON image reference form only when the host implementation verifies the selected transport encoding.
 
-Before implementation, confirm all of these:
+## Streaming
 
-- the model exists in `model-catalog.md`
-- the capability row exists in `capability-matrix.md`
-- `Supports Non-Stream = verified` for the base request path
-- `Supports Stream = verified` before using partial-image streaming
-- requested fields such as `Inputs.ReferenceImages`, `Inputs.ImageSize`, and `Inputs.ImageCount` are verified
+Both generation and edit surfaces support SSE partial-image streaming.
 
-If any of those are missing, stop.
+- `partial_images` is `0..3`.
+- Generation event types include `image_generation.partial_image` and the final completed event.
+- Edit event types include `image_edit.partial_image` and `image_edit.completed`.
+- Partial events carry base64 image data and an index/metadata according to the event schema.
+- Each partial image adds `100` image-output tokens; do not present streaming previews as free.
+- Do not treat a partial preview as the final artifact.
 
-## Response Mapping
+Recommended progress stages:
 
-Map the provider result into the shared response envelope:
+`validating -> preparing -> uploading -> sending -> waiting-first-event -> streaming -> decoding-final -> completed`
 
-- `ResultKind = imaging`
-- `ImageOutputs = generated image result list`
-- `Usage = normalized text, image input, and image output token usage when available`
-- `Transport.IsStream = true or false`
+Never fabricate percentages.
 
-## UI Rule
+## Output
 
-If the caller wants UI:
+GPT Image models return base64-encoded image data on the Image API; URL response mode is not supported for these models.
 
-- use stage-based progress instead of fake percentage
-- show prompt, model, surface, stream state, elapsed time, retry count, and failure state
-- show partial images only when stream events return stable partial image data
-- show final thumbnails only after the provider returns final base64, URLs, or binary content
+Normalize:
+
+- final base64/binary results -> `ImageOutputs`
+- partial previews -> stream progress events, not final outputs
+- text/image input and image output token details -> `Usage`
+- actual size, quality, background, and output format -> `ProviderMeta`
+
+Organization verification may be required before GPT Image access. Treat that as a configuration/access error, not evidence that the model capability is unsupported.
+
+Sources: `https://developers.openai.com/api/docs/models/gpt-image-2`, `https://developers.openai.com/api/docs/guides/image-generation`, `https://developers.openai.com/api/reference/resources/images/methods/generate`, `https://developers.openai.com/api/reference/resources/images/methods/edit`, `https://developers.openai.com/api/reference/resources/images/edit-streaming-events`.

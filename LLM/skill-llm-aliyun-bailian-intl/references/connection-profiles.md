@@ -1,40 +1,29 @@
-# Aliyun Bailian International Connection Profiles
+# Aliyun Bailian International / Singapore Connection Profiles
 
-Use this file when the host project defines named Aliyun Bailian International / DashScope connection profiles.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
 
-Connection profiles choose API key references, base URLs, allowed request kinds, and profile-level restrictions. Request URL templates are stored separately in `request-urls.md`.
+Read `../../_shared/connection-profile-schema.md` first. The Canonical Profiles table is authoritative.
 
-## Rules
+## Canonical Profiles
 
-- Follow `../../_shared/connection-profile-schema.md`.
-- Store only secret references such as environment variable names. Do not store real API keys.
-- Use provider identifier `aliyun-bailian-intl`.
-- Resolve `ConnectionProfileKey` before selecting the final model and API surface.
-- Do not silently fall back from one profile, API key, base URL, request URL, or region to another.
-- A profile may narrow allowed models, request kinds, API surfaces, or features.
-- A profile must not expand a model capability from `unknown` or `unsupported` to usable.
-- If a profile points to a gateway or OpenAI-compatible endpoint, verify that the endpoint supports the requested Aliyun API surface before wiring advanced fields.
+| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Text Model | Default Multimodal Model | Default Image Model | Default Music Model | Allowed Request Kinds | Default Route Map | Allowed Surface Versions | Model Allowlist | Capability Restrictions | Billing Region | Deployment Scope | Serving Region | Last Verified At | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `intl-runtime` | `Aliyun Bailian International Runtime` | `aliyun-bailian-intl` | `runtime` | `template` | `openai-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `qwen3.7-max` | `none` | `none` | `none` | `text-chat` | `text-chat=responses@compatible-mode-v1` | `responses@compatible-mode-v1,chat-completions@compatible-mode-v1` | `catalog-selected` | `qwen3.7-max chat may use responses or chat-completions; the selected alias resolves to the text-only 2026-05-20 snapshot, so vision is blocked` | `singapore` | `international` | `singapore` | `2026-07-14` | `evset-aliyun-bailian-intl-connection-profiles-intl-runtime-94eeb93ba0` | `recommended workspace-specific Singapore endpoint; replace {WorkspaceId} before use` |
+| `intl-native-runtime` | `Aliyun Bailian International Native Runtime` | `aliyun-bailian-intl` | `runtime` | `disabled` | `provider-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `none` | `none` | `none` | `none` | `none` | `none` | `none` | `none` | `reference-only endpoint template; no selected International native image or music contract exists` | `singapore` | `international` | `singapore` | `2026-07-14` | `evset-aliyun-bailian-intl-connection-profiles-intl-native-runtime-411e5ecce1` | `recommended workspace-specific DashScope native Singapore endpoint; replace {WorkspaceId} before use` |
 
-## Local Profiles
+## Legacy Compatibility View
 
-These rows are templates. The host project owns whether the secret reference is active.
+This derived table keeps the original 19-column contract. Legacy request-kind names are normalized once at the request boundary; they do not change the canonical route map.
 
 | Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Chat Model | Default Vision Model | Default Imaging Model | Default Music Model | Allowed Request Kinds | Allowed API Surfaces | Model Allowlist | Capability Restrictions | Last Verified At | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `intl-runtime` | `Aliyun Bailian International Runtime` | `aliyun-bailian-intl` | `runtime` | `template` | `openai-compatible` | `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `qwen3.6-max-preview` | `none` | `none` | `none` | `chat` | `chat-completions` | `catalog-selected` | `only selected International catalog rows are allowed` | `2026-05-01` | `OpenAI-compatible International endpoint template` |
-| `intl-native-runtime` | `Aliyun Bailian International Native Runtime` | `aliyun-bailian-intl` | `runtime` | `template` | `provider-compatible` | `https://dashscope-intl.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `none` | `none` | `none` | `none` | `imaging,music` | `dashscope-native-sync,dashscope-native-async,dashscope-native` | `catalog-selected` | `no selected International native imaging or music rows yet` | `2026-05-01` | `DashScope native International endpoint template` |
+| `intl-runtime` | `Aliyun Bailian International Runtime` | `aliyun-bailian-intl` | `runtime` | `template` | `openai-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `qwen3.7-max` | `none` | `none` | `none` | `chat` | `responses,chat-completions` | `catalog-selected` | `qwen3.7-max chat may use responses or chat-completions; the selected alias resolves to the text-only 2026-05-20 snapshot, so vision is blocked` | `2026-07-14` | `recommended workspace-specific Singapore endpoint; replace {WorkspaceId} before use` |
+| `intl-native-runtime` | `Aliyun Bailian International Native Runtime` | `aliyun-bailian-intl` | `runtime` | `disabled` | `provider-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `none` | `none` | `none` | `none` | `none` | `none` | `none` | `reference-only endpoint template; no selected International native image or music contract exists` | `2026-07-14` | `recommended workspace-specific DashScope native Singapore endpoint; replace {WorkspaceId} before use` |
 
-## Custom Base URL Rule
+## Rules
 
-If the owner changes `Base URL` to a gateway or proxy, also change `Endpoint Kind`.
-
-For gateway or custom endpoints, verify support for:
-
-- OpenAI-compatible Chat Completions
-- DashScope native job APIs
-- streaming
-- thinking fields
-- structured output
-- imaging job submission and polling
-
-If the endpoint does not clearly support one of those fields, block that option for the profile instead of assuming official Aliyun parity.
+- Resolve a profile before model, surface, version, capability, URL, or price selection.
+- Profile restrictions may narrow capabilities but never expand them.
+- Do not fall back to another profile, region, key, surface, or version.
+- Claim details are in `../../_evidence/evidence.json`.

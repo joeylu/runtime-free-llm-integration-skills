@@ -12,7 +12,7 @@ Do not invent music model names.
 
 Build the shared request envelope with:
 
-- `RequestKind = music`
+- `RequestKind = music-generation`
 - `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`

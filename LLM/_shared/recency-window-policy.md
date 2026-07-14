@@ -1,58 +1,35 @@
-# Shared Recency Window Policy
+# Shared Discovery and Review Freshness Policy
 
-Use this policy for any provider skill that syncs model catalogs from official docs.
+A recency window is a **discovery aid**, not a provider lifecycle rule.
 
-## Boundary Confirmation Rule
+## Defaults
 
-When the user asks to sync models, ask the user to confirm a recency boundary first.
+- Default discovery lookback: `6 months`.
+- Default factual review freshness target: `90 days` unless a provider file declares a shorter target.
+- Price, alias, API-version, and lifecycle claims should be reviewed sooner whenever their official source is known to change frequently.
 
-Default proposal:
+## Discovery Window
 
-- `6 months`
+When a user asks for a current-model sync and does not give a boundary, an agent may use the repository default without blocking the task. Convert it to one absolute cutoff date and record it in the sync report.
 
-Do not start sync until the user either:
+Use the window to prioritize newly released or newly available models. Do not:
 
-- confirms the default boundary, or
-- gives a different boundary
+- mark an older model deprecated merely because it predates the cutoff;
+- remove a selected model merely because a newer model exists;
+- treat absence from a recent-release page as proof of shutdown.
 
-## Cutoff Rule
+## Review Freshness
 
-Convert the confirmed boundary into one absolute cutoff date based on the sync date.
+Set:
 
-Example:
+- `current` when the row's evidence was reviewed within the provider's freshness target and no newer conflicting official source is known;
+- `stale` when the target is exceeded or a volatile claim has passed its effective window;
+- `unreviewed` when no explicit official review exists.
 
-- sync date: `2026-04-24`
-- boundary: `6 months`
-- cutoff date: `2025-10-24`
+A stale row is blocked by the selector, but its `Provider Lifecycle` remains unchanged until official lifecycle evidence says otherwise.
 
-Use absolute dates in the catalog after sync. Do not keep only relative wording such as `half year`.
+## Lifecycle Evidence
 
-## Classification Rule
+Use an official lifecycle/deprecation page for `scheduled-deprecated`, `deprecated`, `shutdown`, or `removed` whenever one exists. Release age, local replacement, pricing absence, and catalog omission are not lifecycle evidence.
 
-For each model row reviewed during sync:
-
-- if the official recency basis date is on or after the cutoff date, classify it as `candidate`
-- if the official recency basis date is before the cutoff date, classify it as `retired`
-
-Use the same cutoff date to review:
-
-- newly discovered official rows
-- rows already present in the current catalog
-
-## Basis-Date Rule
-
-Use one clear official date for the recency decision.
-
-Preferred basis date order:
-
-1. official model release date
-2. official model availability date
-3. official model page update date only when it clearly refers to that exact model row
-
-If the official docs do not clearly provide a suitable basis date for a row, stop and ask the user instead of guessing.
-
-## Selector Rule
-
-Rows classified as `retired` should not remain user-selectable.
-
-Provider skills may express this by marking the local catalog row as `deprecated` while keeping the historical record visible.
+Future provider shutdown dates are valid factual dates. Store them in `Provider Shutdown At` and keep the row `scheduled-deprecated` until the deadline. After the deadline, re-verify the provider state before changing it to `shutdown` or `removed`.

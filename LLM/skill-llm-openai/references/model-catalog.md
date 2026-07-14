@@ -1,65 +1,43 @@
 # OpenAI Model Catalog
 
-Use this file as the local OpenAI model catalog for direct-model work.
+- `CoverageMode: curated-allowlist`
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
+- Every factual row is valid only through its own `Last Verified At` and `Evidence Refs`.
+- New models are not made default automatically.
 
-Selection context for the current local catalog:
+Read `../../_shared/model-catalog-schema.md` before using this file.
 
-- sync date: `2026-05-01`
-- recency boundary: `6 months`
-- recency cutoff date: `2025-11-01`
-- only rows with `Catalog Status = active` and `Selection Status = selected` are valid local options
+## Selector Rule
 
-Meanings:
+Use only Canonical Registry rows where `Local Selection = selected`, `Provider Lifecycle` is callable, `Verification State = verified`, and `Review Freshness = current`. Then resolve the exact profile, URL, API version, capability row, and pricing scope.
 
-- `Catalog Status`: local availability flag used by this skill
-- `Selection Status`: whether the row was chosen into the local model set
-- `Recency Classification`: whether the row is inside the last confirmed sync boundary
+## Canonical Registry
 
-## Dropdown Rule
+| Request Kind | API Model | Display Name | Primary API Surface | Provider Lifecycle | Provider Shutdown At | Provider Earliest Retirement At | Local Selection | Selection Reason | Is Default | Verification State | Review Freshness | Last Verified At | Official Context Display | Exact Context Tokens | Official Max Input Display | Exact Max Input Tokens | Official Max Output Display | Exact Max Output Tokens | Recommended Max Output Tokens | Limit Unit Convention | Is Moving Alias | Alias Target At Verification | Alias Mode | Alias Target Verified At | Replacement Model | Evidence Refs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `text-chat` | `gpt-5.6-sol` | `GPT-5.6 Sol` | `responses` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `1,050,000` | `1050000` | `unknown` | `unknown` | `128,000` | `128000` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-openai-model-catalog-text-chat-gpt-5-6-sol-f573efdecf` |
+| `text-chat` | `gpt-5.6-terra` | `GPT-5.6 Terra` | `responses` | `stable` | `none` | `none` | `selected` | `selected cost/quality alternative` | `no` | `verified` | `current` | `2026-07-14` | `1,050,000` | `1050000` | `unknown` | `unknown` | `128,000` | `128000` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-openai-model-catalog-text-chat-gpt-5-6-terra-26f0f6fffd` |
+| `text-chat` | `gpt-5.6-luna` | `GPT-5.6 Luna` | `responses` | `stable` | `none` | `none` | `selected` | `selected high-volume alternative` | `no` | `verified` | `current` | `2026-07-14` | `1,050,000` | `1050000` | `unknown` | `unknown` | `128,000` | `128000` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-openai-model-catalog-text-chat-gpt-5-6-luna-a9964eb864` |
+| `multimodal-chat` | `gpt-5.6-sol` | `GPT-5.6 Sol` | `responses` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `1,050,000` | `1050000` | `unknown` | `unknown` | `128,000` | `128000` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-openai-model-catalog-multimodal-chat-gpt-5-6-sol-d543afcbdc` |
+| `multimodal-chat` | `gpt-5.6-terra` | `GPT-5.6 Terra` | `responses` | `stable` | `none` | `none` | `selected` | `selected cost/quality alternative` | `no` | `verified` | `current` | `2026-07-14` | `1,050,000` | `1050000` | `unknown` | `unknown` | `128,000` | `128000` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-openai-model-catalog-multimodal-chat-gpt-5-6-terra-76d0dd153e` |
+| `multimodal-chat` | `gpt-5.6-luna` | `GPT-5.6 Luna` | `responses` | `stable` | `none` | `none` | `selected` | `selected high-volume alternative` | `no` | `verified` | `current` | `2026-07-14` | `1,050,000` | `1050000` | `unknown` | `unknown` | `128,000` | `128000` | `unknown` | `exact-integer` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-openai-model-catalog-multimodal-chat-gpt-5-6-luna-26a4bfa364` |
+| `image-generation` | `gpt-image-2` | `GPT Image 2` | `image-api-generations` | `stable` | `none` | `none` | `selected` | `curated primary or alternative` | `yes` | `verified` | `current` | `2026-07-14` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `no` | `none` | `n/a` | `n/a` | `none` | `evset-openai-model-catalog-image-generation-gpt-image-2-a63a82cc14` |
 
-When building a model selector:
+## Legacy Compatibility View
 
-- display `API Model`
-- submit `API Model`
-- keep `UI Label` equal to `API Model` if the column is present
-- filter out rows whose `Catalog Status` is not `active`
-- filter out rows whose `Selection Status` is not `selected`
-
-## Pricing Rule
-
-Use `pricing-matrix.md` for billing region, currency, context band, metered side, and unit price.
-
-The catalog price columns are compatibility summaries only. Do not parse `Input Price`, `Output Price`, or `Pricing Note` to reconstruct tiered billing.
-
-## Active Chat Models
+This derived table preserves the original column contract during migration. It is not the source of truth for provider lifecycle or selection. New integrations must use the Canonical Registry above.
 
 | Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `gpt-5.5` | `GPT55` | `gpt-5.5` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-24` | `2025-11-01` | `1000000` | `unknown` | `128000` | `global` | `per-million-tokens` | `$5.00` | `$30.00` | `flagship model for complex reasoning and coding; cached input $0.50 per 1M tokens` | `2026-05-01` | `models: https://developers.openai.com/api/docs/models ; latest: https://developers.openai.com/api/docs/guides/latest-model ; pricing: https://openai.com/api/pricing/` |
-| `chat` | `gpt-5.4` | `GPT54` | `gpt-5.4` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-03-05` | `2025-11-01` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `$2.50` | `$15.00` | `more affordable model for coding and professional work; cached input $0.25 per 1M tokens` | `2026-05-01` | `model: https://developers.openai.com/api/docs/models/gpt-5.4 ; pricing: https://openai.com/api/pricing/` |
-| `chat` | `gpt-5.4-mini` | `GPT54Mini` | `gpt-5.4-mini` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-03-17` | `2025-11-01` | `400000` | `unknown` | `128000` | `global` | `per-million-tokens` | `$0.75` | `$4.50` | `strong mini model for lower-latency, lower-cost workloads; cached input $0.075 per 1M tokens` | `2026-05-01` | `model: https://developers.openai.com/api/docs/models/gpt-5.4-mini ; pricing: https://openai.com/api/pricing/` |
+| `chat` | `gpt-5.6-sol` | `GPT-5.6 Sol` | `gpt-5.6-sol` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-07-09` | `2026-01-14` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `USD 5.00` | `USD 30.00` | `Short-context compatibility summary; use pricing-matrix.md for long-context and cache bands` | `2026-07-14` | `https://developers.openai.com/api/docs/models/gpt-5.6-sol` |
+| `chat` | `gpt-5.6-terra` | `GPT-5.6 Terra` | `gpt-5.6-terra` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-07-09` | `2026-01-14` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `USD 2.50` | `USD 15.00` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://developers.openai.com/api/docs/models/gpt-5.6-terra` |
+| `chat` | `gpt-5.6-luna` | `GPT-5.6 Luna` | `gpt-5.6-luna` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-07-09` | `2026-01-14` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `USD 1.00` | `USD 6.00` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://developers.openai.com/api/docs/models/gpt-5.6-luna` |
+| `vision` | `gpt-5.6-sol` | `GPT-5.6 Sol` | `gpt-5.6-sol` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-07-09` | `2026-01-14` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `USD 5.00` | `USD 30.00` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://developers.openai.com/api/docs/models/gpt-5.6-sol` |
+| `vision` | `gpt-5.6-terra` | `GPT-5.6 Terra` | `gpt-5.6-terra` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-07-09` | `2026-01-14` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `USD 2.50` | `USD 15.00` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://developers.openai.com/api/docs/models/gpt-5.6-terra` |
+| `vision` | `gpt-5.6-luna` | `GPT-5.6 Luna` | `gpt-5.6-luna` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-07-09` | `2026-01-14` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `USD 1.00` | `USD 6.00` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://developers.openai.com/api/docs/models/gpt-5.6-luna` |
+| `imaging` | `gpt-image-2` | `GPT Image 2` | `gpt-image-2` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-21` | `2026-01-14` | `n/a` | `n/a` | `n/a` | `global` | `per-million-tokens` | `text USD 5.00; image USD 8.00` | `image USD 30.00` | `Use pricing-matrix.md; compatibility summary only` | `2026-07-14` | `https://developers.openai.com/api/docs/models/gpt-image-2` |
 
-## Active Vision Models
+## Evidence
 
-| Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `vision` | `gpt-5.5` | `GPT55Vision` | `gpt-5.5` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-24` | `2025-11-01` | `1000000` | `unknown` | `128000` | `global` | `per-million-tokens` | `$5.00` | `$30.00` | `all latest OpenAI models support text and image input; image input is billed as input tokens` | `2026-05-01` | `models: https://developers.openai.com/api/docs/models ; latest: https://developers.openai.com/api/docs/guides/latest-model ; pricing: https://openai.com/api/pricing/` |
-| `vision` | `gpt-5.4` | `GPT54Vision` | `gpt-5.4` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-03-05` | `2025-11-01` | `1050000` | `unknown` | `128000` | `global` | `per-million-tokens` | `$2.50` | `$15.00` | `all latest OpenAI models support text and image input; image input is billed as input tokens` | `2026-05-01` | `model: https://developers.openai.com/api/docs/models/gpt-5.4 ; pricing: https://openai.com/api/pricing/` |
-| `vision` | `gpt-5.4-mini` | `GPT54MiniVision` | `gpt-5.4-mini` | `active` | `selected` | `no` | `verified` | `candidate` | `2026-03-17` | `2025-11-01` | `400000` | `unknown` | `128000` | `global` | `per-million-tokens` | `$0.75` | `$4.50` | `all latest OpenAI models support text and image input; image input is billed as input tokens` | `2026-05-01` | `model: https://developers.openai.com/api/docs/models/gpt-5.4-mini ; pricing: https://openai.com/api/pricing/` |
-
-## Active Imaging Models
-
-| Model Type | API Model | Display Name | UI Label | Catalog Status | Selection Status | Is Default | Verification State | Recency Classification | Recency Basis Date | Recency Cutoff Date | Context Window Tokens | Max Input Tokens | Max Output Tokens | Price Region | Price Unit | Input Price | Output Price | Pricing Note | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `imaging` | `gpt-image-2` | `GPTImage2` | `gpt-image-2` | `active` | `selected` | `yes` | `verified` | `candidate` | `2026-04-21` | `2025-11-01` | `n/a` | `unknown` | `n/a` | `global` | `per-million-tokens` | `image: $8.00; text: $5.00` | `image: $30.00` | `pricing is token based; cached image input $2.00 and cached text input $1.25 per 1M tokens` | `2026-05-01` | `model: https://developers.openai.com/api/docs/models/gpt-image-2 ; image docs: https://developers.openai.com/api/docs/guides/image-generation ; pricing: https://openai.com/api/pricing/` |
-
-## Active Music Models
-
-No locally selected music rows yet.
-
-## Candidate Rows Not Selected In This Local Pass
-
-| Model Type | API Model | Reason |
-| --- | --- | --- |
-| `chat` | `gpt-5.5-pro` | `candidate-not-selected; long-running pro path needs separate background-mode rules before becoming a default local option` |
-| `chat` | `gpt-5.4-nano` | `candidate-not-selected; useful for low-cost workflows but not selected in this first ChatGPT/OpenAI structure pass` |
+Evidence sets and field-level claims live in `../../_evidence/evidence.json`. Pricing details live in `pricing-matrix.md`; capability and endpoint details live in their exact surface/version matrices.

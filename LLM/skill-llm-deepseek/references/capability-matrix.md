@@ -1,37 +1,22 @@
 # DeepSeek Capability Matrix
 
-Use this file to verify whether a locally selected model-kind combination supports a requested feature.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
+- Key: `Request Kind + API Model + API Surface + API Version`
 
-Meanings:
+Read `../../_shared/capability-matrix-schema.md` first. Each row covers one exact surface and one exact API version. `unknown` and `unsupported` both block a requested option; `unsupported` means the official contract explicitly excludes it.
 
-- `verified`: confirmed from official DeepSeek docs during the `2026-05-01` initial pass
-- `unsupported`: explicitly listed as unsupported in the official docs
-- `unknown`: not yet verified, so risky features must stop
-- `n/a`: not applicable to that request kind
-
-## Fail-Fast Rule
-
-If a requested option is `unknown` or `unsupported`, stop before implementation.
-
-Only the locally selected active rows from `model-catalog.md` are tracked here.
+The matrix contains selected rows and, where explicitly labeled in the catalog, reviewed candidates. A capability row never makes a model locally selectable by itself.
 
 ## Current Matrix
 
-### Chat
+| Request Kind | API Model | API Surface | API Version | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Tool Choice When Thinking | Required Tool-History Fields | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `text-chat` | `deepseek-v4-flash` | `chat-completions` | `provider-default` | `verified` | `verified` | `mixed` | `on` | `unsupported` | `n/a` | `non-thinking-only` | `unknown` | `all-modes` | `unknown` | `all-modes` | `unsupported` | `unknown` | `unsupported` | `reasoning_content,assistant.content(non-null)` | `verified` | `none,low,medium,high,xhigh,max` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-deepseek-capability-matrix-text-chat-deepseek-v4-flash-chat-completions-provider-default-bef2340298` | `Strict function schemas are available only on the beta base URL. When effective thinking is enabled, tool_choice is unsupported; preserve prior assistant reasoning_content and non-null content in tool-call history.` |
+| `text-chat` | `deepseek-v4-flash` | `beta` | `beta` | `verified` | `verified` | `mixed` | `on` | `unsupported` | `n/a` | `non-thinking-only` | `unknown` | `all-modes` | `unknown` | `all-modes` | `verified` | `unknown` | `unsupported` | `reasoning_content,assistant.content(non-null)` | `verified` | `none,low,medium,high,xhigh,max` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-deepseek-capability-matrix-text-chat-deepseek-v4-flash-beta-beta-4cf811ae76` | `Strict function schemas are available only on the beta base URL. When effective thinking is enabled, tool_choice is unsupported; preserve prior assistant reasoning_content and non-null content in tool-call history.` |
+| `text-chat` | `deepseek-v4-pro` | `chat-completions` | `provider-default` | `verified` | `verified` | `mixed` | `on` | `unsupported` | `n/a` | `non-thinking-only` | `unknown` | `all-modes` | `unknown` | `all-modes` | `unsupported` | `unknown` | `unsupported` | `reasoning_content,assistant.content(non-null)` | `verified` | `none,low,medium,high,xhigh,max` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-deepseek-capability-matrix-text-chat-deepseek-v4-pro-chat-completions-provider-default-18ede8a31a` | `Strict function schemas are available only on the beta base URL. When effective thinking is enabled, tool_choice is unsupported; preserve prior assistant reasoning_content and non-null content in tool-call history.` |
+| `text-chat` | `deepseek-v4-pro` | `beta` | `beta` | `verified` | `verified` | `mixed` | `on` | `unsupported` | `n/a` | `non-thinking-only` | `unknown` | `all-modes` | `unknown` | `all-modes` | `verified` | `unknown` | `unsupported` | `reasoning_content,assistant.content(non-null)` | `verified` | `none,low,medium,high,xhigh,max` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `evset-deepseek-capability-matrix-text-chat-deepseek-v4-pro-beta-beta-799544ac2c` | `Strict function schemas are available only on the beta base URL. When effective thinking is enabled, tool_choice is unsupported; preserve prior assistant reasoning_content and non-null content in tool-call history.` |
 
-| Model Type | API Model | Supports Non-Stream | Supports Stream | Thinking Mode | Thinking Default | Thinking Budget Field | Thinking Budget Default | Temperature Mode | Temperature Defaults | Json Object Mode | Json Schema Mode | Tool Calling Mode | Strict Tool Schema Mode | Parallel Tool Calls | Reasoning Effort Field | Reasoning Effort Values | Reasoning Summary Field | Reasoning Output Visibility | Supports Image Input | Supports Seed | Supports Image Size | Supports Image Count | Supports Duration Seconds | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `deepseek-v4-flash` | `verified` | `verified` | `mixed` | `on` | `unsupported` | `n/a` | `non-thinking-only` | `unknown` | `all-modes` | `unknown` | `all-modes` | `verified` | `unknown` | `verified` | `none,low,medium,high,xhigh,max` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `pricing page lists JSON Output and Tool Calls for V4 Flash; thinking-mode docs say thinking.type defaults enabled, reasoning_effort supports high/max with compatibility mappings low/medium->high and xhigh->max, and reasoning_content is returned; strict function calling is beta-surface only` |
-| `chat` | `deepseek-v4-pro` | `verified` | `verified` | `mixed` | `on` | `unsupported` | `n/a` | `non-thinking-only` | `unknown` | `all-modes` | `unknown` | `all-modes` | `verified` | `unknown` | `verified` | `none,low,medium,high,xhigh,max` | `n/a` | `raw` | `n/a` | `n/a` | `n/a` | `n/a` | `n/a` | `pricing page lists JSON Output and Tool Calls for V4 Pro; thinking-mode docs say thinking.type defaults enabled, reasoning_effort supports high/max with compatibility mappings low/medium->high and xhigh->max, and reasoning_content is returned; strict function calling is beta-surface only` |
+## Resolution Rule
 
-### Vision
-
-No locally selected DeepSeek vision capability rows yet.
-
-### Imaging
-
-No locally selected DeepSeek imaging capability rows yet.
-
-### Music
-
-No locally selected DeepSeek music capability rows yet.
+Resolve the connection profile, exact surface, exact API version, and effective thinking state before reading this table. Do not merge capabilities across rows or retry on another surface/version without a new explicit selection. Claim details are in `../../_evidence/evidence.json`.

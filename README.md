@@ -1,112 +1,88 @@
 # runtime-free-llm-integration-skills
 
-Runtime-free skills for coding agents to build fail-fast LLM provider integration, starting with OpenAI, Aliyun Bailian / DashScope China Mainland, Aliyun Bailian / DashScope International, DeepSeek, Gemini, MiniMax China Mainland, and MiniMax International.
+This repository gives coding agents a reliable set of rules for building direct LLM provider integrations.
 
-## What problem does this solve?
+It is not an SDK, proxy, gateway, or runtime service. Your application still calls each provider directly. The skill pack simply helps the agent choose the right model, endpoint, API surface, capability, role, and price without guessing.
 
-Many projects want to let users connect their own LLM provider by entering an API key, choosing a model, and enabling features like chat, vision, or image generation.
+## Why use it?
 
-The hard part is not just calling an API.
+LLM APIs often look similar, but the details are not interchangeable. A model may exist in one region but not another, support tools on one API surface but not another, or use a different price and endpoint.
 
-The hard part is making sure the coding agent does not:
+This pack keeps those boundaries explicit:
 
-- guess model IDs
-- mix provider names
-- enable unsupported features
-- silently fall back to another model or key
-- hide connection errors
-- build confusing provider/model UI
+- unknown stays unknown;
+- unsupported features stay disabled;
+- failed requests stay failed;
+- no silent model, region, endpoint, or API fallback.
 
-This repository provides a lightweight skill-based map for building that integration correctly.
-
-## Core idea
-
-This is not an LLM gateway, proxy, SDK, or runtime.
-
-It does not force your application traffic through a bridge like LiteLLM or Portkey.
-
-Instead, it gives coding agents a set of provider integration rules so they can build native LLM connection logic directly inside your project.
-
-The authoring logic is simple:
-
-> Unknown means unknown.  
-> Unsupported means disabled.  
-> Failed means failed.  
-> Do not guess, do not hide, do not fallback silently.
-
-## Current provider coverage
-
-The current version includes these concrete provider skills:
+## Supported providers
 
 - OpenAI API
-- Aliyun Bailian / DashScope China Mainland
-- Aliyun Bailian / DashScope International / Singapore
-- DeepSeek API
 - Gemini Developer API
-- MiniMax China Mainland API
-- MiniMax International API
+- DeepSeek API
+- Aliyun Bailian / Model Studio China Mainland
+- Alibaba Cloud Model Studio International
+- MiniMax China Mainland
+- MiniMax International
 
-MiniMax provider skills separate `build` and `plan` profiles: `plan` is chat-only, while `build` includes verified HTTP chat, image generation, and music generation rows. MiniMax HTTP video links are documented as reference-only until the shared contracts add a video request kind.
+China Mainland and International services are separate providers in this repository. Their keys, endpoints, models, and prices must not be mixed.
 
-The shared structure is designed so more LLM providers can be added later.
+## How to use it
 
-## What is included?
+1. Keep the whole `LLM/` folder together.
+2. Pick one provider and region.
+3. Ask your coding agent to read `COMMANDS.md` and that provider's `SKILL.md`.
+4. Describe what you want to build.
 
-- shared request / response / error contracts
-- provider model catalog pattern
-- structured provider pricing matrix pattern
-- live LLM model sync policy for pricing, capabilities, context windows, and token limits
-- connection profile pattern for separate API keys and base URLs
-- request URL matrix pattern for exact provider request endpoints
-- capability matrix rules
-- model selection UI guidance
-- provider configuration UI guidance
-- fail-fast validation rules
-- transport rules for different model modes
-- OpenAI API provider skill
-- Aliyun Bailian / DashScope China Mainland provider skill
-- Aliyun Bailian / DashScope International provider skill
-- DeepSeek API provider skill
-- Gemini Developer API provider skill
-- MiniMax China Mainland provider skill
-- MiniMax International provider skill
-
-## Who is this for?
-
-This repository is for developers who use coding agents such as Codex, Claude Code, Cursor, or similar tools to build LLM provider integration into their own apps.
-
-Typical use case:
-
-> "Build a website settings page where users can enter their own LLM API key, select a provider model, test the connection, and enable only verified capabilities."
-
-## What this is not
-
-This is not:
-
-- a runtime service
-- an API proxy
-- a hosted gateway
-- a full model registry
-- a universal LLM SDK
-- a fallback router
-
-If you want a runtime bridge, use a gateway or SDK.
-
-If you want a lightweight integration map for coding agents, this repository is for that.
-
-## Basic usage
-
-Copy or reference the relevant skill folder in your coding-agent workflow.
-
-Start from:
+For example:
 
 ```text
-LLM/_shared/
-LLM/skill-llm-openai/
-LLM/skill-llm-aliyun-bailian-cn/
-LLM/skill-llm-aliyun-bailian-intl/
-LLM/skill-llm-deepseek/
-LLM/skill-llm-gemini/
-LLM/skill-llm-minimax-cn/
-LLM/skill-llm-minimax-intl/
+Read COMMANDS.md and LLM/skill-llm-openai/SKILL.md.
+Build a settings page for OpenAI text and image generation.
+Use only selected models and verified capabilities. Do not silently fall back.
 ```
+
+For a model-data refresh:
+
+```text
+Sync the Aliyun Bailian China Mainland skill from official documentation,
+then audit the repository and run the validator.
+```
+
+See [QUICKSTART.md](QUICKSTART.md) for a few more ready-to-use prompts.
+
+## What's inside?
+
+```text
+LLM/_shared/                 shared request, response, error, and schema rules
+LLM/_evidence/               reviewed official-source evidence
+LLM/skill-llm-<provider>/    provider-specific rules and reference tables
+tools/validate_repo.py       local consistency checker
+```
+
+Each provider skill includes its own model catalog, connection profiles, request URLs, capabilities, roles, pricing, and transport notes.
+
+The catalog is a curated allowlist, not a complete live registry. Finding a newer model does not automatically make it selected or default.
+
+## A few useful terms
+
+New integrations use request kinds such as:
+
+- `text-chat`
+- `multimodal-chat`
+- `image-generation`
+- `music-generation`
+
+Older names such as `chat`, `vision`, `imaging`, and `music` are kept only for compatibility at the input boundary.
+
+## Validation
+
+After changing repository data, run:
+
+```bash
+python tools/validate_repo.py
+```
+
+This checks the local files, evidence links, tables, routes, and cross-file rules. It does not replace live API testing or a fresh review of provider documentation.
+
+For the details behind this update, see [CHANGELOG.md](CHANGELOG.md), [MODEL-MIGRATION-2026-07-14.md](MODEL-MIGRATION-2026-07-14.md), and [VALIDATION-2026-07-14.md](VALIDATION-2026-07-14.md).

@@ -1,42 +1,42 @@
-# Shared Pricing Matrix Schema
+# Shared Pricing Matrix Schema v2
 
-Use this file to keep provider pricing data structured and separate from model selection.
+Pricing is selected by an exact billing scope, not by model name alone.
 
-`model-catalog.md` decides which models can be selected. `pricing-matrix.md` decides how a selected model is priced.
+## Required Key
+
+`Request Kind + API Model + API Surface + API Version + Billing Region + Deployment Scope + Serving Region + Service Tier + Metered Side + Metered Item + Price Condition + Effective At`
 
 ## Required Columns
 
 | Column | Meaning |
 | --- | --- |
-| `Model Type` | One of `chat`, `vision`, `imaging`, or `music` |
-| `API Model` | Exact provider model identifier sent over the wire |
-| `Price Region` | Provider billing region such as `global`, `china-mainland`, or `international` |
-| `Price Currency` | ISO 4217 currency code such as `USD`, `CNY`, or `unknown` |
-| `Price Unit` | Billing unit such as `per-million-tokens`, `per-image`, or `mixed` |
-| `Metered Side` | `input`, `cached-input`, `output`, `image-input`, `image-output`, `audio-input`, or `unknown` |
-| `Metered Item` | What is metered, such as `text tokens`, `image tokens`, `audio tokens`, or `image` |
-| `Context Band` | The exact official band, such as `all`, `0 < tokens <= 256K`, or `image <= 1024x1024` |
-| `Unit Price` | Numeric official price for one `Price Unit`, or `unknown` / `n/a` |
-| `Price Condition` | Explicit condition such as `standard`, `batch unsupported`, `prompt_extend=true`, or discount window |
-| `Last Verified At` | Absolute verification date or `unverified` |
-| `Source` | Exact official source URL or explicit inherited source note |
+| `Request Kind` | Canonical request kind |
+| `API Model` | Exact provider model ID |
+| `API Surface` | Exact surface, or `all-documented-surfaces` only when the provider explicitly prices the model independently of surface |
+| `API Version` | Exact version, `provider-default`, or `all-documented-versions` only when official pricing is version-independent |
+| `Billing Region` | Region used for billing, never the vague value `international` when official prices differ by region |
+| `Deployment Scope` | Provider scope such as `global`, `international`, `china-mainland`, or `workspace-specific` |
+| `Serving Region` | Actual serving/deployment region such as `singapore`, `beijing`, or `global` |
+| `Service Tier` | `standard`, `priority`, `batch`, or another exact official tier |
+| `Price Currency` | ISO currency code |
+| `Price Unit` | Exact billing unit |
+| `Metered Side` | `input`, `cached-input`, `cache-write`, `output`, `image-output`, `request`, or another explicit side |
+| `Metered Item` | What is measured |
+| `Price Condition` | Context band, mode, quality, duration, or other condition |
+| `Unit Price` | Numeric price or `unknown` |
+| `Effective At` | Official start date/time if known; otherwise `unknown`; never substitute the review date |
+| `Expires At` | Promotion/end date, `none`, or `unknown` |
+| `Pricing Status` | `current`, `scheduled`, `expired`, `unknown`, or `historical` |
+| `Last Verified At` | Exact review date |
+| `Evidence Refs` | Pricing evidence-set IDs |
+| `Notes` | Non-normative explanation |
 
 ## Rules
 
-- Keep one row per priceable side, item, region, currency, unit, and context band.
-- Do not combine multiple context bands in one price cell.
-- Do not combine input and output prices in one row.
-- Use `Price Currency = unknown` when the official docs do not clearly expose the currency.
-- Use `Context Band = all` only when the price does not vary by context length, token range, image size, or another published band.
-- Use `unknown` for missing prices. Do not infer prices from sibling models, unofficial calculators, SDK constants, or runtime billing errors.
-- Treat `pricing-matrix.md` as the source of truth for billing UI, estimates, and cost documentation.
-- Treat model-catalog price fields as compatibility summaries only; do not parse `Pricing Note` to reconstruct price bands.
-
-## Example
-
-For a tiered model, use separate rows:
-
-| Model Type | API Model | Price Region | Price Currency | Price Unit | Metered Side | Metered Item | Context Band | Unit Price | Price Condition | Last Verified At | Source |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `0 < tokens <= 256K` | `2` | `standard` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
-| `chat` | `qwen3.6-plus` | `china-mainland` | `CNY` | `per-million-tokens` | `input` | `text tokens` | `256K < tokens <= 1M` | `8` | `standard` | `2026-05-01` | `https://help.aliyun.com/zh/model-studio/billing/` |
+- `all-documented-surfaces` and `all-documented-versions` are allowed only when the official pricing source prices the model independently of those dimensions.
+- A price is usable only when every key dimension needed by the provider is known and `Pricing Status = current`.
+- Never apply a Singapore price to Global, US, EU, or another deployment scope.
+- Promotions require an explicit effective window when the provider publishes one. Expired rows remain historical and are never used for estimates.
+- If the provider shows a current discounted price without an end date, record that current price, `Expires At = unknown`, and do not invent a future rollback.
+- Pricing pages are authoritative for price; model cards and examples are not substitutes.
+- Do not parse compatibility summaries in `model-catalog.md` for billing.

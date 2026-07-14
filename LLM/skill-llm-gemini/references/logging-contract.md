@@ -1,60 +1,52 @@
 # Gemini Logging Contract
 
-Use this file when the caller wants request logging, troubleshooting, or trace retention.
+Apply `../../_shared/logging-fields.md` first. Log normalized values before provider-specific extras.
 
-Read `../../_shared/logging-fields.md` first.
+## Minimum Gemini Fields
 
-## Default Rule
+In addition to the shared minimum, record:
 
-Log normalized fields first.
-
-Add Gemini-specific raw payload snapshots only when debugging value outweighs storage cost or privacy risk.
-
-## Minimum Log Payload
-
-Store at least:
-
-- `provider = gemini`
-- `connection_profile_key`
-- `endpoint_kind`
 - `api_surface`
-- `base_url`
-- `request_url`
-- `request_kind`
-- `model`
-- `catalog_verification_state`
-- `is_stream`
-- `reasoning_effort`
-- `thinking_requested`
-- `thinking_applied`
-- `reasoning_summary_requested`
-- `reasoning_output_visibility`
-- `response_format`
-- `tool_count`
-- `temperature`
-- `image_size`
-- `reference_image_count`
-- `usage`
-- `latency_ms`
-- `finish_reason`
-- `error_code`
-- `error_stage`
-- `retry_count`
+- `interaction_id_returned` as a boolean by default, not the opaque ID
+- `previous_interaction_id_present`
+- `store_response_effective`
+- `state_mode = stateful | stateless | history-replay`
+- `thinking_level_effective`
+- `thought_signature_present`
+- `thought_summary_present`
+- `thinking_summaries_effective = auto | omitted`
+- `sampling_override_rejected`
+- `function_call_count`
+- `function_result_count`
+- `function_identity_validated`
+- `hosted_tool_types`
+- `interaction_step_types`
+- `cache_mode`
+- `cached_input_tokens` from Interactions `usage.total_cached_tokens` or GenerateContent `usageMetadata.cachedContentTokenCount`
+- `thought_tokens` from Interactions `usage.total_thought_tokens` or GenerateContent `usageMetadata.thoughtsTokenCount`
+- `safety_surface`
+- `response_format_surface`
+- `inline_image_output_count`
+- `provider_finish_reason`
 
-## Helpful Provider Extras
+## Streaming Extras
 
-Store these when available:
+For Interactions, record the observed step-event types and terminal state. For StreamGenerateContent, record candidate chunk count and terminal finish reason. Never merge the two protocols under an ambiguous parser label.
 
-- official endpoint path
-- request id
-- candidate count
-- safety ratings
-- prompt feedback
-- thought signature presence
-- thought summary presence
-- inline image output count
-- provider finish reason
+## Privacy and Retention
 
-## Fail-Fast Rule
+- Do not log API keys, raw continuation IDs, thought signatures, raw prompts, files, images, function arguments, or generated images by default.
+- A request with `store=true` has provider-side retention implications. Log the effective boolean and profile policy.
+- Raw payload snapshots require explicit owner approval and redaction.
+- Grounding annotations may contain URLs or snippets; apply the host application's data-retention policy.
 
-If the user asks for detailed traces that include raw prompts, raw outputs, images, files, function arguments, thought summaries, or thought signatures, confirm that this is intended before implementation.
+## Diagnostic Warnings
+
+Record warnings for:
+
+- Preview capability use
+- structured output combined with tools
+- the current official Computer Use documentation conflict
+- omitted continuation because `store=false`
+- empty GenerateContent output after a mismatched function-result round
+- attempted sampling override blocked by `provider-default-only`

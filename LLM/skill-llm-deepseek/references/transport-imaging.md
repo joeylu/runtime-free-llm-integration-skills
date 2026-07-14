@@ -12,7 +12,7 @@ Do not invent imaging model names or route chat rows into image generation.
 
 Build the shared request envelope with:
 
-- `RequestKind = imaging`
+- `RequestKind = image-generation`
 - `ConnectionProfileKey = <profile key>` when the host uses multiple DeepSeek profiles
 - `Model = <API Model>`
 - `Inputs.Prompt = <text>`

@@ -1,29 +1,23 @@
 # MiniMax China Mainland Request URLs
 
-Use this file to resolve the final request URL after the connection profile and API surface are selected.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
+- Key: `Request Kind + Model Scope + API Surface + API Version + Endpoint Kind`
 
-Read `../../_shared/request-url-matrix-schema.md` first.
+Read `../../_shared/request-url-matrix-schema.md` first. Resolve a connection profile before substituting `{Profile.Base URL}`. No row authorizes silent surface or version fallback.
 
 ## Current Matrix
 
-| Request Kind | Model Scope | API Surface | Endpoint Kind | HTTP Method | Base URL | Request Path Template | Request URL Template | Stream Variant | Request URL Status | Last Verified At | Source | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `catalog-selected` | `chat-completions` | `official` | `POST` | `{Profile.Base URL}` | `/chat/completions` | `{Profile.Base URL}/chat/completions` | `body-param` | `verified` | `2026-05-03` | `https://platform.minimaxi.com/docs/api-reference/text-chat-openai` | `China Mainland OpenAI-compatible chat path; template profile base URL is https://api.minimaxi.com/v1` |
-| `vision` | `catalog-selected` | `chat-completions` | `official` | `POST` | `{Profile.Base URL}` | `unknown` | `unknown` | `n/a` | `unknown` | `unverified` | `no selected MiniMax China Mainland vision rows` | `keep blocked until a vision model sync verifies the exact model and endpoint behavior` |
-| `imaging` | `image-01` | `image-generation` | `official` | `POST` | `{Profile.Base URL}` | `/image_generation` | `{Profile.Base URL}/image_generation` | `n/a` | `verified` | `2026-05-03` | `https://platform.minimaxi.com/docs/api-reference/image-generation-t2i` | `build profile only; plan profile must block this request kind` |
-| `music` | `music-2.6` | `music-generation` | `official` | `POST` | `{Profile.Base URL}` | `/music_generation` | `{Profile.Base URL}/music_generation` | `n/a` | `verified` | `2026-05-03` | `https://platform.minimaxi.com/docs/api-reference/music-generation` | `build profile only; plan profile must block this request kind` |
-
-## Build-Only Video Reference
-
-MiniMax China Mainland build-profile HTTP video generation is documented at `https://platform.minimaxi.com/docs/guides/video-generation` and uses `POST {Profile.Base URL}/video_generation`.
-
-Do not add this as a current matrix row because `../../_shared/request-url-matrix-schema.md` only allows `chat`, `vision`, `imaging`, and `music`. Stop before first-class video implementation unless the owner extends the shared schemas.
+| Request Kind | Model Scope | API Surface | API Version | Endpoint Kind | HTTP Method | Base URL | Request Path Template | Request URL Template | Stream Variant | Request URL Status | Last Verified At | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `text-chat` | `all-reviewed` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/chat/completions` | `{Profile.Base URL}/chat/completions` | `body-param` | `verified` | `2026-07-14` | `evset-minimax-cn-request-urls-text-chat-all-reviewed-chat-completions-v1-1ee355b3f0` | `China Mainland OpenAI-compatible chat path; template profile base URL is https://api.minimaxi.com/v1` |
+| `multimodal-chat` | `all-reviewed` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `unknown` | `unknown` | `n/a` | `unknown` | `unverified` | `evset-minimax-cn-request-urls-multimodal-chat-all-reviewed-chat-completions-v1-fd66241325` | `keep blocked until a vision model sync verifies the exact model and endpoint behavior` |
+| `image-generation` | `image-01` | `image-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/image_generation` | `{Profile.Base URL}/image_generation` | `n/a` | `verified` | `2026-07-14` | `evset-minimax-cn-request-urls-image-generation-image-01-image-generation-v1-dded324bbe` | `build profile only; plan profile must block this request kind` |
+| `music-generation` | `music-2.6` | `music-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/music_generation` | `{Profile.Base URL}/music_generation` | `n/a` | `verified` | `2026-07-14` | `evset-minimax-cn-request-urls-music-generation-music-2-6-music-generation-v1-b413c3a57a` | `build profile only; plan profile must block this request kind` |
 
 ## Rules
 
-- Use only China Mainland base URLs in this skill.
-- Do not fall back to `https://api.minimax.io`.
-- Do not route through MiniMax Anthropic-compatible endpoints unless a separate explicit surface is added.
-- Resolve the profile first so `{Profile.Base URL}` matches the selected endpoint kind.
-- Do not put API keys in request URL templates.
-- Enforce profile restrictions after resolving the row: `plan` allows only `chat`; `build` allows `chat`, `imaging`, and `music`.
+- Use only `verified` rows for sending.
+- Treat `unknown` paths as hard stops.
+- Do not put secrets or signed user data in a logged resolved URL.
+- Claim details and official source locators are in `../../_evidence/evidence.json`.

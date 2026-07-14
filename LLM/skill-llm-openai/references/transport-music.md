@@ -1,39 +1,7 @@
 # OpenAI Music Transport
 
-Use this file for music or audio generation requests.
+This skill has no selected OpenAI music or audio-generation row.
 
-## Current State
+Do not route speech, transcription, realtime audio, or an invented music model through `RequestKind = music-generation`. A future integration requires an explicit shared request-kind decision, selected catalog row, endpoint, pricing rows, capability rows, and transport contract.
 
-This skill does not bundle selected OpenAI music rows yet.
-
-Do not invent music model names or route text-to-speech, transcription, or realtime voice through `RequestKind = music` unless the shared request-kind contract is explicitly expanded.
-
-## Input Shape
-
-Build the shared request envelope with:
-
-- `RequestKind = music`
-- `Model = <API Model>`
-- `Inputs.Prompt = <text>`
-- optional `Inputs.Lyrics = <text>`
-- optional `Inputs.DurationSeconds`
-- optional `Inputs.Seed`
-- optional `TimeoutMs`
-
-## Fail-Fast Rule
-
-Before implementation, confirm all of these:
-
-- the model exists in `model-catalog.md`
-- the capability row exists in `capability-matrix.md`
-- requested fields such as `Inputs.DurationSeconds` and `Inputs.Seed` are verified
-
-If any of those are missing, stop.
-
-## Response Mapping
-
-Map the provider result into the shared response envelope:
-
-- `ResultKind = music`
-- `AudioOutputs = generated audio result list`
-- `Usage = normalized usage when available`
+Fail before implementation when a music request reaches this skill.

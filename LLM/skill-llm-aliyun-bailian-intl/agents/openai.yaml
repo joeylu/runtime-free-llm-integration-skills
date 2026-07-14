@@ -1,7 +1,7 @@
 interface:
   display_name: "Aliyun Bailian International Direct Models"
-  short_description: "Wire Aliyun Bailian International chat, vision, image, and music model flows."
-  default_prompt: "Use $skill-llm-aliyun-bailian-intl to wire an Aliyun Bailian International direct-model integration with the right catalog, request URLs, transport, progress, and error contracts."
+  short_description: "Wire Alibaba Cloud International selected direct-model routes."
+  default_prompt: "Use $skill-llm-aliyun-bailian-intl to build an International direct-model integration. Resolve profile, canonical request kind, selected model, exact surface/version, request URL, role/history, billing/deployment/serving scope, capability, transport, progress, errors, and evidence; never use China Mainland routes."
 
 policy:
   allow_implicit_invocation: true

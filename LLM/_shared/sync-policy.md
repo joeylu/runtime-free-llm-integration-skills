@@ -1,55 +1,58 @@
-# Shared Sync Policy
+# Shared Official Sync Policy
 
-Use this policy for any provider-specific `skill-llm-xxxx` model sync workflow.
+This policy separates **official fact collection** from **repository validation**.
 
-Read `recency-window-policy.md` together with this file.
+## Trigger
 
-## Trigger Rule
+Perform an official sync when the user asks for current/latest information, refresh, re-verification, or provider/model updates. Normal implementation may use the current snapshot but must respect row freshness and fail-closed rules.
 
-Sync only when the user explicitly asks for:
+## Sources
 
-- latest models
-- sync
-- refresh
-- verification against official docs
+Use official provider sources only for provider facts. A source must be HTTPS and owned by the provider or its official cloud documentation domain.
 
-Do not auto-sync during normal implementation work.
+Source precedence for conflicting facts:
 
-## Source Rule
+1. exact endpoint/API reference for request fields and conditional validity;
+2. exact model card for model ID, modalities, limits, and stability label;
+3. official pricing page for regional price and effective windows;
+4. official lifecycle/deprecation page for shutdown and replacement;
+5. official release notes/changelog for release date and alias history;
+6. official examples/migration guides for recommended usage.
 
-Use official provider documentation only.
+When two authoritative sources still conflict, record both claims with `conflict_state = open`, set the affected field to `unknown` or `conflicted`, and fail closed.
 
-## Live Collection Rule
+## Collection Methods
 
-Every model sync or metadata collection task must be performed live by the LLM against official provider documentation at the time of the task.
+Automated extraction, scripts, official machine-readable indexes, and SDK/schema inspection are allowed to improve repeatability, but they are not evidence by themselves unless the provider publishes them as official documentation.
 
-Do not write, use, or rely on scripts, scrapers, crawlers, generated parsers, SDK enum dumps, automated catalog generators, or any other programmatic processing to collect model rows, capabilities, pricing, context windows, input limits, or output limits.
+Every extracted value must be:
 
-The LLM may use normal reading and search tools to locate official documentation, but the reviewed values must be selected and recorded by the LLM from the official docs during that sync.
+- traceable to an official URL and locator;
+- reviewed before promotion to `verified`;
+- recorded in `LLM/_evidence/evidence.json`;
+- compared against existing values and effective windows.
 
-## Update Rule
+Prohibited behavior is unsupported inference, not automation. Do not infer facts from names, neighboring models, pricing bands, third-party registries, runtime errors, or examples that do not define the field.
 
-When syncing:
+## Sync Order
 
-1. confirm the recency boundary with the user, proposing `6 months` by default
-2. convert the confirmed boundary into one absolute cutoff date
-3. update the provider skill's model catalog
-4. update the provider skill's pricing matrix with region, currency, unit, metered side, context band, and unit price rows
-5. update the provider skill's request URL matrix when endpoint paths, base URLs, or API surfaces change
-6. update the provider skill's capability matrix
-7. collect context window, max input token, and max output token values when official docs clearly expose them
-8. keep removed rows visible as `deprecated` or `removed`
-9. stamp exact dates, cutoff dates, and source URLs
-10. use the same cutoff date to re-review existing catalog rows
+1. Identify provider, region, request kinds, and desired discovery scope.
+2. Establish an absolute discovery cutoff; use the repository default when the user did not specify one.
+3. Review exact model IDs and provider lifecycle.
+4. Review aliases and fixed targets.
+5. Review API surfaces and versions.
+6. Review request fields and capabilities.
+7. Review limits while preserving official display values.
+8. Review regional/deployment pricing and effective windows.
+9. Update claim-level evidence first.
+10. Update provider catalogs/matrices from reviewed claims.
+11. Run structural validation and inspect the diff.
 
-## Fail-Fast Rule
+## Fail-Closed Rules
 
-If the official docs do not clearly confirm a field, leave that field as `unknown`.
-
-Do not upgrade `unknown` to `verified` by inference.
-
-Do not infer context windows, input limits, or output limits from pricing tiers, request failures, sibling model names, or non-official references.
-
-Do not infer currency, region, context bands, or unit prices from unlabeled price text. If official docs do not clearly expose one pricing dimension, set that dimension to `unknown`.
-
-If the official docs do not clearly provide a recency basis date for a row, stop and ask the user.
+- Keep unclear facts `unknown`.
+- Do not convert `K`/`M` displays to exact integers without an official unit convention.
+- Do not use an expired promotion for current estimates.
+- Do not treat a local replacement as provider deprecation.
+- Do not treat a recent-release cutoff as a selector rule.
+- Do not silently change a default model, region, profile, surface, or API version.

@@ -1,38 +1,29 @@
 # Gemini Connection Profiles
 
-Use this file to describe named Gemini connection profiles.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
 
-Connection profiles choose API key references, base URLs, allowed request kinds, and profile-level restrictions.
+Read `../../_shared/connection-profile-schema.md` first. The Canonical Profiles table is authoritative.
 
-They do not define model capabilities. Capabilities still come from `capability-matrix.md`.
+## Canonical Profiles
 
-## Rules
+| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Text Model | Default Multimodal Model | Default Image Model | Default Music Model | Allowed Request Kinds | Default Route Map | Allowed Surface Versions | Model Allowlist | Capability Restrictions | Billing Region | Deployment Scope | Serving Region | Last Verified At | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `build` | `Gemini Build` | `gemini` | `build` | `active` | `official` | `https://generativelanguage.googleapis.com` | `GEMINI_BUILD_API_KEY` | `env` | `gemini-3.5-flash` | `gemini-3.5-flash` | `gemini-3.1-flash-image` | `none` | `text-chat,multimodal-chat,image-generation` | `text-chat=interactions@v1;multimodal-chat=interactions@v1;image-generation=interactions@v1` | `interactions@v1,generate-content@v1beta,stream-generate-content@v1beta` | `catalog-selected` | `custom Interactions safety settings blocked; explicit cache only on generate-content; no cross-surface fallback` | `global` | `global` | `global` | `2026-07-14` | `evset-gemini-connection-profiles-build-44575cf5b2` | `new work defaults to interactions; compatibility surfaces require explicit selection` |
+| `plan` | `Gemini Plan` | `gemini` | `plan` | `active` | `official` | `https://generativelanguage.googleapis.com` | `GEMINI_PLAN_API_KEY` | `env` | `gemini-3.5-flash` | `gemini-3.5-flash` | `none` | `none` | `text-chat,multimodal-chat` | `text-chat=interactions@v1;multimodal-chat=interactions@v1` | `interactions@v1,generate-content@v1beta,stream-generate-content@v1beta` | `gemini-3.5-flash,gemini-3.1-pro-preview` | `imaging disabled; custom Interactions safety settings blocked; explicit cache only on generate-content` | `global` | `global` | `global` | `2026-07-14` | `evset-gemini-connection-profiles-plan-64879f7d6b` | `planning and review boundary with a distinct key or billing boundary` |
 
-- Store only secret references such as environment variable names. Do not store real API keys.
-- Resolve `ConnectionProfileKey` before selecting the final model and API surface.
-- Do not silently fall back between profiles, API keys, base URLs, or API surfaces.
-- A profile may narrow allowed models, request kinds, API surfaces, or features.
-- A profile must not expand a model capability from `unknown` or `unsupported` to usable.
-- A Gemini Developer API profile must not be reused as a Vertex AI profile unless the owner explicitly changes the endpoint and re-verifies transport behavior.
+## Legacy Compatibility View
 
-## Local Profiles
+This derived table keeps the original 19-column contract. Legacy request-kind names are normalized once at the request boundary; they do not change the canonical route map.
 
 | Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Chat Model | Default Vision Model | Default Imaging Model | Default Music Model | Allowed Request Kinds | Allowed API Surfaces | Model Allowlist | Capability Restrictions | Last Verified At | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `build` | `Gemini Build` | `gemini` | `build` | `active` | `official` | `https://generativelanguage.googleapis.com/v1beta` | `GEMINI_BUILD_API_KEY` | `env` | `gemini-3-flash-preview` | `gemini-3-flash-preview` | `gemini-3.1-flash-image-preview` | `none` | `chat,vision,imaging` | `generate-content,stream-generate-content` | `catalog-selected` | `none` | `2026-05-01` | `intended for implementation or production-like execution flows, including Nano Banana image generation through generateContent` |
-| `plan` | `Gemini Plan` | `gemini` | `plan` | `active` | `official` | `https://generativelanguage.googleapis.com/v1beta` | `GEMINI_PLAN_API_KEY` | `env` | `gemini-3-flash-preview` | `gemini-3-flash-preview` | `none` | `none` | `chat,vision` | `generate-content,stream-generate-content` | `catalog-selected` | `imaging disabled by profile unless the owner explicitly enables it` | `2026-05-01` | `intended for planning, review, and analysis flows that may use a separate key or billing boundary` |
+| `build` | `Gemini Build` | `gemini` | `build` | `active` | `official` | `https://generativelanguage.googleapis.com` | `GEMINI_BUILD_API_KEY` | `env` | `gemini-3.5-flash` | `gemini-3.5-flash` | `gemini-3.1-flash-image` | `none` | `chat,vision,imaging` | `interactions,generate-content,stream-generate-content` | `catalog-selected` | `custom Interactions safety settings blocked; explicit cache only on generate-content; no cross-surface fallback` | `2026-07-14` | `new work defaults to interactions; compatibility surfaces require explicit selection` |
+| `plan` | `Gemini Plan` | `gemini` | `plan` | `active` | `official` | `https://generativelanguage.googleapis.com` | `GEMINI_PLAN_API_KEY` | `env` | `gemini-3.5-flash` | `gemini-3.5-flash` | `none` | `none` | `chat,vision` | `interactions,generate-content,stream-generate-content` | `gemini-3.5-flash,gemini-3.1-pro-preview` | `imaging disabled; custom Interactions safety settings blocked; explicit cache only on generate-content` | `2026-07-14` | `planning and review boundary with a distinct key or billing boundary` |
 
-## Custom Base URL Rule
+## Rules
 
-If the owner changes `Base URL` to a gateway or proxy, also change `Endpoint Kind`.
-
-For gateway or custom endpoints, verify support for:
-
-- Gemini `generateContent`
-- Gemini `streamGenerateContent`
-- Gemini `thinkingConfig`
-- structured outputs
-- function calling
-- image generation and image edit parts
-
-If the endpoint does not clearly support one of those fields, block that option for the profile instead of assuming official Gemini parity.
+- Resolve a profile before model, surface, version, capability, URL, or price selection.
+- Profile restrictions may narrow capabilities but never expand them.
+- Do not fall back to another profile, region, key, surface, or version.
+- Claim details are in `../../_evidence/evidence.json`.

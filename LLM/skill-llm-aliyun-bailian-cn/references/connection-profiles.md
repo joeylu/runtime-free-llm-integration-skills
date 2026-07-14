@@ -1,40 +1,29 @@
 # Aliyun Bailian China Mainland Connection Profiles
 
-Use this file when the host project defines named Aliyun Bailian China Mainland / DashScope connection profiles.
+- `SchemaVersion: 2`
+- `StructuralSnapshotDate: 2026-07-14`
 
-Connection profiles choose API key references, base URLs, allowed request kinds, and profile-level restrictions. Request URL templates are stored separately in `request-urls.md`.
+Read `../../_shared/connection-profile-schema.md` first. The Canonical Profiles table is authoritative.
 
-## Rules
+## Canonical Profiles
 
-- Follow `../../_shared/connection-profile-schema.md`.
-- Store only secret references such as environment variable names. Do not store real API keys.
-- Use provider identifier `aliyun-bailian-cn`.
-- Resolve `ConnectionProfileKey` before selecting the final model and API surface.
-- Do not silently fall back from one profile, API key, base URL, request URL, or region to another.
-- A profile may narrow allowed models, request kinds, API surfaces, or features.
-- A profile must not expand a model capability from `unknown` or `unsupported` to usable.
-- If a profile points to a gateway or OpenAI-compatible endpoint, verify that the endpoint supports the requested Aliyun API surface before wiring advanced fields.
+| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Text Model | Default Multimodal Model | Default Image Model | Default Music Model | Allowed Request Kinds | Default Route Map | Allowed Surface Versions | Model Allowlist | Capability Restrictions | Billing Region | Deployment Scope | Serving Region | Last Verified At | Evidence Refs | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `cn-runtime` | `Aliyun Bailian CN Runtime` | `aliyun-bailian-cn` | `runtime` | `template` | `openai-compatible` | `https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_CN_API_KEY` | `env` | `qwen3.7-plus` | `qwen3.7-plus` | `none` | `none` | `text-chat,multimodal-chat` | `text-chat=responses@compatible-mode-v1;multimodal-chat=responses@compatible-mode-v1` | `responses@compatible-mode-v1,chat-completions@compatible-mode-v1` | `catalog-selected` | `Responses is verified for qwen3.7-plus chat and image-only vision; video/audio vision remains on chat-completions; native imaging uses a separate DashScope API base URL` | `china-mainland` | `china-mainland` | `beijing` | `2026-07-14` | `evset-aliyun-bailian-cn-connection-profiles-cn-runtime-7f0cc9b297` | `recommended workspace-specific China Mainland endpoint; replace {WorkspaceId} before use` |
+| `cn-native-runtime` | `Aliyun Bailian CN Native Runtime` | `aliyun-bailian-cn` | `runtime` | `template` | `provider-compatible` | `https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_CN_API_KEY` | `env` | `none` | `none` | `z-image-turbo` | `none` | `image-generation` | `image-generation=dashscope-native-sync@native-v1` | `dashscope-native-sync@native-v1,dashscope-native-async@native-v1` | `catalog-selected` | `selected native image-generation rows only; music-generation remains blocked until a selected model, exact URL, capability, role, price, and transport contract are all verified` | `china-mainland` | `china-mainland` | `beijing` | `2026-07-14` | `evset-aliyun-bailian-cn-connection-profiles-cn-native-runtime-97a8c36645` | `recommended workspace-specific DashScope native endpoint; replace {WorkspaceId} before use` |
 
-## Local Profiles
+## Legacy Compatibility View
 
-These rows are templates. The host project owns whether the secret reference is active.
+This derived table keeps the original 19-column contract. Legacy request-kind names are normalized once at the request boundary; they do not change the canonical route map.
 
 | Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Default Chat Model | Default Vision Model | Default Imaging Model | Default Music Model | Allowed Request Kinds | Allowed API Surfaces | Model Allowlist | Capability Restrictions | Last Verified At | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `cn-runtime` | `Aliyun Bailian CN Runtime` | `aliyun-bailian-cn` | `runtime` | `template` | `openai-compatible` | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_CN_API_KEY` | `env` | `qwen3.6-plus` | `qwen3.6-plus` | `none` | `none` | `chat,vision` | `chat-completions` | `catalog-selected` | `native imaging uses a separate DashScope API base URL; configure a separate profile or gateway path when needed` | `2026-05-01` | `OpenAI-compatible China Mainland endpoint template` |
-| `cn-native-runtime` | `Aliyun Bailian CN Native Runtime` | `aliyun-bailian-cn` | `runtime` | `template` | `provider-compatible` | `https://dashscope.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_CN_API_KEY` | `env` | `none` | `none` | `z-image-turbo` | `none` | `imaging,music` | `dashscope-native-sync,dashscope-native-async,dashscope-native` | `catalog-selected` | `exact model-family request URL must be resolved from request-urls.md` | `2026-05-01` | `DashScope native China Mainland endpoint template` |
+| `cn-runtime` | `Aliyun Bailian CN Runtime` | `aliyun-bailian-cn` | `runtime` | `template` | `openai-compatible` | `https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_CN_API_KEY` | `env` | `qwen3.7-plus` | `qwen3.7-plus` | `none` | `none` | `chat,vision` | `responses,chat-completions` | `catalog-selected` | `Responses is verified for qwen3.7-plus chat and image-only vision; video/audio vision remains on chat-completions; native imaging uses a separate DashScope API base URL` | `2026-07-14` | `recommended workspace-specific China Mainland endpoint; replace {WorkspaceId} before use` |
+| `cn-native-runtime` | `Aliyun Bailian CN Native Runtime` | `aliyun-bailian-cn` | `runtime` | `template` | `provider-compatible` | `https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_CN_API_KEY` | `env` | `none` | `none` | `z-image-turbo` | `none` | `imaging` | `dashscope-native-sync,dashscope-native-async` | `catalog-selected` | `selected native image-generation rows only; music-generation remains blocked until a selected model, exact URL, capability, role, price, and transport contract are all verified` | `2026-07-14` | `recommended workspace-specific DashScope native endpoint; replace {WorkspaceId} before use` |
 
-## Custom Base URL Rule
+## Rules
 
-If the owner changes `Base URL` to a gateway or proxy, also change `Endpoint Kind`.
-
-For gateway or custom endpoints, verify support for:
-
-- OpenAI-compatible Chat Completions
-- DashScope native job APIs
-- streaming
-- thinking fields
-- structured output
-- imaging job submission and polling
-
-If the endpoint does not clearly support one of those fields, block that option for the profile instead of assuming official Aliyun parity.
+- Resolve a profile before model, surface, version, capability, URL, or price selection.
+- Profile restrictions may narrow capabilities but never expand them.
+- Do not fall back to another profile, region, key, surface, or version.
+- Claim details are in `../../_evidence/evidence.json`.

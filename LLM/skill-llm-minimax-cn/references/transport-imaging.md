@@ -1,91 +1,46 @@
 # MiniMax China Mainland Imaging Transport
 
-Use this file for build-profile MiniMax China Mainland text-to-image requests.
+- `SchemaVersion: 2`
+- `LastReviewedAt: 2026-07-14`
+- Route: `image-generation@image-generation@v1`
+- Selected model: `image-01` on the `build` profile only.
 
-## Current State
+## Required Input
 
-This skill selects `image-01` for build-profile HTTP image generation.
-
-`ConnectionProfileKey = plan` must block `RequestKind = imaging`. Do not route plan-profile image work to CLI, MCP, chat, or any hidden fallback in this skill.
-
-## Input Shape
-
-Build the shared request envelope with:
-
-- `RequestKind = imaging`
-- `ConnectionProfileKey = build` when MiniMax profiles are used
+- `RequestKind = image-generation`
+- `ConnectionProfileKey = build`
 - `ApiSurface = image-generation`
+- `ApiVersion = v1`
 - `Model = image-01`
-- `Inputs.Prompt = <text>`
-- optional `Inputs.Seed` only because the capability matrix marks seed verified
-- optional `Inputs.ImageCount` only because the capability matrix marks `n` verified
-- optional `ProviderOptions.aspect_ratio`
-- optional `ProviderOptions.response_format`
-- optional `ProviderOptions.prompt_optimizer`
-- optional `TimeoutMs`
+- `Inputs.Prompt`, length at most `1500` characters
 
-Do not use `Inputs.ImageSize` for MiniMax `aspect_ratio`. `Inputs.ImageSize` means an explicit shared image-size field; `aspect_ratio` is a provider option such as `16:9`.
+## Verified Optional Mapping
 
-Before adding `Inputs.ReferenceImages`, `Inputs.ImageSize`, or streaming, check `capability-matrix.md`. Current selected rows do not verify those options.
+| Shared/provider field | MiniMax field | Validation |
+| --- | --- | --- |
+| `Inputs.Seed` | `seed` | integer |
+| `Inputs.ImageCount` | `n` | integer `1..9`; default is provider-defined `1` when omitted |
+| `Inputs.ImageSize = WIDTHxHEIGHT` | `width`, `height` | both `512..2048`, both divisible by `8` |
+| `ProviderOptions.aspect_ratio` | `aspect_ratio` | `1:1`, `16:9`, `4:3`, `3:2`, `2:3`, `3:4`, `9:16`, or `21:9` |
+| `ProviderOptions.response_format` | `response_format` | `url` or `base64` |
+| `ProviderOptions.prompt_optimizer` | `prompt_optimizer` | boolean |
 
-Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
+Reject a request that sends both explicit width/height and `aspect_ratio`. The provider documents that `aspect_ratio` takes precedence; this transport rejects the ambiguous combination instead of silently ignoring the shared size.
 
-## Request Mapping
+`response_format` defaults to `url` when omitted. Returned URLs expire after 24 hours; do not treat them as durable storage.
 
-Map the provider request body as:
+## Unsupported or Unknown Boundary
 
-| Shared Field | MiniMax Field |
-| --- | --- |
-| `Model` | `model` |
-| `Inputs.Prompt` | `prompt` |
-| `Inputs.Seed` | `seed` |
-| `Inputs.ImageCount` | `n` |
-| `ProviderOptions.aspect_ratio` | `aspect_ratio` |
-| `ProviderOptions.response_format` | `response_format` |
-| `ProviderOptions.prompt_optimizer` | `prompt_optimizer` |
-
-Do not invent defaults for provider options. If the host wants a fixed aspect ratio, response format, or prompt optimizer value, make that config explicit.
-
-## Default Flow
-
-Treat imaging as direct non-stream HTTP unless a later sync verifies streaming.
-
-Recommended stage pattern:
-
-- `validating`
-- `preparing`
-- `submitting-request`
-- `waiting-provider`
-- `downloading-result`
-- `local-processing`
-- `completed`
-
-## Fail-Fast Rule
-
-Before implementation, confirm all of these:
-
-- the selected profile allows `imaging`
-- the selected model is `image-01`
-- `request-urls.md` has a verified `image-generation` row
-- `Supports Non-Stream = verified`
-- every requested optional field is `verified` or is an explicitly supplied provider option documented above
-
-If any requirement is missing, stop.
+- Streaming remains blocked unless the exact capability row becomes verified.
+- Reference-image input is not enabled on this text-to-image surface. A separate image-to-image route requires its own URL, capability, pricing, and transport row.
+- Do not invent image-size defaults in the shared envelope.
 
 ## Response Mapping
 
-Map the provider result into the shared response envelope:
-
-- `ResultKind = imaging`
-- `ImageOutputs = generated image result list`
-- `Usage = normalized usage when available`
+- `ResultKind = image-generation`
+- returned URLs or base64 values -> `ImageOutputs`
+- response `id` -> provider trace metadata
+- success/failed counts -> `ProviderMeta`
 - `Transport.IsStream = false`
 
-## UI Rule
-
-If the caller wants UI:
-
-- disable MiniMax imaging for plan profile
-- show only `image-01` unless a sync selects more imaging rows
-- expose provider options as advanced controls, not shared fields
-- show result thumbnails only after the provider returns stable result URLs or binary content
+Official reference: `https://platform.minimaxi.com/docs/api-reference/image-generation-t2i`.

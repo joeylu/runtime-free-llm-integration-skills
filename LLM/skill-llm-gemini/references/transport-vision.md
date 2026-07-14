@@ -1,88 +1,41 @@
 # Gemini Vision Transport
 
-Use this file for Gemini image-understanding requests.
+Use this for `RequestKind = multimodal-chat` and image understanding. Chat state, thinking, tools, schema, cache, and stream rules inherit from `transport-chat.md`.
 
-## Preferred Surface
+## Input Contract
 
-Use Gemini Developer API `models/{model}:generateContent` for non-stream vision.
+The shared request requires ordered `Inputs.Messages` and `Inputs.Images`. Validate every image before serialization:
 
-Use `models/{model}:streamGenerateContent?alt=sse` only when `Supports Stream = verified`.
+- supported MIME type
+- size and count limits from current official media guidance
+- reachable file or valid inline bytes
+- no secret-bearing URLs in logs
 
-## Input Shape
+This skill does not silently reinterpret audio, video, or PDF input as `Inputs.Images`. Those modalities are supported by the selected text models, but a host project must add a typed media-input extension and re-verify its upload, token, and response behavior.
 
-Build the shared request envelope with:
+## Interactions Mapping
 
-- `RequestKind = vision`
-- `ConnectionProfileKey = <profile key>` when the host uses multiple Gemini profiles
-- `Model = <API Model>`
-- `Inputs.Messages = [...]`
-- `Inputs.Images = [...]`
-- optional `IsStream`
-- optional `ReasoningEffort`
-- optional `ReasoningSummary`
-- optional `Temperature`
-- optional `ResponseFormat`
-- optional `Tools`
-- optional `ToolChoice`
+Map each image to a typed image input item with its MIME type and either provider-supported bytes or URI representation. Preserve the caller's text/image order when it is semantically important.
 
-Resolve the connection profile before mapping request fields.
+For stateful follow-ups, `previous_interaction_id` can preserve prior multimodal history, but current `tools`, `system_instruction`, and `generation_config` must still be re-sent.
 
-The selected profile must allow `vision`, the requested API surface, and the selected model.
+## GenerateContent Mapping
 
-## Image Input Rule
+Map images into content parts on the selected `generate-content` or `stream-generate-content` surface. For stateless multi-turn requests, replay the full unmodified content history and thought signatures.
 
-Map each image to a Gemini content part using one verified provider-supported input method:
+## Media Resolution
 
-- inline image data
-- Files API file reference
-- URL or blob only if the host SDK and provider docs verify it for that language/runtime
+Use provider media-resolution controls only after exact verification for the selected model, media type, and API surface. Do not infer image token cost or fidelity from pixel dimensions alone.
 
-Do not move image inputs into prompt text.
+## Tools and Structured Output
 
-If the caller requests multiple input images and the provider limit matters, verify that limit from Gemini docs or stop and ask for sync. Do not use `Supports Image Count` for vision input images.
-
-## Thinking Rule
-
-Use the same Gemini 3 thinking rules as `transport-chat.md`.
-
-Do not disable thinking for selected Gemini 3 vision rows.
-
-Do not expose raw chain-of-thought.
-
-Preserve returned thought signatures as `ReasoningItems` or `ProviderMeta` for follow-up turns. Do not render thought signatures as user-visible reasoning.
-
-## Structured Output Rule
-
-Use the same JSON schema mapping as `transport-chat.md`.
-
-Bare `ResponseFormat = json_object` is blocked while `Json Object Mode = unknown`.
-
-## Tool Rule
-
-Caller-defined tools map to Gemini `functionDeclarations`.
-
-Use Gemini tool-choice modes only after verifying the selected model row supports tools.
+- Caller-defined functions follow the exact call/result identity rules in `transport-chat.md`.
+- Multimodal function results must be inside the function result object.
+- `json_schema` mappings differ by surface and must not be copied between Interactions and GenerateContent.
+- Hosted tools require `hosted-tools.md` verification.
 
 ## Response Mapping
 
-Map the provider result into the shared response envelope:
+Map final text to `TextContent`, schema output to `StructuredContent`, function requests to `ToolCalls`, hosted activity to `HostedToolCalls`, grounding to `Annotations`, signatures to `ReasoningItems`, and usage to the normalized `Usage` object.
 
-- `ResultKind = vision`
-- `TextContent = final output text when available`
-- `ReasoningSummary = thought summary parts when requested and returned`
-- `ReasoningItems = thought signatures or other continuation metadata when returned`
-- `ToolCalls = functionCall parts`
-- `Usage = normalized prompt, output, image-input, and thinking token usage when available`
-- `FinishReason = normalized provider finish reason`
-- `Transport.IsStream = true or false`
-
-## UI Rule
-
-If the caller wants UI:
-
-- show image upload/input controls only for `RequestKind = vision`
-- show model selector and connection profile selector
-- show stream toggle only for verified stream paths
-- show thinking level and thought-summary controls only when verified
-- show structured-output and tool controls only when verified
-- keep unsupported imaging controls hidden; image generation belongs to `RequestKind = imaging`
+Image understanding does not produce `ImageOutputs`. Image generation belongs to `RequestKind = image-generation`.

@@ -14,7 +14,7 @@ Do not invent imaging model names or unsupported parameters.
 
 Build the shared request envelope with:
 
-- `RequestKind = imaging`
+- `RequestKind = image-generation`
 - optional `ConnectionProfileKey`
 - `ApiSurface = dashscope-native-sync` for synchronous image generation/edit paths
 - `ApiSurface = dashscope-native-async` only when `request-urls.md` verifies an asynchronous job path for the selected model

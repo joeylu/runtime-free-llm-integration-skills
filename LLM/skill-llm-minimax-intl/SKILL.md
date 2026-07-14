@@ -1,138 +1,98 @@
 ---
 name: skill-llm-minimax-intl
-description: Standardize MiniMax International direct-model integration for chat plus build-profile HTTP image and music generation, with build-only video endpoint references. Use when Codex needs to choose International MiniMax models, resolve minimax.io base URLs and request URLs, separate build and plan profiles, wire chat/imaging/music transports, or gate MiniMax capabilities through shared fail-fast contracts. Plan profile is chat-only. Build profile supports chat, imaging, music, and documented video HTTP links, but video is reference-only until the shared request schema adds a video request kind. Do not use for MiniMax China Mainland, Anthropic-compatible MiniMax surfaces, Agent/App orchestration, non-MiniMax providers, or prompt-only work with no integration change.
+description: Standardize MiniMax International direct API integration for selected text, image, and music routes through exact profile, surface, version, capability, role, pricing, transport, and evidence contracts. Video remains reference-only until this provider skill contains a complete selected video contract.
 ---
 
 # Skill LLM MiniMax International
 
 ## Mission
 
-Own the provider-specific part of MiniMax International direct-model integration while reusing the shared contracts under `../_shared`.
+Own the provider-specific layer for **MiniMax International direct API only** while reusing the shared contracts under `../_shared`.
 
-Keep this skill focused on:
-
-- MiniMax International chat, imaging, and music model catalog
-- MiniMax International request URLs
-- MiniMax International model sync workflow
-- MiniMax International capability verification
-- MiniMax OpenAI-compatible chat transport rules
-- MiniMax build-profile HTTP imaging and music transport rules
-- MiniMax build-profile video HTTP endpoint references
-- MiniMax-specific logging additions
-
-Do not make this skill own:
-
-- MiniMax China Mainland access
-- MiniMax Anthropic-compatible access
-- plan-profile image, audio, or video generation
-- first-class video generation before the shared request schema adds `RequestKind = video`
-- business prompt content
-- platform-specific UI layouts
-- non-MiniMax providers
+This skill is a curated, fail-fast integration contract. It is not a complete live provider inventory and it does not prove remote runtime availability without an authenticated request.
 
 ## Read Order
 
-Read these shared files first:
+Read the shared contracts first:
 
 1. `../_shared/model-catalog-schema.md`
-2. `../_shared/pricing-matrix-schema.md`
-3. `../_shared/capability-matrix-schema.md`
-4. `../_shared/connection-profile-schema.md`
-5. `../_shared/request-url-matrix-schema.md`
-6. `../_shared/recency-window-policy.md`
-7. `../_shared/request-envelope.md`
-8. `../_shared/response-envelope.md`
-9. `../_shared/error-contract.md`
-10. `../_shared/progress-contract.md`
-11. `../_shared/ui-binding.md`
-12. `../_shared/sync-policy.md`
+2. `../_shared/capability-matrix-schema.md`
+3. `../_shared/request-url-matrix-schema.md`
+4. `../_shared/pricing-matrix-schema.md`
+5. `../_shared/connection-profile-schema.md`
+6. `../_shared/role-support-matrix-schema.md`
+7. `../_shared/evidence-manifest-schema.md`
+8. `../_shared/request-envelope.md`
+9. `../_shared/response-envelope.md`
+10. `../_shared/error-contract.md`
+11. `../_shared/progress-contract.md`
+12. `../_shared/ui-binding.md`
 13. `../_shared/logging-fields.md`
+14. `../_shared/sync-policy.md`
+15. `../_shared/recency-window-policy.md`
 
-Then read these MiniMax International-specific files:
+Then read the provider files:
 
 1. `references/connection-profiles.md`
-2. `references/request-urls.md`
-3. `references/model-catalog.md`
-4. `references/pricing-matrix.md`
-5. `references/model-sync.md`
-6. `references/capability-matrix.md`
-7. `references/transport-chat.md`
-8. `references/transport-imaging.md` when `RequestKind = imaging`
-9. `references/transport-music.md` when `RequestKind = music`
-10. `references/transport-vision.md` only to confirm vision is blocked
-11. `references/build-multimodal-http.md` when build-profile video links or multimodal endpoint references are requested
-12. `references/logging-contract.md` when logging is requested
+2. `references/model-catalog.md`
+3. `references/request-urls.md`
+4. `references/capability-matrix.md`
+5. `references/role-support-matrix.md`
+6. `references/pricing-matrix.md`
+7. the matching `references/transport-*.md` file
+8. references/logging-contract.md when logging is requested
+9. references/model-sync.md only for explicit current-data sync
+10. references/build-multimodal-http.md for reference-only video endpoint documentation
 
-## Hard Rules
+## Core Boundary Rules
 
-- Treat this skill as MiniMax International direct-model access for `chat`, plus build-profile `imaging` and `music`.
 - Use provider identifier `minimax-intl`.
-- Use MiniMax International official endpoints only.
-- Use OpenAI-compatible MiniMax Chat Completions only for `RequestKind = chat`.
-- Do not silently switch to MiniMax China Mainland, `api.minimaxi.com`, or Anthropic-compatible MiniMax surfaces.
-- Resolve a provided connection profile before selecting the model. Do not silently fall back between `build`, `plan`, API keys, base URLs, request URLs, or regions.
-- Treat `build` and `plan` as separate connection profiles. They currently share the official MiniMax International base URL, but they use different API key references and purpose boundaries.
-- Keep `ConnectionProfileKey = plan` chat-only. Do not expose imaging, music, video, or CLI-backed Token Plan multimodal flows through this skill's plan profile.
-- Allow `ConnectionProfileKey = build` to use verified HTTP rows for `chat`, `imaging`, and `music`.
-- Treat MiniMax build video as documented provider capability but reference-only in this skill pack. Because `../_shared/request-envelope.md` does not define `RequestKind = video`, stop before first-class video implementation unless the owner approves a shared schema extension.
-- Resolve the request URL from `references/request-urls.md` after selecting the API surface.
-- Use the bundled International model catalog by default. Do not sync model metadata unless the user explicitly asks for sync or latest-model verification.
-- When sync is explicitly requested, collect model rows, pricing, capabilities, context window, max input tokens, and max output tokens live from official MiniMax International docs by LLM review only. Do not use scripts, scrapers, SDK enum dumps, or automated catalog generators.
-- When the user asks for sync, confirm one recency boundary first. Propose `6 months` by default and convert it into one absolute cutoff date before reviewing rows.
-- Use `references/pricing-matrix.md` for International billing region, currency, metered side, and unit price. Do not reconstruct pricing from catalog notes.
-- Use `API Model` as both the model dropdown display text and submitted value.
-- Keep provider-neutral request, response, progress, error, and UI contracts in `../_shared`. Do not clone those contracts inside this skill.
-- Fail fast on unsupported or unverified combinations. Do not silently disable `stream`, `thinking`, `ResponseFormat`, `Tools`, `Temperature`, or request URL resolution.
-- If a requested advanced capability is marked `unknown`, stop and tell the user to either sync the catalog or choose a verified path.
-- Do not add MiniMax Anthropic-compatible rows unless the owner explicitly asks for that surface.
+- Resolve `ConnectionProfileKey` before model, surface, API version, URL, capability, role, or price selection.
+- Select only catalog rows that satisfy the shared selector rule: locally selected, provider-callable, verified, and current.
+- Resolve one exact `Request Kind + API Model + API Surface + API Version` capability row. A comma-separated surface or version is invalid.
+- Resolve one exact request URL row. Never construct a URL by guessing or silently retry another surface, version, profile, key, region, or provider.
+- Validate input roles and tool history against `references/role-support-matrix.md`. OpenAI compatibility does not imply complete role compatibility.
+- Use `references/pricing-matrix.md` only after billing region, deployment scope, serving region, service tier, and effective window match the request.
+- Treat `Provider Lifecycle`, `Local Selection`, and `Review Freshness` as independent. Do not infer lifecycle from age, replacement, or local preference.
+- Keep caller-defined `Tools` separate from provider-hosted `HostedTools`.
+- Reject unsupported, unknown, stale, conflicted, or out-of-scope options before sending. Never disable or rewrite a requested feature silently.
+- Use the bundled reviewed data by default. Perform a live official-source sync only when the task asks for current verification or the required evidence is stale/missing.
+- A sync may use reproducible automated extraction from official sources, but every changed fact requires reviewed claim-level evidence before it becomes verified.
+- Store secret references only. Do not place API keys, signed URLs, or authorization headers in skill files or normal logs.
 
 ## Standard Workflow
 
-1. Confirm that the task is MiniMax International direct-model access.
-2. Set `RequestKind` to `chat`, `imaging`, or `music`. Stop on `video` until the shared schema adds that request kind.
-3. Read `references/connection-profiles.md` and resolve `ConnectionProfileKey` when the host defines MiniMax profiles.
-4. Read `references/model-catalog.md` and select only rows whose `Catalog Status` is `active` and `Selection Status` is `selected`.
-5. Read `references/pricing-matrix.md` when billing, estimates, or price display are needed.
-6. Apply profile restrictions before choosing the final model and API surface.
-7. Read `references/request-urls.md` and resolve the exact request URL template for the selected API surface.
-8. Read `references/capability-matrix.md` and verify every requested option before wiring the request.
-9. Read the matching transport file: `transport-chat.md`, `transport-imaging.md`, or `transport-music.md`.
-10. Build the request with the shared request envelope from `../_shared/request-envelope.md`.
-11. Map the provider response into the shared response envelope from `../_shared/response-envelope.md`.
-12. If the user wants UI, apply `../_shared/ui-binding.md`, `../_shared/progress-contract.md`, and `../_shared/error-contract.md`.
-13. If the user wants logging, apply `../_shared/logging-fields.md` and `references/logging-contract.md`.
-14. Sync the model catalog only when the user explicitly asks for latest-model sync, and apply `../_shared/recency-window-policy.md` before reviewing rows.
+1. Confirm this provider and region boundary.
+2. Normalize the caller's legacy request-kind alias once, then use only canonical request kinds.
+3. Resolve the connection profile and its allowed kinds, surfaces, versions, models, and regional scope.
+4. Select a catalog row using the shared selector rule; never auto-select a newer candidate.
+5. Resolve the exact route from `request-urls.md`.
+6. Resolve the exact capability and role rows; validate every caller field and every required history field.
+7. Resolve pricing only when the exact billing scope is present.
+8. Build the shared request envelope and map it through the matching provider transport.
+9. Send with the requested stream semantics; do not change surface or model after an error.
+10. Normalize output through the shared response envelope, error, progress, UI, and logging contracts.
+11. For current-data changes, update evidence first and run `python tools/validate_repo.py` after all dependent matrices are updated.
 
-## Request Kinds
+## Supported Request-Kind Boundary
 
-- `chat`: text-first conversation requests through MiniMax OpenAI-compatible Chat Completions
-- `imaging`: build-profile text-to-image requests through MiniMax official Image Generation
-- `music`: build-profile song generation requests through MiniMax official Music Generation
+This skill exposes `text-chat`, build-profile `image-generation`, and build-profile `music-generation`; `video-generation` remains blocked.
 
-Current bundled MiniMax International coverage selects `chat`, build-profile `imaging`, and build-profile `music` rows.
+A request kind is implemented only when the selected catalog row, profile, URL, capability, role, pricing policy, and transport all agree. The mere existence of an official endpoint does not make it selectable here.
 
-`video` is not a shared request kind yet. Use `references/build-multimodal-http.md` for build-profile video endpoint links, then stop before implementation unless the owner extends the shared request and response contracts.
+## Provider-Specific Rules
 
-## MiniMax-Specific Concepts
+- Never mix International and China Mainland endpoints, API keys, availability, or prices.
+- The plan profile is text-chat only. Profile restrictions may narrow capabilities and never expand them.
+- Distinguish official recommended output limits from official maxima. Do not treat a sample `max_tokens` value as a model limit.
+- For `music-2.6`, validate `is_instrumental`, `lyrics_optimizer`, `lyrics`, `prompt`, `stream`, and `output_format` as one conditional matrix.
+- For `image-01`, validate prompt length, aspect ratio or explicit dimensions, seed, count, response format, and URL lifetime from the transport.
+- MiniMax-M3 is a reviewed candidate, not an automatic replacement or default.
 
-- `ApiSurface = chat-completions` maps to MiniMax OpenAI-compatible `POST /v1/chat/completions`.
-- `ApiSurface = image-generation` maps to MiniMax official `POST /v1/image_generation`.
-- `ApiSurface = music-generation` maps to MiniMax official `POST /v1/music_generation`.
-- MiniMax M2.7 chat models may return thinking content in OpenAI-compatible `content` using `<think>...</think>` tags. Normalize that text into `ThinkingContent` when present, and keep the final answer in `TextContent`.
-- `ResponseFormat`, caller-defined `Tools`, strict tool schemas, and parallel tool calls are not selected in this first pass unless the capability matrix marks the exact option verified.
-- `ConnectionProfileKey` selects the key/base-URL profile, for example `build` or `plan`.
-
-Examples:
-`ConnectionProfileKey = build` uses `MINIMAX_INTL_BUILD_API_KEY`, while `ConnectionProfileKey = plan` uses `MINIMAX_INTL_PLAN_API_KEY`. Both currently use `https://api.minimax.io/v1`, but the implementation must still resolve the selected profile instead of assuming the URL or key.
-
-`ConnectionProfileKey = plan` with `RequestKind = imaging` must fail before request construction. `ConnectionProfileKey = build` with `RequestKind = imaging` may use `image-01` only after resolving the verified image request URL and capability row.
-
-## Do Not Use This Skill For
+## Out of Scope
 
 - MiniMax China Mainland access
-- MiniMax Anthropic-compatible API access
-- MiniMax plan-profile image, audio, or video generation
-- first-class MiniMax video implementation before `RequestKind = video` exists in shared contracts
-- OpenAI, Gemini, DeepSeek, Aliyun, Anthropic, or other non-MiniMax providers
-- platform-specific UI layout design
-- prompt engineering tasks that do not change integration code or contracts
+- Anthropic-compatible MiniMax surfaces
+- plan-profile image, music, or video generation
+- first-class video implementation without complete catalog, URL, capability, role, pricing, and transport rows
+- prompt-only work that does not change integration code or contracts

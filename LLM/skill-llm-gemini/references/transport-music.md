@@ -1,17 +1,15 @@
 # Gemini Music Transport
 
-No Gemini music rows are selected in this local catalog.
+No local music model is selected in `model-catalog.md`, and no music capability row is bundled.
 
-If `RequestKind = music`, fail fast before implementation.
+If a caller requests `RequestKind = music-generation`, stop before implementation. An explicit sync must first add:
 
-Do not map music generation onto chat, vision, or imaging.
+- exact model and lifecycle status
+- request URL and API surface
+- input, duration, seed, and output constraints
+- synchronous, background, or streaming protocol
+- pricing
+- response and file handling
+- safety and attribution requirements
 
-If the owner wants Gemini or Google music generation later, run an explicit model sync and add:
-
-- model catalog rows
-- capability matrix rows
-- pricing notes
-- transport rules
-- response mapping rules
-
-Until then, keep Gemini music disabled.
+Do not map a Lyria, Live, TTS, or consumer Gemini feature into this skill by analogy.
