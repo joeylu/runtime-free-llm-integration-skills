@@ -1,18 +1,11 @@
-# Model Update
+# Model Sync
 
-Use this file when the user requests a model or API update.
+Last verified: `2026-08-13`.
 
-## Official Sources
+Maintained allowlist: `qwen3.8-max`, `qwen3.7-plus`, `qwen-image-3.0`, `qwen-image-3.0-pro`, `wan2.7-image`, `wan2.7-image-pro`.
 
-- `https://help.aliyun.com/zh/model-studio/models`
-- `https://help.aliyun.com/zh/model-studio/model-pricing`
-- `https://help.aliyun.com/zh/model-studio/newly-released-models`
+## Rule
 
-## Update Steps
+Verify exact model ID, region, model page, connection profile, every Base URL placeholder and its configuration source, API-Key/workspace binding, API surface, request example, capability flags, limits, pricing, and transport together. Generic parameter pages do not override model-specific evidence. Preserve `unknown` when exact evidence is absent.
 
-1. Identify whether the change is a clear replacement for a model already documented here.
-2. Verify the exact model ID, region, endpoints, capabilities, limits, examples, pricing, and lifecycle from official sources.
-3. Update every dependent catalog, capability, pricing, request-URL, transport, and example reference in one change.
-4. For paired regional skills, verify each region independently during the same update.
-
-If the model has no documented predecessor in this repository, ask the user before adding it.
+When official references conflict on an exact model/surface, record the conflict as `unknown` and fail closed instead of choosing one source.

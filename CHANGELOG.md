@@ -8,6 +8,28 @@ The format follows the principles of [Keep a Changelog](https://keepachangelog.c
 
 No unreleased changes.
 
+## [2026-08-13]
+
+### Fixed
+
+- Declared China Mainland and International Aliyun Bailian Workspace IDs as explicit non-secret connection inputs for workspace-specific profiles.
+- Added placeholder bindings, allowed configuration sources, API-key/workspace/region invariants, and fail-fast `config_error` behavior for unresolved `{WorkspaceId}` values.
+- Added explicit shared-domain DashScope profiles as opt-in alternatives; they are never automatic fallbacks.
+- Added verified asynchronous task routing for `qwen-image-3.0`; kept `qwen-image-3.0-pro` asynchronous support `unknown` because official references conflict.
+- Normalized OpenAI Image API stream-route values to the shared `Stream Variant` enumeration.
+- Replaced ambiguous bare provider-reference names in `SKILL.md` files with explicit `references/...` paths.
+
+## [2026-08-06]
+
+### Changed
+
+- Replaced Aliyun Bailian China Mainland `qwen3.7-max` with `qwen3.8-max`; retained `qwen3.7-plus`.
+- Replaced `qwen-image-2.0` and `qwen-image-2.0-pro` with `qwen-image-3.0` and `qwen-image-3.0-pro`; retained `wan2.7-image` and `wan2.7-image-pro`; removed all other China Mainland Aliyun models.
+- Replaced Aliyun Bailian International `qwen3.7-max` with `qwen3.8-max`.
+- Replaced Gemini `gemini-3.5-flash` with `gemini-3.6-flash`.
+- Replaced MiniMax China Mainland and International `music-2.6` with `music-3.0`.
+- Added model-specific parameter contracts and re-audited capabilities, routes, pricing, thinking behavior, streaming, image generation, and music generation against official documentation and examples.
+
 ## [2026-07-15]
 
 ### Changed

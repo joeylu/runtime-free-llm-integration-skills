@@ -1,74 +1,78 @@
-# Aliyun Imaging Transport
+# Aliyun Bailian China Mainland Imaging Transport
 
-Use this file for image generation or image edit requests.
+## Connection Gate
 
-## Current State
+Resolve `connection-profiles.md` and `workspace-configuration.md` before model or payload construction.
 
-This China Mainland skill bundles documented Aliyun imaging rows in `model-catalog.md` and base imaging capability rows in `capability-matrix.md`.
+- Workspace profiles require `ALIYUN_BAILIAN_CN_WORKSPACE_ID`; shared profiles do not.
+- Do not serialize a URL containing `{WorkspaceId}`.
+- Do not add `X-DashScope-WorkSpace` to direct model-inference requests.
+- Keep model, profile, region, workspace when applicable, and API Key fixed through the full request lifecycle.
 
-A catalog row identifies the model; optional imaging fields still require capability verification. It does not prove support for edit/reference images, seed, size, count, prompt rewriting, or streaming.
+## Family Gate
 
-Do not invent imaging model names or unsupported parameters.
+Resolve the exact model before constructing content or parameters.
 
-## Input Shape
+### Qwen-Image 3.0 Family
 
-Build the shared request envelope with:
+- Exactly one user message.
+- Text-to-image: one text item.
+- Image editing: one to three image items plus one text item.
+- Parameters: `prompt_extend`, `prompt_extend_mode`, `n`, `size`, `negative_prompt`, `seed`, `watermark`.
+- `prompt_extend_mode=agent` is text-to-image only.
 
-- `RequestKind = imaging`
-- optional `ConnectionProfileKey`
-- `ApiSurface = dashscope-native-sync` for synchronous image generation/edit paths
-- `ApiSurface = dashscope-native-async` only when `request-urls.md` verifies an asynchronous job path for the documented model
-- `Model = <API Model>`
-- `Inputs.Prompt = <text>`
-- optional `Inputs.ReferenceImages = [...]`
-- optional `Inputs.Seed`
-- optional `Inputs.ImageSize`
-- optional `Inputs.ImageCount`
-- optional `TimeoutMs`
+#### Synchronous Route — Standard and Pro
 
-Before adding any optional field, verify that exact field in `capability-matrix.md`. For example, `Inputs.ReferenceImages` requires verified imaging image-input support, not just a model note that says the family can edit images.
+- Models: `qwen-image-3.0`, `qwen-image-3.0-pro`.
+- API surface: `multimodal-generation`.
+- Path: `/services/aigc/multimodal-generation/generation`.
+- Do not send `X-DashScope-Async`.
+- The completed response contains generated image output.
 
-Resolve `ResolvedRequestUrl` from `request-urls.md` before sending.
+#### Asynchronous Route — Standard Only Verified
 
-## Default Flow
+- Model: `qwen-image-3.0`.
+- API surface: `image-generation`.
+- Create path: `/services/aigc/image-generation/generation`.
+- Send `X-DashScope-Async: enable` on task creation.
+- Treat the submission response as accepted work: it returns `task_id`, not a completed image.
+- Poll `GET {Profile.Base URL}/tasks/{task_id}` with the same profile, region, workspace when applicable, and API Key.
+- Do not send `X-DashScope-Async` on the poll request.
+- The task ID, task data, and generated image URLs are retained for 24 hours.
 
-Treat imaging as a job-style flow unless the capability matrix later verifies a true stream path.
+`qwen-image-3.0-pro / image-generation` is `unknown` and must be rejected. Alibaba Cloud's model-specific API reference documents this route and shows Pro examples, but the official error-code reference explicitly states that `qwen-image-3.0-pro` does not support asynchronous calls. Do not choose one official statement over the other.
 
-Recommended stage pattern:
+```json
+{
+  "model": "qwen-image-3.0",
+  "input": {
+    "messages": [
+      {
+        "role": "user",
+        "content": [{"text": "..."}]
+      }
+    ]
+  },
+  "parameters": {
+    "prompt_extend": true,
+    "prompt_extend_mode": "direct",
+    "n": 1,
+    "size": "1024*1024",
+    "watermark": false
+  }
+}
+```
 
-- `validating`
-- `preparing`
-- `submitting-job`
-- `waiting-provider-accept`
-- `polling-job`
-- `downloading-result`
-- `local-processing`
-- `completed`
+### Wan 2.7 / Pro
 
-## Fail-Fast Rule
+- Synchronous and asynchronous create endpoints are separate.
+- Supports generation, editing, groups, multi-image references, and optional bounding boxes.
+- Parameters include `enable_sequential`, `thinking_mode`, `color_palette`, `bbox_list`, model-specific `size`, `n`, `seed`, and `watermark`.
+- `thinking_mode` is effective only for non-sequential requests with no image input; do not treat it as an image-edit control.
+- Never copy Qwen-Image prompt-extension or negative-prompt fields into Wan requests unless the exact Wan contract is later verified.
 
-Before implementation, confirm all of these:
+For asynchronous creation, add `X-DashScope-Async: enable` and poll the task. A submission response is not a completed image.
 
-- the model exists in `model-catalog.md`
-- the capability row exists in `capability-matrix.md`
-- `Supports Non-Stream = verified` for the base job request path
-- requested fields such as `Inputs.ReferenceImages`, `Inputs.Seed`, `Inputs.ImageSize`, and `Inputs.ImageCount` are verified
+## Output
 
-If any of those are missing, stop.
-
-## Response Mapping
-
-Map the provider result into the shared response envelope:
-
-- `ResultKind = imaging`
-- `ImageOutputs = generated image result list`
-- `Usage = normalized usage when available`
-- `Transport.IsStream = false` unless verified otherwise
-
-## UI Rule
-
-If the caller wants UI:
-
-- use stage-based progress instead of fake percentage
-- show prompt, model, job state, elapsed time, retry count, and failure state
-- show result thumbnails only after the provider returns stable result URLs or binary content
+Provider task data and image URLs expire after 24 hours. Normalize by downloading the asset or returning an explicit temporary-URL status; never treat the URL itself as durable storage.

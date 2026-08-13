@@ -1,7 +1,7 @@
 interface:
   display_name: "MiniMax International Direct Models"
-  short_description: "Wire MiniMax International M3 chat/vision plus build-profile image and music flows."
-  default_prompt: "Use $skill-llm-minimax-intl to wire MiniMax International M3 chat/vision or build-profile image/music integration with the right profiles, catalog, request URLs, transport, progress, and error contracts. Keep plan profile chat-only and treat video as reference-only until shared contracts add RequestKind=video."
+  short_description: "Wire MiniMax International M3 chat/vision plus image-01 and music-3.0 flows."
+  default_prompt: "Use $skill-llm-minimax-intl to wire MiniMax International M3 chat/vision or build-profile image/music integration with the exact model/surface parameters, profiles, catalog, request URLs, transport, progress, and error contracts."
 
 policy:
   allow_implicit_invocation: false

@@ -1,14 +1,36 @@
 # Aliyun Bailian International Vision Transport
 
-No International `vision` row is documented in this skill.
+## Rules
 
-The moving `qwen3.7-max` alias documented here is text-only. Do not send image, video, audio, or file input to it through `responses` or `chat-completions`.
+- `qwen3.8-max` accept image and video input on Chat Completions and DashScope native surfaces.
+- Responses is maintained for `input_image` only. Do not send video, audio, or generic files on that route.
+- Keep text and media in documented typed content blocks. Do not disguise media URLs as plain text.
+- Validate provider limits before request construction; do not infer one surface's media object shape from another.
+- In multi-turn thinking/tool flows, replay required assistant reasoning and tool-call identities exactly.
 
-Before implementing International vision, all of the following must exist for the exact region and model:
+## OpenAI-compatible Image Example
 
-1. a `vision` row in `model-catalog.md`;
-2. a verified request URL row;
-3. `Supports Image Input = verified` in `capability-matrix.md`;
-4. request and response mapping rules in this transport.
+```json
+{
+  "model": "qwen3.8-max",
+  "messages": [{
+    "role": "user",
+    "content": [
+      {"type": "text", "text": "Describe the image."},
+      {"type": "image_url", "image_url": {"url": "https://example.com/image.png"}}
+    ]
+  }]
+}
+```
 
-Until those rows exist, stop with `capability_unverified`. Do not substitute a snapshot, China Mainland endpoint, another model, or a chat-only row.
+## Responses Image Example
+
+```json
+{
+  "model": "qwen3.8-max",
+  "input": [{"role": "user", "content": [
+    {"type": "input_text", "text": "Describe the image."},
+    {"type": "input_image", "image_url": "https://example.com/image.png"}
+  ]}]
+}
+```

@@ -1,20 +1,13 @@
 # MiniMax International Request URLs
 
-- Key: `Request Kind + Model Scope + API Surface + API Version + Endpoint Kind`
-
-Read `../../_shared/request-url-matrix-schema.md` first. Resolve a connection profile before substituting `{Profile.Base URL}`. Never silently change surface, version, or endpoint.
-
-## Current Matrix
-
 | Request Kind | Model Scope | API Surface | API Version | Endpoint Kind | HTTP Method | Base URL | Request Path Template | Request URL Template | Stream Variant | Request URL Status | Last Verified At | Source | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `chat` | `documented-models` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/chat/completions` | `{Profile.Base URL}/chat/completions` | `body-param` | `verified` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/text-chat-openai` | `International OpenAI-compatible chat path; template profile base URL is https://api.minimax.io/v1` |
-| `vision` | `MiniMax-M3` | `chat-completions` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/chat/completions` | `{Profile.Base URL}/chat/completions` | `body-param` | `verified` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/text-chat-openai` | `MiniMax-M3 image input uses the OpenAI-compatible Chat Completions endpoint` |
-| `imaging` | `image-01` | `image-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/image_generation` | `{Profile.Base URL}/image_generation` | `n/a` | `verified` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/image-generation-t2i` | `build profile only; plan profile must block this request kind` |
-| `music` | `music-2.6` | `music-generation` | `v1` | `official` | `POST` | `{Profile.Base URL}` | `/music_generation` | `{Profile.Base URL}/music_generation` | `n/a` | `verified` | `2026-07-14` | `https://platform.minimax.io/docs/api-reference/music-generation` | `build profile only; plan profile must block this request kind` |
+| `chat,vision` | `MiniMax-M3` | `chat-completions` | `v1` | `openai-compatible` | `POST` | `https://api.minimax.io/v1` | `/chat/completions` | `https://api.minimax.io/v1/chat/completions` | `body-param` | `verified` | 2026-08-06 | `https://platform.minimax.io/docs/api-reference/text-chat-openai` | `OpenAI-compatible contract.` |
+| `chat,vision` | `MiniMax-M3` | `anthropic-messages` | `v1` | `provider-compatible` | `POST` | `https://api.minimax.io/anthropic` | `/v1/messages` | `https://api.minimax.io/anthropic/v1/messages` | `body-param` | `verified` | 2026-08-06 | `https://platform.minimax.io/docs/api-reference/text-anthropic-api` | `Anthropic-compatible contract.` |
+| `chat,vision` | `MiniMax-M3` | `anthropic-count-tokens` | `v1` | `provider-compatible` | `POST` | `https://api.minimax.io/anthropic` | `/v1/messages/count_tokens` | `https://api.minimax.io/anthropic/v1/messages/count_tokens` | `n/a` | `verified` | 2026-08-06 | `https://platform.minimax.io/docs/api-reference/text-anthropic-api` | `Token counting only.` |
+| `imaging` | `image-01` | `image-generation` | `v1` | `provider-compatible` | `POST` | `https://api.minimax.io/v1` | `/image_generation` | `https://api.minimax.io/v1/image_generation` | `n/a` | `verified` | 2026-08-06 | `https://platform.minimax.io/docs/api-reference/image-generation-t2i ; https://platform.minimax.io/docs/api-reference/image-generation-i2i` | `Native image-generation route; no image-01 streaming contract is asserted.` |
+| `music` | `music-3.0` | `music-generation` | `v1` | `provider-compatible` | `POST` | `https://api.minimax.io/v1` | `/music_generation` | `https://api.minimax.io/v1/music_generation` | `body-param` | `verified` | 2026-08-06 | `https://platform.minimax.io/docs/api-reference/music-generation` | `Streaming only with hex output.` |
 
-## Rules
+## Rule
 
-- Use only `verified` rows for sending.
-- Treat `unknown` paths as hard stops.
-- Do not put secrets or signed user data in a logged resolved URL.
+Never change the regional domain or compatibility prefix as fallback.

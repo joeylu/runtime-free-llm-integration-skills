@@ -40,7 +40,7 @@ Then read:
 
 ## Runtime Rules
 
-- Send the exact model ID from `model-catalog.md`.
+- Send the exact model ID from `references/model-catalog.md`.
 - Resolve connection profile, request kind, API surface, API version, endpoint kind, full route key, base URL, and request URL before capability lookup.
 - Match capabilities by the exact full `RouteKey` row, including API version and endpoint kind.
 - The normal Chat Completions surface and the beta strict-function surface are separate rows. Strict function schemas require the documented beta endpoint.

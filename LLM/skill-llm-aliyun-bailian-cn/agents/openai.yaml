@@ -1,7 +1,7 @@
 interface:
   display_name: "Aliyun Bailian China Mainland Direct Models"
-  short_description: "Wire Aliyun Bailian China Mainland chat, vision, and image model flows."
-  default_prompt: "Use $skill-llm-aliyun-bailian-cn to wire an Aliyun Bailian China Mainland direct-model integration with the right catalog, request URLs, transport, progress, and error contracts."
+  short_description: "Wire the maintained Aliyun Bailian China Mainland chat, vision, and image flows."
+  default_prompt: "Use $skill-llm-aliyun-bailian-cn to wire an Aliyun Bailian China Mainland direct-model integration with explicit connection inputs (including Workspace ID for workspace profiles), the exact catalog, model/surface parameter whitelist, request URLs, transport, progress, and error contracts."
 
 policy:
   allow_implicit_invocation: false

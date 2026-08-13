@@ -1,18 +1,7 @@
-# Model Update
+# Model Sync
 
-Use this file when the user requests a model or API update.
+Last verified: `2026-08-06`.
 
-## Official Sources
+Maintained IDs: `gemini-3.6-flash`, `gemini-3.1-pro-preview`, `gemini-3.1-flash-image`, `gemini-3-pro-image`.
 
-- `https://ai.google.dev/gemini-api/docs/models`
-- `https://ai.google.dev/gemini-api/docs/pricing`
-- `https://ai.google.dev/gemini-api/docs/deprecations`
-
-## Update Steps
-
-1. Identify whether the change is a clear replacement for a model already documented here.
-2. Verify the exact model ID, region, endpoints, capabilities, limits, examples, pricing, and lifecycle from official sources.
-3. Update every dependent catalog, capability, pricing, request-URL, transport, and example reference in one change.
-4. For paired regional skills, verify each region independently during the same update.
-
-If the model has no documented predecessor in this repository, ask the user before adding it.
+Verify the model page, latest-model migration guide, Interactions and GenerateContent schemas, image examples, and pricing independently. Preserve preview status and `unknown` fields.

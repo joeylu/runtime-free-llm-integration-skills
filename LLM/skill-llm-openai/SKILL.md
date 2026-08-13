@@ -53,7 +53,7 @@ Read `references/hosted-tools.md` when provider-hosted tools are requested.
 - Preserve response item IDs, call IDs, required linkage, encrypted reasoning items, and assistant `phase` when continuing a documented stateful flow.
 - Never expose raw chain-of-thought. Map visible summaries to `ReasoningSummary` and opaque state to `ReasoningItems` or provider metadata.
 - Store API-key references only. Never write secrets, authorization headers, MCP credentials, or signed URLs into these files or normal logs.
-- Use `pricing-matrix.md` for estimates, including context bands and cache charges.
+- Use `references/pricing-matrix.md` for estimates, including context bands and cache charges.
 
 ## Request Flow
 

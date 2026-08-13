@@ -11,7 +11,7 @@ Example:
 
 ```text
 Use LLM/skill-llm-aliyun-bailian-cn/SKILL.md.
-Integrate glm-5.2 through the documented Chat Completions surface.
+Integrate qwen3.8-max through the documented Chat Completions surface.
 Follow the exact capability and transport rules; do not switch regions or models silently.
 ```
 

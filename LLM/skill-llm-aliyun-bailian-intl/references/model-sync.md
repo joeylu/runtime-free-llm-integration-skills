@@ -1,18 +1,9 @@
-# Model Update
+# Model Sync
 
-Use this file when the user requests a model or API update.
+Last verified: `2026-08-13`.
 
-## Official Sources
+Maintained allowlist: `qwen3.8-max`.
 
-- `https://www.alibabacloud.com/help/en/model-studio/models`
-- `https://www.alibabacloud.com/help/en/model-studio/model-pricing`
-- `https://www.alibabacloud.com/help/en/model-studio/newly-released-models`
+## Rule
 
-## Update Steps
-
-1. Identify whether the change is a clear replacement for a model already documented here.
-2. Verify the exact model ID, region, endpoints, capabilities, limits, examples, pricing, and lifecycle from official sources.
-3. Update every dependent catalog, capability, pricing, request-URL, transport, and example reference in one change.
-4. For paired regional skills, verify each region independently during the same update.
-
-If the model has no documented predecessor in this repository, ask the user before adding it.
+Verify exact model ID, region, model page, connection profile, every Base URL placeholder and its configuration source, API-Key/workspace binding, API surface, request example, capability flags, limits, pricing, and transport together. Generic parameter pages do not override model-specific evidence. Preserve `unknown` when exact evidence is absent.

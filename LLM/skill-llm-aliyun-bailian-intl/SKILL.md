@@ -1,78 +1,48 @@
 ---
 name: skill-llm-aliyun-bailian-intl
-description: Runtime contract for Aliyun Bailian International direct-model integration. Use it to resolve exact model IDs, regional connection profiles, OpenAI-compatible or DashScope-native URLs, thinking, tools, structured output, multimodal input, image generation, streaming, response mapping, pricing references, and logging. Model choice remains with the user or host project.
+description: Runtime contract for Aliyun Bailian International (Singapore) direct-model integration. Use it to resolve the retained model, Singapore workspace endpoints, API surfaces, per-surface parameters, thinking, tools, structured output, multimodal input, streaming, response mapping, pricing, and logging. It constructs requests only and never executes them.
 ---
 
 # Skill LLM Aliyun Bailian International
 
 ## Purpose
 
-Define how an agent integrates an International Aliyun Bailian model already named by the user or host project. Keep China Mainland and International as separate skills because official availability, endpoints, snapshots, prices, and capabilities can differ.
+Build a validated Singapore-region Aliyun Bailian request for `qwen3.8-max`. This skill is an integration contract, not a model selector or execution layer.
 
 ## Read Order
 
-Read shared contracts first:
-
-1. `../_shared/route-key-schema.md`
-2. `../_shared/model-catalog-schema.md`
-3. `../_shared/pricing-matrix-schema.md`
-4. `../_shared/capability-matrix-schema.md`
-5. `../_shared/connection-profile-schema.md`
-6. `../_shared/request-url-matrix-schema.md`
-7. `../_shared/request-envelope.md`
-8. `../_shared/response-envelope.md`
-9. `../_shared/error-contract.md`
-10. `../_shared/progress-contract.md`
-11. `../_shared/ui-binding.md`
-12. `../_shared/sync-policy.md`
-13. `../_shared/logging-fields.md`
-
-Then read:
+Read the shared schemas first, then:
 
 1. `references/connection-profiles.md`
-2. `references/request-urls.md`
-3. `references/model-catalog.md`
-4. `references/pricing-matrix.md`
+2. `references/workspace-configuration.md`
+3. `references/request-urls.md`
+4. `references/model-catalog.md`
 5. `references/capability-matrix.md`
-6. the transport for the requested kind
-7. `references/logging-contract.md` when logging is implemented
-8. `references/model-sync.md` only for an explicit update or verification task
+6. `references/model-parameters.md`
+7. the matching transport
+8. `references/pricing-matrix.md` only when cost matters
+9. `references/logging-contract.md` when logging is implemented
+10. `references/model-sync.md` only during an explicit update
 
 ## Runtime Rules
 
-- Use provider identifier `aliyun-bailian-intl`.
-- Send the exact model ID from this region's `model-catalog.md`.
-- Do not copy a model, price, URL, snapshot rule, or capability from the other region unless that region's official documentation verifies it.
-- Resolve connection profile, request kind, API surface, API version, endpoint kind, full route key, base URL, and request URL before capability lookup.
-- Match capabilities by the exact full `RouteKey` row, including API version and endpoint kind.
-- OpenAI-compatible Responses, OpenAI-compatible Chat Completions, and DashScope-native APIs are separate surfaces with separate payloads.
-- Do not silently switch region, workspace endpoint, model, snapshot, surface, URL, or credential.
-- Apply thinking, reasoning-effort, structured-output, function-calling, image-input, and stream rules from the exact capability row and transport.
-- Treat model-owner names such as Qwen, GLM, Kimi, or MiniMax as model facts; the callable provider remains Aliyun Bailian for this skill.
-- Reject requested fields marked `unsupported` or `unknown`; do not silently omit them.
-- Use `pricing-matrix.md` for the exact regional billing facts. Keep unpublished prices as `unknown`.
-- Store API-key references only and redact resolved URLs before logging when they contain sensitive query values.
-
-## Request Flow
-
-1. Read the requested region, model, request kind, and API surface.
-2. Resolve the regional connection profile and exact request URL row.
-3. Resolve the exact catalog and capability rows.
-4. Validate every optional field and regional restriction.
-5. Apply the matching transport.
-6. Normalize response, errors, progress, and logs through the shared contracts.
+- Provider identifier is `aliyun-bailian-intl` and the maintained allowlist is exactly `qwen3.8-max`.
+- Singapore and China Mainland are separate providers. Never copy endpoints, prices, availability, or rate limits across regions.
+- Resolve an explicit connection profile and every declared connection input before URL construction. Workspace profiles require `ALIYUN_BAILIAN_INTL_WORKSPACE_ID`; shared profiles do not. Never switch profiles implicitly.
+- Resolve request kind, exact model, API surface, API version, and endpoint kind before capability lookup.
+- A generic provider parameter list is not model evidence. Use a field only when the exact model/surface row or an official model example confirms it.
+- `unknown` is fail-closed. Reject the field and report the missing evidence; do not reinterpret silence as `unsupported`.
+- Chat Completions/DashScope use `reasoning_effort`; Responses uses `reasoning.effort`. Never send `reasoning_effort` together with `thinking_budget`.
+- Responses, Chat Completions, and DashScope multimodal generation are distinct payload contracts.
+- For a workspace-specific direct-model profile, the workspace ID is encoded in the hostname; a shared profile has no workspace placeholder. Do not add `X-DashScope-WorkSpace` to these routes unless a separate application-API contract explicitly requires it.
+- Preserve required reasoning and tool-call history; never expose hidden reasoning.
+- Reject unsupported or unknown fields rather than dropping or renaming them.
 
 ## Request Kinds
 
 - `chat`: text-first generation or agent turns
-- `vision`: image understanding
-- `imaging`: image generation or editing
-- `music`: music generation when a documented row exists
+- `vision`: image or video understanding
 
 ## Out of Scope
 
-- the other Aliyun region
-- Agent App orchestration
-- cross-region availability assumptions
-- model ranking or permission policy
-- non-Aliyun providers
+China Mainland routes, imaging, Agent App orchestration, model ranking, substitution, execution, and unlisted models.

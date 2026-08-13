@@ -1,7 +1,7 @@
 interface:
   display_name: "Aliyun Bailian International Direct Models"
-  short_description: "Wire the maintained Aliyun Bailian International qwen3.7-max chat flows."
-  default_prompt: "Use $skill-llm-aliyun-bailian-intl to wire an Aliyun Bailian International direct-model integration with the right catalog, request URLs, transport, progress, and error contracts."
+  short_description: "Wire the maintained Aliyun Bailian International qwen3.8-max chat and vision flows."
+  default_prompt: "Use $skill-llm-aliyun-bailian-intl to wire an Aliyun Bailian International qwen3.8-max integration with explicit connection inputs (including Workspace ID for workspace profiles), the exact catalog, model/surface parameter whitelist, request URLs, transport, progress, and error contracts."
 
 policy:
   allow_implicit_invocation: false

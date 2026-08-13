@@ -1,41 +1,9 @@
 # Gemini Vision Transport
 
-Use this for `RequestKind = vision` and image understanding. Chat state, thinking, tools, schema, cache, and stream rules inherit from `transport-chat.md`.
+Use typed media inputs. `gemini-3.6-flash` and `gemini-3.1-pro-preview` accept text, image, video, audio, and PDF; the shared `vision` envelope only proves image input unless the host explicitly models the other media type.
 
-## Input Contract
-
-The shared request requires ordered `Inputs.Messages` and `Inputs.Images`. Validate every image before serialization:
-
-- supported MIME type
-- size and count limits from current official media guidance
-- reachable file or valid inline bytes
-- no secret-bearing URLs in logs
-
-This skill does not silently reinterpret audio, video, or PDF input as `Inputs.Images`. Those modalities are supported by the documented text models, but a host project must add a typed media-input extension and re-verify its upload, token, and response behavior.
-
-## Interactions Mapping
-
-Map each image to a typed image input item with its MIME type and either provider-supported bytes or URI representation. Preserve the caller's text/image order when it is semantically important.
-
-For stateful follow-ups, `previous_interaction_id` can preserve prior multimodal history, but current `tools`, `system_instruction`, and `generation_config` must still be re-sent.
-
-## GenerateContent Mapping
-
-Map images into content parts on the resolved `generate-content` or `stream-generate-content` surface. For stateless multi-turn requests, replay the full unmodified content history and thought signatures.
-
-## Media Resolution
-
-Use provider media-resolution controls only after exact verification for the documented model, media type, and API surface. Do not infer image token cost or fidelity from pixel dimensions alone.
-
-## Tools and Structured Output
-
-- Caller-defined functions follow the exact call/result identity rules in `transport-chat.md`.
-- Multimodal function results must be inside the function result object.
-- `json_schema` mappings differ by surface and must not be copied between Interactions and GenerateContent.
-- Hosted tools require `hosted-tools.md` verification.
-
-## Response Mapping
-
-Map final text to `TextContent`, schema output to `StructuredContent`, function requests to `ToolCalls`, hosted activity to `HostedToolCalls`, grounding to `Annotations`, signatures to `ReasoningItems`, and usage to the normalized `Usage` object.
-
-Image understanding does not produce `ImageOutputs`. Image generation belongs to `RequestKind = imaging`.
+- Interactions: typed items in `input`.
+- GenerateContent: typed parts in `contents`.
+- Never disguise audio/video/PDF as an image field.
+- Preserve function call IDs and thought signatures across multimodal tool turns.
+- Validate upload/file URI lifetime before constructing the request.

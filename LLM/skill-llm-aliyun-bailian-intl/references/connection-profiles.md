@@ -1,36 +1,20 @@
 # Aliyun Bailian International Connection Profiles
 
-Connection profiles supply base URLs and credential references. The request supplies the model, and `request-urls.md` supplies the final path.
-
-## Rules
-
-- Store secret references only.
-- Resolve the profile before the final request URL.
-- Match model capabilities through `model-catalog.md` and `capability-matrix.md`.
-- Never silently change profile, base URL, credential, region, API surface, or request path.
-- Re-verify advanced fields for gateways and custom endpoints.
+Connection profiles supply Base URLs and references to required connection inputs. The request supplies the model, and `request-urls.md` supplies the final path.
 
 ## Profiles
 
-| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Request Kinds | API Surfaces | Capability Restrictions | Last Verified At | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `intl-runtime` | `Aliyun Bailian International Runtime` | `aliyun-bailian-intl` | `runtime` | `template` | `openai-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `chat` | `responses,chat-completions` | `qwen3.7-max chat may use responses or chat-completions; the `qwen3.7-max` is documented as text-only; use a separately documented vision-capable snapshot or model for image input, so vision is blocked` | `2026-07-14` | `recommended workspace-specific Singapore endpoint; replace {WorkspaceId} before use` |
-| `intl-native-runtime` | `Aliyun Bailian International Native Runtime` | `aliyun-bailian-intl` | `runtime` | `template` | `provider-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `imaging,music` | `dashscope-native-sync,dashscope-native-async,dashscope-native` | `no documented International native imaging or music rows yet` | `2026-07-14` | `recommended workspace-specific DashScope native Singapore endpoint; replace {WorkspaceId} before use` |
+| Profile Key | Display Name | Provider | Purpose | Profile Status | Endpoint Kind | Base URL | API Key Ref | API Key Source | Non-Secret Config Refs | Non-Secret Config Sources | Placeholder Bindings | Request Kinds | API Surfaces | Capability Restrictions | Last Verified At | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `intl-openai-runtime` | `Aliyun Bailian Singapore workspace OpenAI-compatible` | `aliyun-bailian-intl` | `runtime` | `template` | `openai-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `ALIYUN_BAILIAN_INTL_WORKSPACE_ID` | `env,user-setting,config-file,external` | `{WorkspaceId} <- ALIYUN_BAILIAN_INTL_WORKSPACE_ID` | `chat,vision` | `responses,chat-completions` | `Only qwen3.8-max is maintained; Responses media is image-only.` | 2026-08-13 | `Recommended production profile. Workspace ID and API Key must belong to the same Singapore workspace.` |
+| `intl-native-runtime` | `Aliyun Bailian Singapore workspace DashScope native` | `aliyun-bailian-intl` | `runtime` | `template` | `provider-compatible` | `https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `ALIYUN_BAILIAN_INTL_WORKSPACE_ID` | `env,user-setting,config-file,external` | `{WorkspaceId} <- ALIYUN_BAILIAN_INTL_WORKSPACE_ID` | `chat,vision` | `multimodal-generation` | `Only qwen3.8-max is maintained.` | 2026-08-13 | `Recommended production profile; never use a Beijing endpoint.` |
+| `intl-shared-openai-runtime` | `Aliyun Bailian Singapore shared OpenAI-compatible` | `aliyun-bailian-intl` | `runtime` | `template` | `openai-compatible` | `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `n/a` | `n/a` | `n/a` | `chat,vision` | `responses,chat-completions` | `Existing centralized domain; explicitly selected alternative with lower isolation than a workspace-specific domain.` | 2026-08-13 | `No workspace ID is required. Never select this as an implicit fallback.` |
+| `intl-shared-native-runtime` | `Aliyun Bailian Singapore shared DashScope native` | `aliyun-bailian-intl` | `runtime` | `template` | `provider-compatible` | `https://dashscope-intl.aliyuncs.com/api/v1` | `ALIYUN_BAILIAN_INTL_API_KEY` | `env` | `n/a` | `n/a` | `n/a` | `chat,vision` | `multimodal-generation` | `Only qwen3.8-max is maintained.` | 2026-08-13 | `No workspace ID is required. Never select this as an implicit fallback.` |
 
-## Custom Base URL Rule
+## Rules
 
-If the owner changes `Base URL` to a gateway or proxy, also change `Endpoint Kind`.
-
-The official legacy Singapore domains remain callable, but new templates should use the workspace-specific domains above. Treat an unresolved `{WorkspaceId}` as `config_error`; do not silently fall back to a legacy domain.
-
-For gateway or custom endpoints, verify support for:
-
-- OpenAI-compatible Responses
-- OpenAI-compatible Chat Completions
-- DashScope native job APIs
-- streaming
-- thinking fields
-- structured output
-- imaging job submission and polling
-
-If the endpoint does not clearly support one of those fields, block that option for the profile instead of assuming official Aliyun parity.
+- Read `workspace-configuration.md` before resolving a profile.
+- Resolve the profile and all declared inputs before constructing the final request URL.
+- An unresolved `{WorkspaceId}` is `config_error`; do not guess, omit, or replace it with an account ID.
+- Workspace-specific and shared profiles are separate explicit choices. Never switch profiles or regions automatically.
+- Store references only; never store actual API keys or user workspace IDs in this skill.

@@ -1,6 +1,6 @@
 interface:
   display_name: "Gemini Direct Models"
-  short_description: "Wire Gemini 3.5, Interactions, compatible GenerateContent, multimodal, tools, state, cache, and Nano Banana flows."
+  short_description: "Wire Gemini 3.6, Interactions, GenerateContent, multimodal, tools, state, cache, and image flows."
   default_prompt: "Use $skill-llm-gemini to build a direct Gemini Developer API integration with exact model, profile, API-surface, URL, capability, state, thinking, tool, structured-output, image, progress, error, and logging contracts."
 
 policy:
