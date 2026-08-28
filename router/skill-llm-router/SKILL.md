@@ -28,6 +28,7 @@ Select exactly one provider skill before implementation. This router is the only
 - Gemini Developer API: `LLM/skill-llm-gemini/SKILL.md`
 - MiniMax China Mainland: `LLM/skill-llm-minimax-cn/SKILL.md`
 - MiniMax International: `LLM/skill-llm-minimax-intl/SKILL.md`
+- ElevenLabs: `LLM/skill-llm-elevenlabs/SKILL.md`
 
 ## Out of Scope
 

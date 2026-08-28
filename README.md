@@ -39,6 +39,7 @@ A host agent may use these documents while working in another project, but any i
 - Gemini Developer API
 - MiniMax China Mainland API
 - MiniMax International API
+- ElevenLabs API
 
 Regional skills remain separate because base URLs, availability, pricing, and behavior can differ.
 
@@ -63,6 +64,7 @@ LLM/skill-llm-deepseek/
 LLM/skill-llm-gemini/
 LLM/skill-llm-minimax-cn/
 LLM/skill-llm-minimax-intl/
+LLM/skill-llm-elevenlabs/
 ```
 
 Each provider skill contains connection profiles, request URLs, a maintained model catalog, capability and pricing matrices, transport rules, examples, logging rules, and update sources.

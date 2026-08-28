@@ -1,0 +1,7 @@
+interface:
+  display_name: "ElevenLabs Direct Models"
+  short_description: "Wire Eleven v3 TTS/dialogue and Scribe v2 batch STT exactly."
+  default_prompt: "Use $skill-llm-elevenlabs to wire an ElevenLabs direct-model integration with the exact connection profile, request URL, model, speech/dialogue/transcription transport, streaming/timestamp rules, pricing, progress, logging, and fail-fast contracts."
+
+policy:
+  allow_implicit_invocation: false

@@ -6,7 +6,7 @@ Use this normalized request contract across all `skill-llm-xxxx` skills.
 
 | Field | Meaning |
 | --- | --- |
-| `RequestKind` | `chat`, `vision`, `imaging`, or `music` |
+| `RequestKind` | `chat`, `vision`, `imaging`, `video`, `music`, `speech`, or `transcription` |
 | `ConnectionProfileKey` | named connection profile such as `build` or `plan`; resolved before model routing |
 | `ApiSurface` | exact provider API surface chosen for the request, such as `responses`, `chat-completions`, `interactions`, `generate-content`, `dashscope-native-sync`, or `dashscope-native-async` |
 | `ApiVersion` | exact provider API version from the resolved request-URL row |
@@ -47,7 +47,10 @@ Use this normalized request contract across all `skill-llm-xxxx` skills.
 | `chat` | `Messages` or a provider-verified direct text input | none |
 | `vision` | `Messages`, `Images` | none |
 | `imaging` | `Prompt` | `ReferenceImages`, `Seed`, `ImageSize`, `ImageCount` |
+| `video` | route-specific: generation/context commonly require `Prompt` + `DurationSeconds`; generation also requires `VideoResolution`; regeneration requires `VideoResolution` plus exactly one verified source form | `FirstFrameImage`, `LastFrameImage`, `ReferenceImages`, `ReferenceVideos`, `ReferenceAudio`, `AspectRatio`, `CallbackUrl`, `SourceTaskId`, `OriginalVideoGenerationContent`, `BaseVideo` |
 | `music` | `Prompt` | `Lyrics`, `DurationSeconds`, `Seed` |
+| `speech` | route-specific: `Text` + `VoiceId`, or `DialogueInputs` | `LanguageCode`, `Seed` |
+| `transcription` | exactly one source accepted by the resolved provider transport, such as `AudioFile` or `SourceUrl` | `LanguageCode`, `Seed` |
 
 Keep request-kind-specific options under `Inputs`.
 
@@ -55,6 +58,14 @@ Example:
 Use `Inputs.Seed` and `Inputs.ImageSize`, not top-level `Seed` or `ImageSize`.
 
 For `vision`, `Inputs.Images` is the input image list. Do not use `Inputs.ImageCount` for vision input images; `Inputs.ImageCount` is reserved for imaging output count.
+
+For `video`, the exact provider transport owns the input union. Frame inputs and reference-media inputs are distinct modes and must not be mixed when the selected surface forbids it. `VideoResolution` and `AspectRatio` describe output controls, not input-media dimensions.
+
+`Inputs.SourceTaskId` is an asynchronous provider job reference, not conversational state; never map it to `ContinuationId`. When a provider requires regeneration to replay the original generation inputs, preserve `Inputs.OriginalVideoGenerationContent` exactly and do not reconstruct missing fields. Provider-specific controls such as an AIGC watermark belong under typed `ProviderOptions`.
+
+For `speech`, resolve the exact surface before validating the input union. Single-voice text-to-speech surfaces use `Inputs.Text` plus `Inputs.VoiceId`; dialogue surfaces use `Inputs.DialogueInputs`. Do not silently transform one form into the other.
+
+For `transcription`, the provider transport owns the exact source exclusivity rule. Do not send two competing source forms merely because both are representable in the shared envelope.
 
 `ThinkingRequested` is provider-neutral intent. `ReasoningEffort` is an enum-style control whose exact allowed values and wire mapping come from the resolved `RequestKind + Model + ApiSurface + ApiVersion + EndpointKind` capability row and transport.
 

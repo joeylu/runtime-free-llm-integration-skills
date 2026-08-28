@@ -6,7 +6,19 @@ The format follows the principles of [Keep a Changelog](https://keepachangelog.c
 
 ## [Unreleased]
 
-No unreleased changes.
+### Added
+
+- Added `MiniMax-H3` to the China Mainland and International MiniMax skills with three separate V2 create surfaces: primary video generation, H3-Context-IR prompt enhancement, and 768P-to-2K regeneration.
+- Added the shared H3 asynchronous query/list/cancel-or-delete lifecycle without treating polling endpoints as interchangeable create routes.
+- Added a first-class shared `video` request/result kind, `VideoOutputs`, regional H3 transport rules, media limits, pay-as-you-go pricing, and fail-fast regional field handling.
+- Verified the MiniMax-H3 addition against official China Mainland and International documentation on 2026-08-29.
+- Clarified H3 service-tier absence, pay-as-you-go access wording, callback/polling independence, initial-status handling, frame-ratio provider behavior, and unresolved raw serialization of `filter.task_ids`.
+
+- Added `skill-llm-elevenlabs` for ElevenLabs `eleven_v3` speech generation and `scribe_v2` batch transcription.
+- Added exact Eleven v3 Text to Speech, Text to Dialogue, timestamp, HTTP streaming, and Text to Dialogue WebSocket routes.
+- Added Scribe v2 file/URL transcription rules, advanced diarization/keyterm/entity controls, pricing, and the deprecated `cloud_storage_url` migration rule.
+- Extended shared request/result kinds with `speech` and `transcription` rather than overloading `music` or `chat`.
+
 
 ## [2026-08-13]
 

@@ -10,7 +10,7 @@ Use this state model across all `skill-llm-xxxx` skills.
 | `StageKey` | Stable machine-friendly stage key |
 | `StageLabel` | Human-readable stage label |
 | `Detail` | Short extra detail text |
-| `RequestKind` | `chat`, `vision`, `imaging`, or `music` |
+| `RequestKind` | `chat`, `vision`, `imaging`, `video`, `music`, `speech`, or `transcription` |
 | `Model` | Exact provider model |
 | `ThinkingEnabled` | Whether the request asked for thinking |
 | `IsStreaming` | Whether the transport is stream-based |
@@ -59,7 +59,9 @@ Until then, use:
 ## Request-Kind Notes
 
 - `chat` and `vision` usually care about `waiting-first-byte` and `streaming`.
-- `imaging` and `music` usually care about `submitting-job`, `waiting-provider-accept`, `polling-job`, and `downloading-result`.
+- `imaging`, `video`, and `music` usually care about `submitting-job`, `waiting-provider-accept`, `polling-job`, and `downloading-result`.
+- `speech` HTTP streaming usually uses `waiting-first-byte` then `streaming`; non-stream speech usually uses `waiting-result`.
+- `transcription` batch requests usually use `waiting-result`. When a provider accepts asynchronous webhook delivery, the request may end at provider acceptance while the transcript remains incomplete until the external delivery path finishes.
 
 ## Example
 

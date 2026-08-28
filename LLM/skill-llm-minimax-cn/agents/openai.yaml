@@ -1,7 +1,7 @@
 interface:
   display_name: "MiniMax China Mainland Direct Models"
-  short_description: "Wire MiniMax China Mainland M3 chat/vision plus image-01 and music-3.0 flows."
-  default_prompt: "Use $skill-llm-minimax-cn to wire MiniMax China Mainland M3 chat/vision or build-profile image/music integration with the exact model/surface parameters, profiles, catalog, request URLs, transport, progress, and error contracts."
+  short_description: "Wire MiniMax China Mainland M3 chat/vision, MiniMax-H3 video, image-01, and music-3.0 flows."
+  default_prompt: "Use $skill-llm-minimax-cn to wire MiniMax China Mainland M3 chat/vision, MiniMax-H3 video, or native image/music integration with the exact model/surface parameters, profiles, catalog, request URLs, transport, progress, and error contracts."
 
 policy:
   allow_implicit_invocation: false

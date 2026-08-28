@@ -12,7 +12,7 @@ Use these normalized fields across all `skill-llm-xxxx` integrations.
 | `api_surface` | provider API surface such as `responses`, `chat-completions`, `generate-content`, or `dashscope-native-sync` |
 | `base_url` | resolved non-secret base URL |
 | `request_url` | resolved non-secret request URL with secret query values redacted |
-| `request_kind` | `chat`, `vision`, `imaging`, or `music` |
+| `request_kind` | `chat`, `vision`, `imaging`, `video`, `music`, `speech`, or `transcription` |
 | `model` | exact provider model |
 | `is_stream` | whether stream transport was used |
 | `thinking_requested` | caller intent |
@@ -47,8 +47,21 @@ Use these normalized fields across all `skill-llm-xxxx` integrations.
 - `continuation_id_returned`
 - `hosted_tool_usage`
 - `image_size`
+- `video_resolution`
+- `video_duration_seconds`
+- `video_aspect_ratio`
+- `video_task_type`
+- `video_task_status`
 - `reference_image_count`
+- `reference_video_count`
+- `reference_audio_count`
 - `result_count`
+- `voice_id`
+- `output_format`
+- `source_kind`
+- `audio_duration_seconds`
+- `speaker_count`
+- `timestamp_granularity`
 - `warnings`
 
 ## Rule

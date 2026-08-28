@@ -10,12 +10,12 @@ Use this file to keep provider pricing data structured and separate from capabil
 | `API Model` | exact provider model identifier |
 | `Price Region` | exact provider billing region |
 | `Price Currency` | ISO 4217 code or `unknown` |
-| `Price Unit` | billing unit such as `per-million-tokens`, `per-image`, or `mixed` |
-| `Metered Side` | input/output/cache/image/audio/tool side |
+| `Price Unit` | billing unit such as `per-million-tokens`, `per-image`, `per-second`, or `mixed` |
+| `Metered Side` | input/output/cache/image/video/audio/tool side |
 | `Metered Item` | what is metered |
 | `Context Band` | exact official token, size, duration, or other band |
-| `Billing Plan` | `real-time`, `batch`, or another documented plan |
-| `Service Tier` | `standard`, `priority`, `flex`, or provider-defined tier |
+| `Billing Plan` | `real-time`, `batch`, `pay-as-you-go`, or another documented plan |
+| `Service Tier` | `standard`, `priority`, `flex`, another documented tier, or `n/a` when the official price table exposes no service-tier dimension |
 | `List Unit Price` | undiscounted published unit price, or `unknown`/`n/a` |
 | `Effective Unit Price` | currently applicable unit price, or `unknown`/`n/a` |
 | `Discount Kind` | `none`, a structured discount label, or `unknown` |
@@ -34,5 +34,6 @@ Use this file to keep provider pricing data structured and separate from capabil
 - Keep list price and temporary effective price separate.
 - Never compound a promotional discount with batch, priority, cache, or other discounts unless the provider explicitly documents compounding.
 - If a promotion has no published end date, set `Valid Until = unknown`; consumers must refresh before relying on it.
+- Use `n/a` for `Service Tier` only when the official price table exposes no tier dimension; use `unknown` when tier applicability is unresolved.
 - Use `unknown` for missing prices. Do not infer from sibling models or unofficial calculators.
 - Treat this matrix as the source of truth for billing UI and estimates.

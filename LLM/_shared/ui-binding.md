@@ -20,7 +20,13 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 | tool/function editor | `Tool Calling Mode` is compatible with the resolved thinking state |
 | strict tool schema toggle | `Strict Tool Schema Mode = verified` |
 | parallel tool calls toggle | `Parallel Tool Calls = verified` |
-| image picker | `RequestKind = vision` or imaging edit flow |
+| image picker | `RequestKind = vision`, imaging edit flow, or an exact verified video frame/reference flow |
+| video source/reference picker | `RequestKind = video` and the exact surface verifies source or reference-video input |
+| audio reference picker | `RequestKind = video` and the exact surface verifies reference-audio input |
+| video resolution selector | `RequestKind = video` and the exact surface verifies the allowed output resolutions |
+| aspect-ratio selector | `RequestKind = video` and the exact mode verifies the allowed ratios |
+| transcription source picker | `RequestKind = transcription` |
+| voice selector or voice-id input | `RequestKind = speech` and the resolved provider surface requires a voice |
 | seed input | capability matrix verifies seed |
 | size input | capability matrix verifies size |
 | image count input | `RequestKind = imaging` and capability matrix verifies output image count |
@@ -52,5 +58,8 @@ Use this file to keep platform UI logic consistent across Unity, web, app, and b
 - Render `StructuredContent` for verified schema outputs.
 - Render `ToolCalls` when the model asks the app to call caller-defined tools.
 - Render `ImageOutputs` for `imaging`.
-- Render `AudioOutputs` for `music`.
+- Render `VideoOutputs` for video-generation and video-regeneration results.
+- Render `TextContent` for video prompt-enhancement results.
+- Render `AudioOutputs` for `music` and `speech`.
+- Render `TextContent` for `transcription`; expose word/speaker/timing metadata only when the host UI needs it.
 - Render usage, latency, and finish reason in a secondary diagnostics area when the caller wants debugging visibility.

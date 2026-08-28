@@ -23,7 +23,7 @@ Read `route-key-schema.md` first. Do not resolve capabilities by model name alon
 | Column | Meaning |
 | --- | --- |
 | `Route Key` | canonical full route key from `route-key-schema.md` |
-| `Model Type` | compatibility request-kind field: `chat`, `vision`, `imaging`, or `music` |
+| `Model Type` | compatibility request-kind field: `chat`, `vision`, `imaging`, `video`, `music`, `speech`, or `transcription` |
 | `API Model` | exact provider model identifier |
 | `API Surface` | exact provider API surface from `request-urls.md`; one surface per row |
 | `API Version` | exact API version from the matching request URL row |
@@ -100,6 +100,8 @@ Then gate the request like this:
 For `vision`, `Inputs.Images` means input images; do not use `Supports Image Count` to gate vision input image count.
 
 For `imaging`, treat `Supports Image Input` as verified only when the provider docs confirm image input for the exact requested imaging flow, such as edit input or reference images. Do not infer edit/reference-image support from a base text-to-image row.
+
+For `video`, `Supports Image Input` gates only exact frame/reference-image forms verified for the selected surface. Video resolution, aspect ratio, reference video/audio, source-task, regeneration, callback, and watermark rules remain transport/model-parameter concerns. `Supports Duration Seconds` is `verified` only when that exact create surface accepts caller-controlled duration.
 
 If the docs publish only one model-wide temperature default, record it as `all-modes: <value>` in `Temperature Defaults`.
 
