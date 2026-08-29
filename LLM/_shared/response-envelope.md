@@ -6,7 +6,7 @@ Use this normalized response contract across all `skill-llm-xxxx` skills.
 
 | Field | Meaning |
 | --- | --- |
-| `ResultKind` | `chat`, `vision`, `imaging`, `video`, `music`, `speech`, or `transcription` |
+| `ResultKind` | `chat`, `vision`, `imaging`, `music`, `speech`, or `transcription` |
 | `Model` | exact provider model value that produced the result |
 | `TextContent` | final text output |
 | `StructuredContent` | parsed structured output when a verified schema mode was requested |
@@ -18,7 +18,6 @@ Use this normalized response contract across all `skill-llm-xxxx` skills.
 | `Annotations` | normalized citations, URL annotations, file references, or grounding metadata when available |
 | `ContinuationId` | opaque provider-issued response, interaction, or conversation ID that may be used for a verified follow-up |
 | `ImageOutputs` | generated image result list |
-| `VideoOutputs` | generated video result list |
 | `AudioOutputs` | generated audio result list |
 | `Usage` | normalized usage or billing summary, including cache and reasoning details when returned |
 | `FinishReason` | normalized completion reason |
@@ -41,9 +40,7 @@ Use this normalized response contract across all `skill-llm-xxxx` skills.
 - Put caller-defined tool/function calls in `ToolCalls`.
 - Put provider-hosted tool execution records in `HostedToolCalls`; do not mix them with caller-owned function calls.
 - Preserve `ContinuationId` exactly as returned, but treat it as opaque and provider-scoped.
-- For job-style flows such as imaging, video, or music, use `ImageOutputs`, `VideoOutputs`, or `AudioOutputs` rather than stuffing URLs into `TextContent`.
-- Keep asynchronous provider job IDs under typed `ProviderMeta` and normalized `job_id` logs; never misuse `ContinuationId` for polling.
-- A video route that intentionally returns text, such as prompt enhancement, uses `TextContent` and must not fabricate a `VideoOutputs` item.
+- For job-style flows such as imaging or music, use `ImageOutputs` or `AudioOutputs` rather than stuffing URLs into `TextContent`.
 - For `speech`, put generated audio in `AudioOutputs`; keep provider timing/alignment data in `ProviderMeta` unless a host defines a separate normalized alignment layer.
 - For `transcription`, put the final transcript in `TextContent`; keep word/character timing, speaker labels, detected language, audio duration, and other provider detail in `ProviderMeta`.
 - Do not use `Warnings` to justify silent fallback, silent degradation, or continuing after an unverified capability. Those cases must be errors before sending or explicit user-approved changes.

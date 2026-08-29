@@ -101,7 +101,9 @@ On `succeeded`:
 - `generation` or `regeneration`: map the single `task.content.url` to one `VideoOutputs` item. The URL points to the produced video file, which may contain the model's audio track; do not invent a separate audio URL.
 - `h3_context_ir`: map `task.content.prompt` to `TextContent`.
 
-Map the observed status, task type, modality, resolution, duration, ratio, usage, timestamps, and provider error into normalized metadata/progress/usage/error fields. Do not log raw prompts, original content arrays, media URLs, result URLs, API keys, bearer tokens, or callback payload secrets by default.
+For video results, require the expected task type and output content. Treat `modality` as optional because live China Mainland task responses may omit it despite the official example; when present, it must be `video`. Parse optional usage, timestamps, and other telemetry independently so malformed or newly shaped telemetry cannot invalidate an otherwise valid succeeded result.
+
+Map the observed status, task type, optional modality, resolution, duration, ratio, valid usage, timestamps, and provider error into normalized metadata/progress/usage/error fields. Do not log raw prompts, original content arrays, media URLs, result URLs, API keys, bearer tokens, or callback payload secrets by default.
 
 ## Official Sources
 

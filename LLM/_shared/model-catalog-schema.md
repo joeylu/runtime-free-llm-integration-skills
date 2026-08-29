@@ -6,11 +6,11 @@ A provider catalog lists the models for which that skill maintains runtime integ
 
 | Column | Meaning |
 | --- | --- |
-| `Model Type` | compatibility request kind: `chat`, `vision`, `imaging`, `video`, `music`, `speech`, or `transcription` |
-| `Operation` | `text-generation`, `multimodal-understanding`, `image-generation`, `video-generation`, `video-prompt-enhancement`, `video-regeneration`, `music-generation`, `speech-generation`, or `speech-transcription` |
+| `Model Type` | compatibility request kind: `chat`, `vision`, `imaging`, `music`, `speech`, or `transcription` |
+| `Operation` | `text-generation`, `multimodal-understanding`, `image-generation`, `music-generation`, `speech-generation`, or `speech-transcription` |
 | `Input Modalities` | comma-separated exact maintained inputs such as `text,image,video,audio,pdf` |
-| `Output Modalities` | comma-separated maintained outputs such as `text`, `image`, `video`, or `audio` |
-| `Flow Kind` | maintained task flow, for example `chat`, `vision`, `text-to-image`, `text-to-video`, or `video-regeneration` |
+| `Output Modalities` | comma-separated maintained outputs such as `text`, `image`, or `audio` |
+| `Flow Kind` | maintained task flow, for example `chat`, `vision`, `text-to-image`, or `image-edit` |
 | `API Model` | exact provider model identifier sent over the wire |
 | `Status` | `active`, `preview`, or `deprecated` |
 | `Identifier Kind` | `opaque-provider-id`, `moving-alias`, `fixed-snapshot`, or `preview-id` |
@@ -30,7 +30,7 @@ A provider catalog lists the models for which that skill maintains runtime integ
 ## Rules
 
 - Use exact provider model IDs.
-- Keep one row per request kind when the same model has distinct chat and vision rules. Keep separate rows when one request kind exposes distinct operations, endpoints, or result modalities.
+- Keep one row per request kind when the same model has distinct chat and vision rules.
 - Do not infer input modalities from a marketing label; record only the maintained flow verified by this skill.
 - A moving alias must record `Resolves To` when the provider publishes the current target.
 - Keep lifecycle dates as `unknown` rather than inferring them.
